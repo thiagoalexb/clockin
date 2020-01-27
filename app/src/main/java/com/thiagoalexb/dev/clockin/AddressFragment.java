@@ -15,20 +15,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.thiagoalexb.dev.clockin.data.AppDatabase;
+import com.thiagoalexb.dev.clockin.databinding.FragmentAddressBinding;
 
 import java.io.IOException;
 import java.util.List;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
+
 public class AddressFragment extends Fragment {
 
-    ViewDataBinding view;
-    EditText state;
-    EditText city;
-    EditText neighborhood;
-    EditText street;
-    EditText number;
+    FragmentAddressBinding fragmentAddressBinding;
+    private final CompositeDisposable mDisposable = new CompositeDisposable();
+    private Integer addressId = 0;
 
     public AddressFragment() {
     }
@@ -37,43 +40,50 @@ public class AddressFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        view = DataBindingUtil.inflate(inflater, R.layout.fragment_address, container, false);
+        fragmentAddressBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_address, container, false);
 
-        state = view.getRoot().findViewById(R.id.state_edit_text);
-        city = view.getRoot().findViewById(R.id.city_edit_text);
-        neighborhood = view.getRoot().findViewById(R.id.neighborhood_edit_text);
-        street = view.getRoot().findViewById(R.id.street_edit_text);
-        number = view.getRoot().findViewById(R.id.number_edit_text);
+        getAddress();
 
-        state.setText("PR");
-        city.setText("Curitiba");
-        neighborhood.setText("Guabirotuba");
-        street.setText("Rua Ministro Gabriel Passos");
-        number.setText("360");
+        setElements();
 
-
-        Button button = view.getRoot().findViewById(R.id.save_address_button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String address = street.getText() + ", " + number.getText() + ", " + neighborhood.getText() + " - " + city.getText() + ", " + state.getText();
-                getLocationFromAddress(address);
-                Navigation.findNavController(v).navigate(R.id.action_addressFragment_to_mainFragment);
-            }
-        });
-
-        return view.getRoot();
+        return fragmentAddressBinding.getRoot();
     }
 
-    public void getLocationFromAddress(String strAddress){
+    @Override
+    public void onStop() {
+        super.onStop();
+        mDisposable.clear();
+    }
+
+    private void getAddress() {
+        AppDatabase db = AppDatabase.getInstance(getContext());
+
+        mDisposable.add(db.addressDao().get()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(address -> {
+                    fragmentAddressBinding.stateEditText.setText(address.state);
+                    fragmentAddressBinding.cityEditText.setText(address.city);
+                    fragmentAddressBinding.neighborhoodEditText.setText(address.neighborhood);
+                    fragmentAddressBinding.streetEditText.setText(address.street);
+                    fragmentAddressBinding.numberEditText.setText(address.number.toString());
+                    addressId = address.id;
+                }, throwable -> {
+
+                }));
+    }
+
+
+    private void getLocationFromAddress(String strAddress) {
 
         Geocoder coder = new Geocoder(getContext());
         List<Address> address;
 
         try {
-            address = coder.getFromLocationName(strAddress,1);
+            address = coder.getFromLocationName(strAddress, 1);
 
             if (address == null) {
+                Toast.makeText(getContext(), "Endereço não encontrado", Toast.LENGTH_LONG);
                 return;
             }
 
@@ -83,19 +93,44 @@ public class AddressFragment extends Fragment {
 
             com.thiagoalexb.dev.clockin.data.Address addressDatabase = new com.thiagoalexb.dev.clockin.data.Address();
 
-            addressDatabase.state = state.getText().toString();
-            addressDatabase.city = city.getText().toString();
-            addressDatabase.neighborhood = neighborhood.getText().toString();
-            addressDatabase.street = street.getText().toString();
-            addressDatabase.number = Integer.parseInt(number.getText().toString());
+            addressDatabase.state = fragmentAddressBinding.stateEditText.getText().toString();
+            addressDatabase.city = fragmentAddressBinding.cityEditText.getText().toString();
+            addressDatabase.neighborhood = fragmentAddressBinding.neighborhoodEditText.getText().toString();
+            addressDatabase.street = fragmentAddressBinding.streetEditText.getText().toString();
+            addressDatabase.number = Integer.parseInt(fragmentAddressBinding.numberEditText.getText().toString());
             addressDatabase.latitude = location.getLatitude();
             addressDatabase.longitude = location.getLongitude();
+            if(addressId > 0)
+                addressDatabase.id = addressId;
 
-            db.addressDao().insert(addressDatabase);
+            mDisposable.add(db.addressDao().insert(addressDatabase).
+                    observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(() -> {
+                        Navigation.findNavController(getView()).navigate(R.id.action_addressFragment_to_mainFragment);
+                    }, throwable -> {
+                        Toast.makeText(getContext(), "Erro ao adicionar endereço", Toast.LENGTH_LONG);
+                    }));
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void setElements() {
+        Button button = fragmentAddressBinding.getRoot().findViewById(R.id.save_address_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String address = fragmentAddressBinding.streetEditText.getText()
+                        + ", " + fragmentAddressBinding.numberEditText.getText()
+                        + ", " + fragmentAddressBinding.neighborhoodEditText.getText()
+                        + " - " + fragmentAddressBinding.cityEditText.getText()
+                        + ", " + fragmentAddressBinding.stateEditText.getText();
+
+                getLocationFromAddress(address);
+            }
+        });
     }
 
 }

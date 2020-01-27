@@ -1,6 +1,8 @@
 package com.thiagoalexb.dev.clockin;
 
 
+import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
@@ -12,6 +14,7 @@ import android.util.Log;
 
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
@@ -35,30 +38,17 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
 
     private void sendNotification(Context context, int transitionType) {
-        // Create an explicit content Intent that starts the main Activity.
-        Intent notificationIntent = new Intent(context, MainActivity.class);
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // Construct a task stack.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel notificationChannel = new NotificationChannel("ID", "Name", importance);
+        notificationManager.createNotificationChannel(notificationChannel);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, notificationChannel.getId());
 
-        // Add the main Activity to the task stack as the parent.
-        stackBuilder.addParentStack(MainActivity.class);
-
-        // Push the content Intent onto the stack.
-        stackBuilder.addNextIntent(notificationIntent);
-
-        // Get a PendingIntent containing the entire back stack.
-        PendingIntent notificationPendingIntent =
-                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        // Get a notification builder
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-
-        // Check the transition type to display the relevant icon image
         if (transitionType == Geofence.GEOFENCE_TRANSITION_ENTER) {
             builder.setSmallIcon(R.drawable.ic_volume_off_white_24dp)
                     .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-                            R.drawable.ic_volume_off_white_24dp))
+                             R.drawable.ic_volume_off_white_24dp))
                     .setContentTitle(context.getString(R.string.silent_mode_activated));
         } else if (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT) {
             builder.setSmallIcon(R.drawable.ic_volume_up_white_24dp)
@@ -67,18 +57,16 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
                     .setContentTitle(context.getString(R.string.back_to_normal));
         }
 
-        builder.setContentText(context.getString(R.string.touch_to_relaunch));
-        builder.setContentIntent(notificationPendingIntent);
+        Intent intent = new Intent(context, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
-        // Dismiss notification once the user touches it.
-        builder.setAutoCancel(true);
+        builder = builder
+                .setContentIntent(pendingIntent)
+                .setContentText(context.getString(R.string.touch_to_relaunch))
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setAutoCancel(true);
 
-        // Get an instance of the Notification manager
-        NotificationManager mNotificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // Issue the notification
-        mNotificationManager.notify(0, builder.build());
+        notificationManager.notify(0, builder.build());
     }
 
 }

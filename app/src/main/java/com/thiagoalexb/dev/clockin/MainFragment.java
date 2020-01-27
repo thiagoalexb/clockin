@@ -24,6 +24,14 @@ import com.thiagoalexb.dev.clockin.data.Address;
 import com.thiagoalexb.dev.clockin.data.AppDatabase;
 import com.thiagoalexb.dev.clockin.databinding.FragmentMainBinding;
 
+import io.reactivex.MaybeObserver;
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+
 public class MainFragment extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
@@ -33,6 +41,7 @@ public class MainFragment extends Fragment implements
     private GoogleApiClient mClient;
     private Geofencing mGeofencing;
     private FragmentMainBinding fragmentMainBinding;
+    private final CompositeDisposable mDisposable = new CompositeDisposable();
 
     public MainFragment() {
     }
@@ -44,50 +53,58 @@ public class MainFragment extends Fragment implements
 
         askLocationPermission();
 
-        setGoogleClient();
-
         setElements();
 
         return fragmentMainBinding.getRoot();
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-//        mClient.stopAutoManage(getActivity());
-//        mClient.disconnect();
+    public void onStart() {
+        super.onStart();
+        setGoogleClient();
     }
 
     @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        Log.i(TAG, "API Client Connection Successful!");
-
-        setGeofencing();
-
-        AppDatabase db = AppDatabase.getInstance(getContext());
-        Address address = db.addressDao().get();
-
-        if(address != null) {
-            mGeofencing.updateGeofencesList(address);
-            mGeofencing.registerAllGeofences();
+    public void onStop() {
+        super.onStop();
+        mDisposable.clear();
+        if(mClient != null  && mClient.isConnected()) {
+            mClient.stopAutoManage(getActivity());
+            mClient.disconnect();
         }
     }
 
     @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.i(TAG, "Conectei kkk");
+        setGeofencing();
+
+        AppDatabase db = AppDatabase.getInstance(getContext());
+        mDisposable.add(db.addressDao().get()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(address -> {
+                    mGeofencing.updateGeofencesList(address);
+                    mGeofencing.registerAllGeofences();
+                }, throwable -> {
+                    navigateToAddress(getView());
+                }));
+    }
+
+    @Override
     public void onConnectionSuspended(int i) {
-        Log.i(TAG, "API Client Connection Suspended!");
+
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.e(TAG, "API Client Connection Failed!");
     }
 
-    public void askLocationPermission(){
-        ActivityCompat.requestPermissions(getActivity(), new String[] { android.Manifest.permission.ACCESS_FINE_LOCATION }, PERMISSIONS_REQUEST_FINE_LOCATION);
+    private void askLocationPermission() {
+        ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_FINE_LOCATION);
     }
 
-    private void setGoogleClient(){
+    private void setGoogleClient() {
         mClient = new GoogleApiClient.Builder(getContext())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -102,12 +119,11 @@ public class MainFragment extends Fragment implements
     }
 
     private void setElements() {
-        fragmentMainBinding.placeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Navigation.findNavController(v).navigate(R.id.action_mainFragment_to_addressFragment);
-            }
-        });
+        fragmentMainBinding.placeBtn.setOnClickListener(view -> navigateToAddress(view));
+    }
+
+    private void navigateToAddress(View view) {
+        Navigation.findNavController(view).navigate(R.id.action_mainFragment_to_addressFragment);
     }
 
 }
