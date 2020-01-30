@@ -12,7 +12,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCluKtyT9gCIVLt98oPiLhCFmiIvOj763M" />
+            android:value="AIzaSyBNWHmnADBiRWFNj8VPqFpbizCGr7-y7Ks" />
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -28,5 +28,6 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
 
 </manifest>

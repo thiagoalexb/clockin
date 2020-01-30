@@ -1,12 +1,15 @@
 package com.thiagoalexb.dev.clockin;
 
+import android.Manifest;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
-import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -16,22 +19,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
-import com.thiagoalexb.dev.clockin.data.Address;
 import com.thiagoalexb.dev.clockin.data.AppDatabase;
 import com.thiagoalexb.dev.clockin.databinding.FragmentMainBinding;
 
-import io.reactivex.MaybeObserver;
-import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class MainFragment extends Fragment implements
@@ -53,17 +50,26 @@ public class MainFragment extends Fragment implements
 
         fragmentMainBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false);
 
-        askLocationPermission();
-
-        setElements();
+        getLocationPermission();
 
         return fragmentMainBinding.getRoot();
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        setElements();
+        setGoogleClient();
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
-        setGoogleClient();
+        int permissionLocation = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
+        if (permissionLocation == PackageManager.PERMISSION_GRANTED) {
+            setGoogleClient();
+        }
     }
 
     @Override
@@ -78,7 +84,7 @@ public class MainFragment extends Fragment implements
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Log.i(TAG, "Conectei kkk");
+        Log.i(TAG, "Conectado no google client");
         setGeofencing();
 
         AppDatabase db = AppDatabase.getInstance(getContext());
@@ -95,25 +101,27 @@ public class MainFragment extends Fragment implements
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        Log.i(TAG, "Suspenso no google client");
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.i(TAG, "Falha no google client");
     }
 
-    private void askLocationPermission() {
-        ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_FINE_LOCATION);
+    private void getLocationPermission() {
+        requestPermissions(new String[]{ android.Manifest.permission.ACCESS_FINE_LOCATION }, PERMISSIONS_REQUEST_FINE_LOCATION);
     }
 
     private void setGoogleClient() {
-        mClient = new GoogleApiClient.Builder(getContext())
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .addApi(Places.GEO_DATA_API)
-                .enableAutoManage(getActivity(), this)
-                .build();
+        if(mClient == null)
+            mClient = new GoogleApiClient.Builder(getContext())
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .addApi(Places.GEO_DATA_API)
+                    .enableAutoManage(getActivity(), this)
+                    .build();
     }
 
     private void setGeofencing() {
@@ -145,4 +153,20 @@ public class MainFragment extends Fragment implements
         Navigation.findNavController(view).navigate(R.id.action_mainFragment_to_addressFragment);
     }
 
+    private void createDialogAddressNotification(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        builder.setTitle(R.string.address);
+        builder.setMessage(R.string.address_mandatory);
+
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                navigateToAddress(getView());
+            }
+        });
+
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 }

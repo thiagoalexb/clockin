@@ -22,6 +22,7 @@ import com.thiagoalexb.dev.clockin.databinding.FragmentAddressBinding;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -32,6 +33,7 @@ public class AddressFragment extends Fragment {
     FragmentAddressBinding fragmentAddressBinding;
     private final CompositeDisposable mDisposable = new CompositeDisposable();
     private Integer addressId = 0;
+    private String addressUUID;
 
     public AddressFragment() {
     }
@@ -68,6 +70,7 @@ public class AddressFragment extends Fragment {
                     fragmentAddressBinding.streetEditText.setText(address.street);
                     fragmentAddressBinding.numberEditText.setText(address.number.toString());
                     addressId = address.id;
+                    addressUUID = address.addressUUID;
                 }, throwable -> {
 
                 }));
@@ -93,6 +96,7 @@ public class AddressFragment extends Fragment {
 
             com.thiagoalexb.dev.clockin.data.Address addressDatabase = new com.thiagoalexb.dev.clockin.data.Address();
 
+
             addressDatabase.state = fragmentAddressBinding.stateEditText.getText().toString();
             addressDatabase.city = fragmentAddressBinding.cityEditText.getText().toString();
             addressDatabase.neighborhood = fragmentAddressBinding.neighborhoodEditText.getText().toString();
@@ -100,8 +104,12 @@ public class AddressFragment extends Fragment {
             addressDatabase.number = Integer.parseInt(fragmentAddressBinding.numberEditText.getText().toString());
             addressDatabase.latitude = location.getLatitude();
             addressDatabase.longitude = location.getLongitude();
-            if(addressId > 0)
+            if(addressId > 0) {
                 addressDatabase.id = addressId;
+                addressDatabase.addressUUID = addressUUID;
+            }else
+                addressDatabase.addressUUID = UUID.randomUUID().toString();
+
 
             mDisposable.add(db.addressDao().insert(addressDatabase).
                     observeOn(AndroidSchedulers.mainThread())

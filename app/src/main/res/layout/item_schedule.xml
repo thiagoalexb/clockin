@@ -9,37 +9,48 @@
     android:padding="@dimen/default_padding">
 
     <TextView
+        android:id="@+id/day_value_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/day"
+        android:textColor="@color/design_default_color_primary"
+        android:textSize="@dimen/sub_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/day_text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:textColor="@color/design_default_color_primary"
         android:textSize="@dimen/sub_title"
+        app:layout_constraintBottom_toBottomOf="@+id/day_value_text_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/day_value_text_view"
+        app:layout_constraintTop_toTopOf="@+id/day_value_text_view"
         tools:text="Day" />
 
     <TextView
         android:id="@+id/entry_text_view"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/entry"
-        app:layout_constraintEnd_toStartOf="@+id/departure_text_view"
+        app:layout_constraintEnd_toStartOf="@+id/entry_value_text_view"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/day_text_view"
+        app:layout_constraintTop_toBottomOf="@+id/day_value_text_view"
         tools:text="Entrada" />
 
     <TextView
         android:id="@+id/departure_text_view"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/departure"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/departure_value_text_view"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/entry_text_view"
+        app:layout_constraintStart_toEndOf="@+id/entry_value_text_view"
         app:layout_constraintTop_toTopOf="@+id/entry_text_view"
         tools:text="Saída" />
 
@@ -47,20 +58,23 @@
         android:id="@+id/entry_value_text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/departure_value_text_view"
+        android:layout_marginStart="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/departure_text_view"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/entry_text_view"
+        app:layout_constraintStart_toEndOf="@+id/entry_text_view"
+        app:layout_constraintTop_toTopOf="@+id/entry_text_view"
         tools:text="08:00" />
 
     <TextView
         android:id="@+id/departure_value_text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/entry_value_text_view"
-        app:layout_constraintTop_toTopOf="@+id/entry_value_text_view"
+        app:layout_constraintStart_toEndOf="@+id/departure_text_view"
+        app:layout_constraintTop_toTopOf="@+id/entry_text_view"
         tools:text="18:00" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.thiagoalexb.dev.clockin.data.Schedule;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ScheduleViewHolder> {
@@ -54,10 +55,13 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
         }
 
         public void bind(Schedule schedule){
-            day.setText(schedule.date.toString());
-            entryValue.setText(schedule.entryTime.toString());
+            String dateFormatted = schedule.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            day.setText(dateFormatted);
+            DateTimeFormatter pattern = DateTimeFormatter.ofPattern("HH:mm");
+            String entryTimeFormatted = schedule.entryTime.format(pattern);
+            entryValue.setText(entryTimeFormatted);
             if(schedule.departureTime != null)
-                departureValue.setText(schedule.departureTime.toString());
+                departureValue.setText(schedule.departureTime.format(pattern));
         }
     }
 }

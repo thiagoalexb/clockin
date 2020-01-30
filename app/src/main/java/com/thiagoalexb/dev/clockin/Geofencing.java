@@ -31,13 +31,17 @@ public class Geofencing implements ResultCallback {
     private GoogleApiClient mGoogleApiClient;
     private Context mContext;
 
+    @Override
+    public void onResult(@NonNull Result result) {
+        Log.e(TAG, result.getStatus().toString());
+    }
+
     public Geofencing(Context context, GoogleApiClient client) {
         mContext = context;
         mGoogleApiClient = client;
         mGeofencePendingIntent = null;
         mGeofenceList = new ArrayList<>();
     }
-
 
     public void registerAllGeofences() {
 
@@ -71,11 +75,10 @@ public class Geofencing implements ResultCallback {
         }
     }
 
-
     public void updateGeofencesList(Address address) {
 
             Geofence geofence = new Geofence.Builder()
-                    .setRequestId(address.id.toString())
+                    .setRequestId(address.addressUUID.toString())
                     .setExpirationDuration(GEOFENCE_TIMEOUT)
                     .setCircularRegion(address.latitude, address.longitude, GEOFENCE_RADIUS)
                     .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
@@ -84,7 +87,6 @@ public class Geofencing implements ResultCallback {
             mGeofenceList.add(geofence);
 
     }
-
 
     private GeofencingRequest getGeofencingRequest() {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
@@ -99,16 +101,11 @@ public class Geofencing implements ResultCallback {
             return mGeofencePendingIntent;
         }
         Intent intent = new Intent(mContext, GeofenceBroadcastReceiver.class);
-        mGeofencePendingIntent = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.
-                FLAG_UPDATE_CURRENT);
+        mGeofencePendingIntent = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         return mGeofencePendingIntent;
     }
 
-    @Override
-    public void onResult(@NonNull Result result) {
-        Log.e(TAG, String.format("Error adding/removing geofence : %s",
-                result.getStatus().toString()));
-    }
+
 
 }
 
