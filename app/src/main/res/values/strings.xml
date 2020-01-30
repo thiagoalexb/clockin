@@ -13,4 +13,6 @@
     <string name="touch_to_relaunch">Clique para abrir.</string>
     <string name="silent_mode_activated">Silent mode activated</string>
     <string name="back_to_normal">Back to normal</string>
+    <string name="entry">Entrada</string>
+    <string name="departure">Saída</string>
 </resources>

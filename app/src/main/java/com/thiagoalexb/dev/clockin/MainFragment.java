@@ -9,6 +9,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -120,6 +122,23 @@ public class MainFragment extends Fragment implements
 
     private void setElements() {
         fragmentMainBinding.placeBtn.setOnClickListener(view -> navigateToAddress(view));
+
+        AppDatabase db = AppDatabase.getInstance(getContext());
+        db.scheduleDao().getByMonth().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(schedules -> {
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+                    fragmentMainBinding.schedulesRecyclerView.setLayoutManager(layoutManager);
+
+                    ScheduleAdapter mAdapter = new ScheduleAdapter(schedules);
+                    fragmentMainBinding.schedulesRecyclerView.setAdapter(mAdapter);
+
+
+                    fragmentMainBinding.schedulesRecyclerView.addItemDecoration(
+                            new DividerItemDecoration(getContext(), DividerItemDecoration.HORIZONTAL));
+                }, throwable -> {
+                    Log.i(TAG, "ERRooooWW");
+                });
     }
 
     private void navigateToAddress(View view) {

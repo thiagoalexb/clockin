@@ -5,7 +5,6 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,14 +13,23 @@ import android.util.Log;
 
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
+import com.thiagoalexb.dev.clockin.data.AppDatabase;
+import com.thiagoalexb.dev.clockin.data.Schedule;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
     public static final String TAG = GeofenceBroadcastReceiver.class.getSimpleName();
+    private CompositeDisposable mDisposable;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -30,6 +38,9 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
             Log.e(TAG, String.format("Error code : %d", geofencingEvent.getErrorCode()));
             return;
         }
+
+        mDisposable = new CompositeDisposable();
+
 
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
@@ -48,13 +59,17 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
         if (transitionType == Geofence.GEOFENCE_TRANSITION_ENTER) {
             builder.setSmallIcon(R.drawable.ic_volume_off_white_24dp)
                     .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-                             R.drawable.ic_volume_off_white_24dp))
+                            R.drawable.ic_volume_off_white_24dp))
                     .setContentTitle(context.getString(R.string.silent_mode_activated));
+
+            saveEntrySchedule(context);
         } else if (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT) {
             builder.setSmallIcon(R.drawable.ic_volume_up_white_24dp)
                     .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
                             R.drawable.ic_volume_up_white_24dp))
                     .setContentTitle(context.getString(R.string.back_to_normal));
+
+            saveDepartureSchedule(context);
         }
 
         Intent intent = new Intent(context, MainActivity.class);
@@ -67,6 +82,59 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
                 .setAutoCancel(true);
 
         notificationManager.notify(0, builder.build());
+    }
+
+    private void saveEntrySchedule(Context context) {
+        AppDatabase db = AppDatabase.getInstance(context);
+
+        Schedule scheduleDb = new Schedule();
+        LocalDate now = LocalDate.now();
+        scheduleDb.date = now;
+        scheduleDb.entryTime = LocalTime.now();
+        scheduleDb.day = now.getDayOfMonth();
+        scheduleDb.month = now.getMonthValue();
+        scheduleDb.year = now.getYear();
+
+        mDisposable.add(db.scheduleDao().getByDay(scheduleDb.year, scheduleDb.month, scheduleDb.day)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(schedule -> {
+                }, throwable -> {
+                    mDisposable.add(db.scheduleDao().insert(scheduleDb)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(() -> {
+
+                                mDisposable.clear();
+                            }, throwable1 -> {
+
+                            }));
+                }));
+    }
+
+    private void saveDepartureSchedule(Context context) {
+        AppDatabase db = AppDatabase.getInstance(context);
+        LocalDate now = LocalDate.now();
+
+        mDisposable.add(db.scheduleDao().getByDay(now.getYear(), now.getMonthValue(), now.getDayOfMonth())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(schedule -> {
+                    if(schedule.entryTime == null) return;
+                    if(schedule.departureTime != null) return;
+                    schedule.departureTime = LocalTime.now();
+                    mDisposable.add(db.scheduleDao().update(schedule)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(() -> {
+
+                                mDisposable.clear();
+                            }, throwable1 -> {
+
+                            }));
+                }, throwable -> {
+
+                }));
     }
 
 }

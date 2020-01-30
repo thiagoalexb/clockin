@@ -7,7 +7,7 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import io.reactivex.Completable;
-import io.reactivex.Flowable;
+import io.reactivex.Single;
 
 @Dao
 public interface AddressDao {
@@ -19,5 +19,5 @@ public interface AddressDao {
     Completable update(Address address);
 
     @Query("SELECT * FROM Address LIMIT 1")
-    Flowable<Address> get();
+    Single<Address> get();
 }

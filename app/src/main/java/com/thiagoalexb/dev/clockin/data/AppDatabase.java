@@ -6,10 +6,15 @@ import android.util.Log;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
+
+import com.thiagoalexb.dev.clockin.data.converters.Converters;
 
 @Database(entities = {
-        Address.class
+        Address.class,
+        Schedule.class
 }, version = 1, exportSchema = false)
+@TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final String LOG_TAG = AppDatabase.class.getSimpleName();
@@ -29,4 +34,5 @@ public abstract class AppDatabase extends RoomDatabase {
     }
 
     public abstract AddressDao addressDao();
+    public abstract ScheduleDao scheduleDao();
 }

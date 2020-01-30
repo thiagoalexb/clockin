@@ -2,4 +2,6 @@
 <resources>
     <dimen name="default_padding">16dp</dimen>
     <dimen name="edit_text_vertical_margin">12dp</dimen>
+    <dimen name="title">28sp</dimen>
+    <dimen name="sub_title">20sp</dimen>
 </resources>
