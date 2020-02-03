@@ -1,4 +1,4 @@
-package com.thiagoalexb.dev.clockin;
+package com.thiagoalexb.dev.clockin.geofence;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -13,8 +13,8 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.Place;
-import com.thiagoalexb.dev.clockin.data.Address;
+import com.thiagoalexb.dev.clockin.broadcasts.GeofenceBroadcastReceiver;
+import com.thiagoalexb.dev.clockin.data.models.Address;
 
 import java.util.ArrayList;
 import java.util.List;

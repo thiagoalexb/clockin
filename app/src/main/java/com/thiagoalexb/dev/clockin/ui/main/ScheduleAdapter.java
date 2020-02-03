@@ -1,4 +1,4 @@
-package com.thiagoalexb.dev.clockin;
+package com.thiagoalexb.dev.clockin.ui.main;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +8,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.thiagoalexb.dev.clockin.data.Schedule;
+import com.thiagoalexb.dev.clockin.R;
+import com.thiagoalexb.dev.clockin.data.models.Schedule;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;

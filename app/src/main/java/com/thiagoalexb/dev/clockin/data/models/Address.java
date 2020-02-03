@@ -1,4 +1,4 @@
-package com.thiagoalexb.dev.clockin.data;
+package com.thiagoalexb.dev.clockin.data.models;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;

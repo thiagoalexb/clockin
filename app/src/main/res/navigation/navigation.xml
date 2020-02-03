@@ -6,7 +6,7 @@
     app:startDestination="@id/mainFragment">
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.thiagoalexb.dev.clockin.MainFragment"
+        android:name="com.thiagoalexb.dev.clockin.ui.main.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/addressFragment2"
-        android:name="com.thiagoalexb.dev.clockin.AddressFragment"
+        android:name="com.thiagoalexb.dev.clockin.ui.address.AddressFragment"
         android:label="fragment_address"
         tools:layout="@layout/fragment_address" >
         <action

@@ -1,4 +1,4 @@
-package com.thiagoalexb.dev.clockin.data;
+package com.thiagoalexb.dev.clockin.data.daos;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
@@ -6,9 +6,8 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Date;
+import com.thiagoalexb.dev.clockin.data.models.Schedule;
+
 import java.util.List;
 
 import io.reactivex.Completable;

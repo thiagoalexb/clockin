@@ -1,4 +1,4 @@
-package com.thiagoalexb.dev.clockin;
+package com.thiagoalexb.dev.clockin.ui.main;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -24,6 +24,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
+import com.thiagoalexb.dev.clockin.geofence.Geofencing;
+import com.thiagoalexb.dev.clockin.R;
 import com.thiagoalexb.dev.clockin.data.AppDatabase;
 import com.thiagoalexb.dev.clockin.databinding.FragmentMainBinding;
 

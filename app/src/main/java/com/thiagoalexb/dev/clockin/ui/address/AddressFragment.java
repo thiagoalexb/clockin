@@ -1,4 +1,4 @@
-package com.thiagoalexb.dev.clockin;
+package com.thiagoalexb.dev.clockin.ui.address;
 
 
 import android.location.Address;
@@ -6,7 +6,6 @@ import android.location.Geocoder;
 import android.os.Bundle;
 
 import androidx.databinding.DataBindingUtil;
-import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
@@ -14,9 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
+import com.thiagoalexb.dev.clockin.R;
 import com.thiagoalexb.dev.clockin.data.AppDatabase;
 import com.thiagoalexb.dev.clockin.databinding.FragmentAddressBinding;
 
@@ -94,7 +93,7 @@ public class AddressFragment extends Fragment {
 
             AppDatabase db = AppDatabase.getInstance(getContext());
 
-            com.thiagoalexb.dev.clockin.data.Address addressDatabase = new com.thiagoalexb.dev.clockin.data.Address();
+            com.thiagoalexb.dev.clockin.data.models.Address addressDatabase = new com.thiagoalexb.dev.clockin.data.models.Address();
 
 
             addressDatabase.state = fragmentAddressBinding.stateEditText.getText().toString();

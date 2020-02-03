@@ -2,7 +2,6 @@ package com.thiagoalexb.dev.clockin.data.converters;
 
 import androidx.room.TypeConverter;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,40 +9,23 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 public class Converters {
+
     @TypeConverter
-    public static LocalDate toLocalDate(Long longValue) {
+    public static LocalDateTime toLocalDateTime(Long longValue) {
         if(longValue == null) return null;
 
-        LocalDate date = Instant.ofEpochMilli(longValue).atZone(ZoneId.systemDefault()).toLocalDate();
-        return date;
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(longValue), TimeZone.getDefault().toZoneId());
+        return localDateTime;
     }
 
     @TypeConverter
-    public static Long fromLocalDate(LocalDate localDate){
-        if(localDate == null) return null;
+    public static Long fromLocalDateTime(LocalDateTime localDateTime){
+        if(localDateTime == null) return null;
 
-        LocalDateTime localDateTime = localDate.atStartOfDay();
-        ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
-        long millis = zonedDateTime.toInstant().toEpochMilli();
-        return millis;
-    }
-
-    @TypeConverter
-    public static LocalTime toLocalTime(Long longValue) {
-        if(longValue == null) return null;
-
-        LocalTime date = Instant.ofEpochMilli(longValue).atZone(ZoneId.systemDefault()).toLocalTime();
-        return date;
-    }
-
-    @TypeConverter
-    public static Long fromLocalTime(LocalTime localTime){
-        if(localTime == null) return null;
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(0, 0, 0, localTime.getHour(), localTime.getMinute(), localTime.getSecond());
-        return calendar.getTimeInMillis();
+        Long milliseconds = localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        return milliseconds;
     }
 }
