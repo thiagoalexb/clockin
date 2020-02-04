@@ -3,6 +3,8 @@ package com.thiagoalexb.dev.clockin.di.components;
 import android.app.Application;
 
 import com.thiagoalexb.dev.clockin.BaseApplication;
+import com.thiagoalexb.dev.clockin.di.modules.AppModule;
+import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelFactoryModule;
 
 import javax.inject.Singleton;
 
@@ -14,7 +16,9 @@ import dagger.android.support.AndroidSupportInjectionModule;
 @Singleton
 @Component(
         modules = {
-                AndroidSupportInjectionModule.class
+                AndroidSupportInjectionModule.class,
+                AppModule.class,
+                ViewModelFactoryModule.class
         }
 )
 public interface AppComponent extends AndroidInjector<BaseApplication> {
