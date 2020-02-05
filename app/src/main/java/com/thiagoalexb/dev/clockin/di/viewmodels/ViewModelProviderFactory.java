@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.inject.Singleton;
 
 public class ViewModelProviderFactory implements ViewModelProvider.Factory {
 

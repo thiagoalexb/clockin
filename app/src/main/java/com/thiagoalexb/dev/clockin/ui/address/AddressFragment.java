@@ -27,14 +27,16 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
+import dagger.android.support.DaggerFragment;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class AddressFragment extends Fragment {
+public class AddressFragment extends DaggerFragment {
 
     @Inject
     ViewModelProviderFactory modelProviderFactory;
+
     AddressViewModel addressViewModel;
 
     FragmentAddressBinding fragmentAddressBinding;
@@ -50,6 +52,7 @@ public class AddressFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         fragmentAddressBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_address, container, false);
+
 
         addressViewModel = ViewModelProviders.of(this, modelProviderFactory).get(AddressViewModel.class);
 
@@ -84,7 +87,6 @@ public class AddressFragment extends Fragment {
 
                 }));
     }
-
 
     private void getLocationFromAddress(String strAddress) {
 

@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,25 +20,34 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
+import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelProviderFactory;
 import com.thiagoalexb.dev.clockin.geofence.Geofencing;
 import com.thiagoalexb.dev.clockin.R;
 import com.thiagoalexb.dev.clockin.data.AppDatabase;
 import com.thiagoalexb.dev.clockin.databinding.FragmentMainBinding;
+import com.thiagoalexb.dev.clockin.ui.address.AddressViewModel;
 
+import javax.inject.Inject;
+
+import dagger.android.support.DaggerFragment;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class MainFragment extends Fragment implements
+public class MainFragment extends DaggerFragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    public static final String TAG = MainFragment.class.getSimpleName();
+    @Inject
+    ViewModelProviderFactory modelProviderFactory;
+    MainViewModel mainViewModel;
+    private static final String TAG = MainFragment.class.getSimpleName();
     private static final int PERMISSIONS_REQUEST_FINE_LOCATION = 111;
     private GoogleApiClient mClient;
     private Geofencing mGeofencing;
@@ -51,6 +61,14 @@ public class MainFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         fragmentMainBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false);
+
+        mainViewModel = ViewModelProviders.of(this, modelProviderFactory).get(MainViewModel.class);
+
+        mainViewModel.checkAddress();
+
+        mainViewModel.getAddress().observe(getViewLifecycleOwner(), address -> {
+            Toast.makeText(getContext(), "Kkkkkkkkkkkkkk FDP", Toast.LENGTH_LONG);
+        });
 
         getLocationPermission();
 
@@ -88,6 +106,8 @@ public class MainFragment extends Fragment implements
     public void onConnected(@Nullable Bundle bundle) {
         Log.i(TAG, "Conectado no google client");
         setGeofencing();
+
+
 
         AppDatabase db = AppDatabase.getInstance(getContext());
         mDisposable.add(db.addressDao().get()

@@ -13,12 +13,10 @@ public class AddressViewModel extends ViewModel {
     private static final String TAG = "AddressViewModel";
 
     @Inject
-    AddressRepository addressRepository;
-
-    public AddressViewModel() {
+    public AddressViewModel(AddressRepository addressRepository) {
         if(addressRepository == null)
-            Log.d(TAG, "AddressViewModel: NULLZAO");
+        Log.d(TAG, "AddressViewModel: kkkkkk errow");
         else
-            Log.d(TAG, "AddressViewModel: NOTNULLZAO");
+            Log.d(TAG, "AddressViewModel: foite");
     }
 }
