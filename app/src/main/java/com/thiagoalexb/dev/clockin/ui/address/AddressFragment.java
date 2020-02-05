@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
@@ -18,16 +19,23 @@ import android.widget.Toast;
 import com.thiagoalexb.dev.clockin.R;
 import com.thiagoalexb.dev.clockin.data.AppDatabase;
 import com.thiagoalexb.dev.clockin.databinding.FragmentAddressBinding;
+import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelProviderFactory;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+
+import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class AddressFragment extends Fragment {
+
+    @Inject
+    ViewModelProviderFactory modelProviderFactory;
+    AddressViewModel addressViewModel;
 
     FragmentAddressBinding fragmentAddressBinding;
     private final CompositeDisposable mDisposable = new CompositeDisposable();
@@ -42,6 +50,8 @@ public class AddressFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         fragmentAddressBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_address, container, false);
+
+        addressViewModel = ViewModelProviders.of(this, modelProviderFactory).get(AddressViewModel.class);
 
         getAddress();
 
