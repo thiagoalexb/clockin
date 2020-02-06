@@ -26,12 +26,16 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
+import com.thiagoalexb.dev.clockin.data.models.Address;
+import com.thiagoalexb.dev.clockin.data.models.Schedule;
 import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelProviderFactory;
 import com.thiagoalexb.dev.clockin.geofence.Geofencing;
 import com.thiagoalexb.dev.clockin.R;
 import com.thiagoalexb.dev.clockin.data.AppDatabase;
 import com.thiagoalexb.dev.clockin.databinding.FragmentMainBinding;
 import com.thiagoalexb.dev.clockin.ui.address.AddressViewModel;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -64,13 +68,9 @@ public class MainFragment extends DaggerFragment implements
 
         mainViewModel = ViewModelProviders.of(this, modelProviderFactory).get(MainViewModel.class);
 
-        mainViewModel.checkAddress();
-
-        mainViewModel.getAddress().observe(getViewLifecycleOwner(), address -> {
-            Toast.makeText(getContext(), "Kkkkkkkkkkkkkk FDP", Toast.LENGTH_LONG);
-        });
-
         getLocationPermission();
+
+        setObservers();
 
         return fragmentMainBinding.getRoot();
     }
@@ -104,31 +104,19 @@ public class MainFragment extends DaggerFragment implements
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Log.i(TAG, "Conectado no google client");
+
         setGeofencing();
 
-
-
-        AppDatabase db = AppDatabase.getInstance(getContext());
-        mDisposable.add(db.addressDao().get()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(address -> {
-                    mGeofencing.updateGeofencesList(address);
-                    mGeofencing.registerAllGeofences();
-                }, throwable -> {
-                    navigateToAddress(getView());
-                }));
+        mainViewModel.checkAddress();
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.i(TAG, "Suspenso no google client");
+
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.i(TAG, "Falha no google client");
     }
 
     private void getLocationPermission() {
@@ -152,23 +140,6 @@ public class MainFragment extends DaggerFragment implements
 
     private void setElements() {
         fragmentMainBinding.placeBtn.setOnClickListener(view -> navigateToAddress(view));
-
-        AppDatabase db = AppDatabase.getInstance(getContext());
-        db.scheduleDao().getByMonth().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(schedules -> {
-                    LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-                    fragmentMainBinding.schedulesRecyclerView.setLayoutManager(layoutManager);
-
-                    ScheduleAdapter mAdapter = new ScheduleAdapter(schedules);
-                    fragmentMainBinding.schedulesRecyclerView.setAdapter(mAdapter);
-
-
-                    fragmentMainBinding.schedulesRecyclerView.addItemDecoration(
-                            new DividerItemDecoration(getContext(), DividerItemDecoration.HORIZONTAL));
-                }, throwable -> {
-                    Log.i(TAG, "ERRooooWW");
-                });
     }
 
     private void navigateToAddress(View view) {
@@ -190,5 +161,40 @@ public class MainFragment extends DaggerFragment implements
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void setObservers(){
+
+        mainViewModel.getAddress().observe(getViewLifecycleOwner(), address -> {
+            validateAddress(address);
+            mainViewModel.checkSchedules();
+        });
+
+        mainViewModel.getSchedules().observe(getViewLifecycleOwner(), schedules -> {
+            validateSchedules(schedules);
+        });
+    }
+
+    private void validateAddress(Address address){
+        if(address.id == 0)
+            navigateToAddress(getView());
+        else {
+            mGeofencing.updateGeofencesList(address);
+            mGeofencing.registerAllGeofences();
+        }
+    }
+
+    private void validateSchedules(List<Schedule> schedules){
+        if(schedules.size() == 0) return;
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        fragmentMainBinding.schedulesRecyclerView.setLayoutManager(layoutManager);
+
+        ScheduleAdapter mAdapter = new ScheduleAdapter(schedules);
+        fragmentMainBinding.schedulesRecyclerView.setAdapter(mAdapter);
+
+
+        fragmentMainBinding.schedulesRecyclerView.addItemDecoration(
+                new DividerItemDecoration(getContext(), DividerItemDecoration.HORIZONTAL));
     }
 }

@@ -9,6 +9,7 @@ import androidx.room.Update;
 import com.thiagoalexb.dev.clockin.data.models.Address;
 
 import io.reactivex.Completable;
+import io.reactivex.Maybe;
 import io.reactivex.Single;
 
 @Dao
@@ -21,5 +22,5 @@ public interface AddressDao {
     Completable update(Address address);
 
     @Query("SELECT * FROM Address LIMIT 1")
-    Single<Address> get();
+    Maybe<Address> get();
 }
