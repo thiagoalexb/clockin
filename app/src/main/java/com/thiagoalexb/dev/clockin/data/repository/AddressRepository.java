@@ -9,8 +9,6 @@ import com.thiagoalexb.dev.clockin.data.models.Schedule;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.reactivex.Flowable;
-import io.reactivex.Maybe;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
@@ -24,8 +22,13 @@ public class AddressRepository {
         _appDatabase = AppDatabase.getInstance(application);
     }
 
-    public Maybe<Address> get(){
+    public Single<Address> get(){
         return _appDatabase.addressDao().get()
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<Long> insert(Address address){
+        return _appDatabase.addressDao().insert(address)
                 .subscribeOn(Schedulers.io());
     }
 

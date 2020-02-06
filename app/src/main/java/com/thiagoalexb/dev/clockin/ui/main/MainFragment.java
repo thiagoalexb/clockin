@@ -10,17 +10,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -31,32 +28,31 @@ import com.thiagoalexb.dev.clockin.data.models.Schedule;
 import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelProviderFactory;
 import com.thiagoalexb.dev.clockin.geofence.Geofencing;
 import com.thiagoalexb.dev.clockin.R;
-import com.thiagoalexb.dev.clockin.data.AppDatabase;
 import com.thiagoalexb.dev.clockin.databinding.FragmentMainBinding;
-import com.thiagoalexb.dev.clockin.ui.address.AddressViewModel;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class MainFragment extends DaggerFragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    @Inject
-    ViewModelProviderFactory modelProviderFactory;
-    MainViewModel mainViewModel;
     private static final String TAG = MainFragment.class.getSimpleName();
     private static final int PERMISSIONS_REQUEST_FINE_LOCATION = 111;
-    private GoogleApiClient mClient;
-    private Geofencing mGeofencing;
+
+    @Inject
+    public ViewModelProviderFactory modelProviderFactory;
+    @Inject
+    public ScheduleAdapter scheduleAdapter;
+
+    private MainViewModel mainViewModel;
+    private GoogleApiClient googleApiClient;
+    private Geofencing geofencing;
     private FragmentMainBinding fragmentMainBinding;
-    private final CompositeDisposable mDisposable = new CompositeDisposable();
+
 
     public MainFragment() {
     }
@@ -95,10 +91,9 @@ public class MainFragment extends DaggerFragment implements
     @Override
     public void onStop() {
         super.onStop();
-        mDisposable.clear();
-        if(mClient != null  && mClient.isConnected()) {
-            mClient.stopAutoManage(getActivity());
-            mClient.disconnect();
+        if(googleApiClient != null  && googleApiClient.isConnected()) {
+            googleApiClient.stopAutoManage(getActivity());
+            googleApiClient.disconnect();
         }
     }
 
@@ -124,8 +119,8 @@ public class MainFragment extends DaggerFragment implements
     }
 
     private void setGoogleClient() {
-        if(mClient == null)
-            mClient = new GoogleApiClient.Builder(getContext())
+        if(googleApiClient == null)
+            googleApiClient = new GoogleApiClient.Builder(getContext())
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
@@ -135,11 +130,14 @@ public class MainFragment extends DaggerFragment implements
     }
 
     private void setGeofencing() {
-        mGeofencing = new Geofencing(getContext(), mClient);
+        geofencing = new Geofencing(getContext(), googleApiClient);
     }
 
     private void setElements() {
         fragmentMainBinding.placeBtn.setOnClickListener(view -> navigateToAddress(view));
+        fragmentMainBinding.schedulesRecyclerView.setAdapter(scheduleAdapter);
+        fragmentMainBinding.schedulesRecyclerView.addItemDecoration(
+                new DividerItemDecoration(getContext(), DividerItemDecoration.HORIZONTAL));
     }
 
     private void navigateToAddress(View view) {
@@ -165,36 +163,30 @@ public class MainFragment extends DaggerFragment implements
 
     private void setObservers(){
 
+        mainViewModel.getAddress().removeObservers(getViewLifecycleOwner());
         mainViewModel.getAddress().observe(getViewLifecycleOwner(), address -> {
             validateAddress(address);
             mainViewModel.checkSchedules();
         });
 
+        mainViewModel.getSchedules().removeObservers(getViewLifecycleOwner());
         mainViewModel.getSchedules().observe(getViewLifecycleOwner(), schedules -> {
             validateSchedules(schedules);
         });
     }
 
     private void validateAddress(Address address){
-        if(address.id == 0)
+        if(address == null)
             navigateToAddress(getView());
         else {
-            mGeofencing.updateGeofencesList(address);
-            mGeofencing.registerAllGeofences();
+            geofencing.updateGeofencesList(address);
+            geofencing.registerAllGeofences();
         }
     }
 
     private void validateSchedules(List<Schedule> schedules){
-        if(schedules.size() == 0) return;
+        if(schedules == null) return;
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        fragmentMainBinding.schedulesRecyclerView.setLayoutManager(layoutManager);
-
-        ScheduleAdapter mAdapter = new ScheduleAdapter(schedules);
-        fragmentMainBinding.schedulesRecyclerView.setAdapter(mAdapter);
-
-
-        fragmentMainBinding.schedulesRecyclerView.addItemDecoration(
-                new DividerItemDecoration(getContext(), DividerItemDecoration.HORIZONTAL));
+        scheduleAdapter.setSchedules(schedules);
     }
 }

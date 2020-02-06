@@ -3,6 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <data>
+        <variable
+            name="addressViewModel"
+            type="com.thiagoalexb.dev.clockin.ui.address.AddressViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
@@ -23,6 +29,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:layout_marginBottom="@dimen/edit_text_vertical_margin"
+                android:text="@={addressViewModel.address.state}"
                 android:hint="@string/state" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -42,6 +49,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:layout_marginBottom="@dimen/edit_text_vertical_margin"
+                android:text="@{addressViewModel.address.city}"
                 android:hint="@string/city" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -61,6 +69,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:layout_marginBottom="@dimen/edit_text_vertical_margin"
+                android:text="@{addressViewModel.address.neighborhood}"
                 android:hint="@string/neighborhood" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -80,6 +89,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:layout_marginBottom="@dimen/edit_text_vertical_margin"
+                android:text="@{addressViewModel.address.street}"
                 android:hint="@string/street" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -99,6 +109,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:layout_marginBottom="@dimen/edit_text_vertical_margin"
+                android:text="@{Integer.toString(addressViewModel.address.number)}"
                 android:hint="@string/number" />
 
         </com.google.android.material.textfield.TextInputLayout>

@@ -9,18 +9,17 @@ import androidx.room.Update;
 import com.thiagoalexb.dev.clockin.data.models.Address;
 
 import io.reactivex.Completable;
-import io.reactivex.Maybe;
 import io.reactivex.Single;
 
 @Dao
 public interface AddressDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    Completable insert(Address address);
+    Single<Long> insert(Address address);
 
     @Update
     Completable update(Address address);
 
     @Query("SELECT * FROM Address LIMIT 1")
-    Maybe<Address> get();
+    Single<Address> get();
 }

@@ -78,9 +78,9 @@ public class Geofencing implements ResultCallback {
     public void updateGeofencesList(Address address) {
 
             Geofence geofence = new Geofence.Builder()
-                    .setRequestId(address.addressUUID.toString())
+                    .setRequestId(address.getAddressUUID())
                     .setExpirationDuration(GEOFENCE_TIMEOUT)
-                    .setCircularRegion(address.latitude, address.longitude, GEOFENCE_RADIUS)
+                    .setCircularRegion(address.getLatitude(), address.getLongitude(), GEOFENCE_RADIUS)
                     .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
                     .build();
 

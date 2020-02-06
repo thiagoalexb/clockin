@@ -37,12 +37,9 @@ public class AddressFragment extends DaggerFragment {
     @Inject
     ViewModelProviderFactory modelProviderFactory;
 
-    AddressViewModel addressViewModel;
+    private AddressViewModel addressViewModel;
+    private FragmentAddressBinding fragmentAddressBinding;
 
-    FragmentAddressBinding fragmentAddressBinding;
-    private final CompositeDisposable mDisposable = new CompositeDisposable();
-    private Integer addressId = 0;
-    private String addressUUID;
 
     public AddressFragment() {
     }
@@ -53,47 +50,43 @@ public class AddressFragment extends DaggerFragment {
 
         fragmentAddressBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_address, container, false);
 
+        fragmentAddressBinding.setLifecycleOwner(this);
 
         addressViewModel = ViewModelProviders.of(this, modelProviderFactory).get(AddressViewModel.class);
 
-        getAddress();
+        fragmentAddressBinding.setAddressViewModel(addressViewModel);
+
+        setObservers();
+
+        addressViewModel.checkAddress();
 
         setElements();
 
         return fragmentAddressBinding.getRoot();
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        mDisposable.clear();
+    private void setObservers() {
+
+        addressViewModel.getStatusInsert().removeObservers(getViewLifecycleOwner());
+        addressViewModel.getStatusInsert().observe(getViewLifecycleOwner(), status -> {
+            validateInsert(status);
+        });
     }
 
-    private void getAddress() {
-        AppDatabase db = AppDatabase.getInstance(getContext());
+    private void validateInsert(Long status){
+        if(status == null) {
+            Toast.makeText(getContext(), "Erro ao salvar endereço", Toast.LENGTH_LONG);
+            return;
+        }
 
-        mDisposable.add(db.addressDao().get()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(address -> {
-                    fragmentAddressBinding.stateEditText.setText(address.state);
-                    fragmentAddressBinding.cityEditText.setText(address.city);
-                    fragmentAddressBinding.neighborhoodEditText.setText(address.neighborhood);
-                    fragmentAddressBinding.streetEditText.setText(address.street);
-                    fragmentAddressBinding.numberEditText.setText(address.number.toString());
-                    addressId = address.id;
-                    addressUUID = address.addressUUID;
-                }, throwable -> {
-
-                }));
+        Navigation.findNavController(getView()).navigate(R.id.action_addressFragment_to_mainFragment);
     }
 
     private void getLocationFromAddress(String strAddress) {
 
-        Geocoder coder = new Geocoder(getContext());
-        List<Address> address;
-
         try {
+            Geocoder coder = new Geocoder(getContext());
+            List<Address> address;
             address = coder.getFromLocationName(strAddress, 1);
 
             if (address == null) {
@@ -103,33 +96,24 @@ public class AddressFragment extends DaggerFragment {
 
             Address location = address.get(0);
 
-            AppDatabase db = AppDatabase.getInstance(getContext());
 
             com.thiagoalexb.dev.clockin.data.models.Address addressDatabase = new com.thiagoalexb.dev.clockin.data.models.Address();
 
 
-            addressDatabase.state = fragmentAddressBinding.stateEditText.getText().toString();
-            addressDatabase.city = fragmentAddressBinding.cityEditText.getText().toString();
-            addressDatabase.neighborhood = fragmentAddressBinding.neighborhoodEditText.getText().toString();
-            addressDatabase.street = fragmentAddressBinding.streetEditText.getText().toString();
-            addressDatabase.number = Integer.parseInt(fragmentAddressBinding.numberEditText.getText().toString());
-            addressDatabase.latitude = location.getLatitude();
-            addressDatabase.longitude = location.getLongitude();
-            if(addressId > 0) {
-                addressDatabase.id = addressId;
-                addressDatabase.addressUUID = addressUUID;
-            }else
-                addressDatabase.addressUUID = UUID.randomUUID().toString();
+            addressDatabase.setState(fragmentAddressBinding.stateEditText.getText().toString());
+            addressDatabase.setCity(fragmentAddressBinding.cityEditText.getText().toString());
+            addressDatabase.setNeighborhood(fragmentAddressBinding.neighborhoodEditText.getText().toString());
+            addressDatabase.setStreet(fragmentAddressBinding.streetEditText.getText().toString());
+            addressDatabase.setNumber(Integer.parseInt(fragmentAddressBinding.numberEditText.getText().toString()));
+            addressDatabase.setLatitude(location.getLatitude());
+            addressDatabase.setLongitude(location.getLongitude());
+            if (addressViewModel.getAddressId() > 0) {
+                addressDatabase.setId(addressViewModel.getAddressId());
+                addressDatabase.setAddressUUID(addressViewModel.getAddressUUID());
+            } else
+                addressDatabase.setAddressUUID(UUID.randomUUID().toString());
 
-
-            mDisposable.add(db.addressDao().insert(addressDatabase).
-                    observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(() -> {
-                        Navigation.findNavController(getView()).navigate(R.id.action_addressFragment_to_mainFragment);
-                    }, throwable -> {
-                        Toast.makeText(getContext(), "Erro ao adicionar endereço", Toast.LENGTH_LONG);
-                    }));
+            addressViewModel.insert(addressDatabase);
 
         } catch (IOException e) {
             e.printStackTrace();

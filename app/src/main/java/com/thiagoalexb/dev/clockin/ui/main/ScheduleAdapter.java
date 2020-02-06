@@ -18,11 +18,6 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
 
     private List<Schedule> schedules;
 
-    public ScheduleAdapter(List<Schedule> schedules){
-        this.schedules = schedules;
-    }
-
-
     @NonNull
     @Override
     public ScheduleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -36,10 +31,14 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
         holder.bind(schedule);
     }
 
-
     @Override
     public int getItemCount() {
-        return schedules.size();
+        return schedules == null ? 0 : schedules.size();
+    }
+
+    public void setSchedules(List<Schedule> schedules){
+        this.schedules = schedules;
+        notifyDataSetChanged();
     }
 
     public class ScheduleViewHolder extends RecyclerView.ViewHolder {

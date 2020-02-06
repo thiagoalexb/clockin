@@ -16,7 +16,7 @@ public class MainModule {
     @MainScope
     @Provides
     static ScheduleAdapter provideAdapter(){
-        return new ScheduleAdapter(new ArrayList<>());
+        return new ScheduleAdapter();
     }
 
     @MainScope

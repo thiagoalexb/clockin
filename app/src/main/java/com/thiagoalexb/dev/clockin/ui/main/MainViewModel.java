@@ -1,8 +1,5 @@
 package com.thiagoalexb.dev.clockin.ui.main;
 
-
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -17,9 +14,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.MaybeObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 
 public class MainViewModel extends ViewModel {
 
@@ -33,47 +29,29 @@ public class MainViewModel extends ViewModel {
     @Inject
     public MainViewModel(AddressRepository addressRepository, ScheduleRepository scheduleRepository) {
 
-        TAG = MainViewModel.class.getSimpleName();
+        this.TAG = MainViewModel.class.getSimpleName();
         this.addressRepository = addressRepository;
         this.scheduleRepository = scheduleRepository;
-        disposable = new CompositeDisposable();
-        address = new MutableLiveData<>();
-        schedules = new MutableLiveData<>();
+        this.disposable = new CompositeDisposable();
+        this.address = new MutableLiveData<>();
+        this.schedules = new MutableLiveData<>();
     }
 
     public void checkAddress(){
                 addressRepository.get()
-                    .subscribe(new MaybeObserver<Address>() {
-                        @Override
-                        public void onSubscribe(Disposable d) {
-                            Log.d(TAG, "onSubscribe: ");
-                        }
-
-                        @Override
-                        public void onSuccess(Address address1) {
-                            address.setValue(address1);
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            address.setValue(new Address());
-                        }
-
-                        @Override
-                        public void onComplete() {
-                            address.setValue(new Address());
-                        }
-                    });
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe((addressDb, throwable) -> {
+                            address.setValue(addressDb);
+                        });
     }
 
     public void checkSchedules(){
         disposable.add(
                 scheduleRepository.get()
-                        .subscribe(addressDb -> {
-                            schedules.setValue(addressDb);
-                        }, throwable -> {
-                            schedules.setValue(new ArrayList<>());
-                        }));
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(schedulesDb ->{
+                            schedules.setValue(schedulesDb);
+                        } ));
     }
 
     public LiveData<Address> getAddress(){

@@ -1,6 +1,5 @@
 package com.thiagoalexb.dev.clockin;
 
-
 import com.thiagoalexb.dev.clockin.di.components.DaggerAppComponent;
 
 import dagger.android.AndroidInjector;
@@ -10,5 +9,6 @@ public class BaseApplication extends DaggerApplication {
     @Override
     protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
         return DaggerAppComponent.builder().application(this).build();
+//        return  null;
     }
 }
