@@ -48,19 +48,17 @@ public class AddressFragment extends DaggerFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        fragmentAddressBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_address, container, false);
-
-        fragmentAddressBinding.setLifecycleOwner(this);
-
         addressViewModel = ViewModelProviders.of(this, modelProviderFactory).get(AddressViewModel.class);
 
+        fragmentAddressBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_address, container, false);
+
         fragmentAddressBinding.setAddressViewModel(addressViewModel);
+
+        fragmentAddressBinding.setLifecycleOwner(this);
 
         setObservers();
 
         addressViewModel.checkAddress();
-
-        setElements();
 
         return fragmentAddressBinding.getRoot();
     }
@@ -75,65 +73,10 @@ public class AddressFragment extends DaggerFragment {
 
     private void validateInsert(Long status){
         if(status == null) {
-            Toast.makeText(getContext(), "Erro ao salvar endereço", Toast.LENGTH_LONG);
+            Toast.makeText(getContext(), getString(R.string.error_address_not_save), Toast.LENGTH_LONG).show();
             return;
         }
 
         Navigation.findNavController(getView()).navigate(R.id.action_addressFragment_to_mainFragment);
     }
-
-    private void getLocationFromAddress(String strAddress) {
-
-        try {
-            Geocoder coder = new Geocoder(getContext());
-            List<Address> address;
-            address = coder.getFromLocationName(strAddress, 1);
-
-            if (address == null) {
-                Toast.makeText(getContext(), "Endereço não encontrado", Toast.LENGTH_LONG);
-                return;
-            }
-
-            Address location = address.get(0);
-
-
-            com.thiagoalexb.dev.clockin.data.models.Address addressDatabase = new com.thiagoalexb.dev.clockin.data.models.Address();
-
-
-            addressDatabase.setState(fragmentAddressBinding.stateEditText.getText().toString());
-            addressDatabase.setCity(fragmentAddressBinding.cityEditText.getText().toString());
-            addressDatabase.setNeighborhood(fragmentAddressBinding.neighborhoodEditText.getText().toString());
-            addressDatabase.setStreet(fragmentAddressBinding.streetEditText.getText().toString());
-            addressDatabase.setNumber(Integer.parseInt(fragmentAddressBinding.numberEditText.getText().toString()));
-            addressDatabase.setLatitude(location.getLatitude());
-            addressDatabase.setLongitude(location.getLongitude());
-            if (addressViewModel.getAddressId() > 0) {
-                addressDatabase.setId(addressViewModel.getAddressId());
-                addressDatabase.setAddressUUID(addressViewModel.getAddressUUID());
-            } else
-                addressDatabase.setAddressUUID(UUID.randomUUID().toString());
-
-            addressViewModel.insert(addressDatabase);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void setElements() {
-        Button button = fragmentAddressBinding.getRoot().findViewById(R.id.save_address_button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String address = fragmentAddressBinding.streetEditText.getText()
-                        + ", " + fragmentAddressBinding.numberEditText.getText()
-                        + ", " + fragmentAddressBinding.neighborhoodEditText.getText()
-                        + " - " + fragmentAddressBinding.cityEditText.getText()
-                        + ", " + fragmentAddressBinding.stateEditText.getText();
-
-                getLocationFromAddress(address);
-            }
-        });
-    }
-
 }

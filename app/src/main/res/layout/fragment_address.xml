@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:layout_marginBottom="@dimen/edit_text_vertical_margin"
-                android:text="@{addressViewModel.address.city}"
+                android:text="@={addressViewModel.address.city}"
                 android:hint="@string/city" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:layout_marginBottom="@dimen/edit_text_vertical_margin"
-                android:text="@{addressViewModel.address.neighborhood}"
+                android:text="@={addressViewModel.address.neighborhood}"
                 android:hint="@string/neighborhood" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -89,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:layout_marginBottom="@dimen/edit_text_vertical_margin"
-                android:text="@{addressViewModel.address.street}"
+                android:text="@={addressViewModel.address.street}"
                 android:hint="@string/street" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -119,6 +119,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/save"
+            android:onClick="@{() -> addressViewModel.insert(addressViewModel.address)}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

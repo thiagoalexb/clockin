@@ -1,6 +1,7 @@
 package com.thiagoalexb.dev.clockin.di.main;
 
 import android.app.Application;
+import android.location.Geocoder;
 
 import com.thiagoalexb.dev.clockin.data.repository.AddressRepository;
 import com.thiagoalexb.dev.clockin.ui.main.ScheduleAdapter;
@@ -23,6 +24,12 @@ public class MainModule {
     @Provides
     static AddressRepository providerAddressRepository(Application application){
         return new AddressRepository(application);
+    }
+
+    @MainScope
+    @Provides
+    static Geocoder providerGeocoder(Application application){
+        return new Geocoder(application);
     }
 
 }
