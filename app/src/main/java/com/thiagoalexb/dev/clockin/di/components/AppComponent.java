@@ -25,7 +25,7 @@ import dagger.android.support.AndroidSupportInjectionModule;
                 BroadcastModule.class
         }
 )
-public interface AppComponent extends AndroidInjector<BaseApplication> {
+public interface AppComponent extends AndroidInjector<BaseApplication>  {
 
 
     @Component.Builder

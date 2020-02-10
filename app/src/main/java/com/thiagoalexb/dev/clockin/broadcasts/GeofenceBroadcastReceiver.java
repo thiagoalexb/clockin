@@ -1,6 +1,7 @@
 package com.thiagoalexb.dev.clockin.broadcasts;
 
 
+import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -12,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 
+import androidx.annotation.CallSuper;
 import androidx.core.app.NotificationCompat;
 
 import com.google.android.gms.location.Geofence;
@@ -32,7 +34,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class GeofenceBroadcastReceiver extends DaggerBroadcastReceiver {
+public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
     public static final String TAG = GeofenceBroadcastReceiver.class.getSimpleName();
     private CompositeDisposable mDisposable;
@@ -42,7 +44,7 @@ public class GeofenceBroadcastReceiver extends DaggerBroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        super.onReceive(context, intent);
+
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             Log.e(TAG, String.format("Error code : %d", geofencingEvent.getErrorCode()));
@@ -72,14 +74,14 @@ public class GeofenceBroadcastReceiver extends DaggerBroadcastReceiver {
                             R.drawable.ic_volume_off_white_24dp))
                     .setContentTitle(context.getString(R.string.silent_mode_activated));
 
-            scheduleService.saveEntry();
+//            scheduleService.saveEntry();
         } else if (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT) {
             builder.setSmallIcon(R.drawable.ic_volume_up_white_24dp)
                     .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
                             R.drawable.ic_volume_up_white_24dp))
                     .setContentTitle(context.getString(R.string.back_to_normal));
 
-            scheduleService.saveDeparture();
+//            scheduleService.saveDeparture();
         }
 
         Intent intent = new Intent(context, MainActivity.class);

@@ -10,6 +10,8 @@ import com.thiagoalexb.dev.clockin.ui.main.ScheduleAdapter;
 
 import java.util.ArrayList;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -28,7 +30,7 @@ public class MainModule {
         return new AddressRepository(application);
     }
 
-    @MainScope
+    @Singleton
     @Provides
     static ScheduleService providerScheduleService(ScheduleRepository scheduleRepository){
         return new ScheduleService(scheduleRepository);
