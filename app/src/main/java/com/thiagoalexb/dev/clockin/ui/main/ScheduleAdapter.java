@@ -55,13 +55,13 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
         }
 
         public void bind(Schedule schedule){
-            String dateFormatted = schedule.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            String dateFormatted = schedule.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             day.setText(dateFormatted);
             DateTimeFormatter pattern = DateTimeFormatter.ofPattern("HH:mm");
-            String entryTimeFormatted = schedule.entryTime.format(pattern);
+            String entryTimeFormatted = schedule.getEntryTime().format(pattern);
             entryValue.setText(entryTimeFormatted);
-            if(schedule.departureTime != null)
-                departureValue.setText(schedule.departureTime.format(pattern));
+            if(schedule.getDepartureTime() != null)
+                departureValue.setText(schedule.getDepartureTime().format(pattern));
         }
     }
 }

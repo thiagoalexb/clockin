@@ -23,20 +23,24 @@ public class Address extends BaseObservable {
     private double latitude;
     private double longitude;
 
+    @Bindable
     public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
+        notifyPropertyChanged(BR.id);
     }
 
+    @Bindable
     public String getAddressUUID() {
         return addressUUID;
     }
 
     public void setAddressUUID(String addressUUID) {
         this.addressUUID = addressUUID;
+        notifyPropertyChanged(BR.addressUUID);
     }
 
     @Bindable
@@ -96,6 +100,7 @@ public class Address extends BaseObservable {
 
     public void setLatitude(double latitude) {
         this.latitude = latitude;
+        notifyPropertyChanged(BR.latitude);
     }
 
     @Bindable
@@ -105,5 +110,6 @@ public class Address extends BaseObservable {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+        notifyPropertyChanged(BR.longitude);
     }
 }

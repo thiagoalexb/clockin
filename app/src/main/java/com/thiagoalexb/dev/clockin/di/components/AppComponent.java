@@ -3,6 +3,7 @@ package com.thiagoalexb.dev.clockin.di.components;
 import android.app.Application;
 
 import com.thiagoalexb.dev.clockin.BaseApplication;
+import com.thiagoalexb.dev.clockin.di.modules.BroadcastModule;
 import com.thiagoalexb.dev.clockin.di.modules.ActivityBuilderModule;
 import com.thiagoalexb.dev.clockin.di.modules.AppModule;
 import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelFactoryModule;
@@ -21,6 +22,7 @@ import dagger.android.support.AndroidSupportInjectionModule;
                 ActivityBuilderModule.class,
                 AppModule.class,
                 ViewModelFactoryModule.class,
+                BroadcastModule.class
         }
 )
 public interface AppComponent extends AndroidInjector<BaseApplication> {

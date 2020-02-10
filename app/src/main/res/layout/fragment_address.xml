@@ -4,6 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+        <import type="com.thiagoalexb.dev.clockin.util.Converters"/>
         <variable
             name="addressViewModel"
             type="com.thiagoalexb.dev.clockin.ui.address.AddressViewModel" />
@@ -109,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:layout_marginBottom="@dimen/edit_text_vertical_margin"
-                android:text="@{Integer.toString(addressViewModel.address.number)}"
+                android:text="@={Converters.toString(addressViewModel.address.number)}"
                 android:hint="@string/number" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -119,7 +120,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/save"
-            android:onClick="@{() -> addressViewModel.insert(addressViewModel.address)}"
+            android:onClick="@{() -> addressViewModel.insert()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

@@ -21,15 +21,14 @@ import java.util.List;
 
 public class Geofencing implements ResultCallback {
 
-    // Constants
     public static final String TAG = Geofencing.class.getSimpleName();
-    private static final float GEOFENCE_RADIUS = 50; // 50 meters
-    private static final long GEOFENCE_TIMEOUT = 24 * 60 * 60 * 1000; // 24 hours
+    private static final float GEOFENCE_RADIUS = 50;
+    private static final long GEOFENCE_TIMEOUT = 24 * 60 * 60 * 1000;
 
-    private List<Geofence> mGeofenceList;
-    private PendingIntent mGeofencePendingIntent;
-    private GoogleApiClient mGoogleApiClient;
-    private Context mContext;
+    private List<Geofence> geofences;
+    private PendingIntent pendingIntent;
+    private GoogleApiClient googleApiClient;
+    private Context context;
 
     @Override
     public void onResult(@NonNull Result result) {
@@ -37,22 +36,22 @@ public class Geofencing implements ResultCallback {
     }
 
     public Geofencing(Context context, GoogleApiClient client) {
-        mContext = context;
-        mGoogleApiClient = client;
-        mGeofencePendingIntent = null;
-        mGeofenceList = new ArrayList<>();
+        this.context = context;
+        googleApiClient = client;
+        pendingIntent = null;
+        geofences = new ArrayList<>();
     }
 
     public void registerAllGeofences() {
 
-        boolean isConnected = mGoogleApiClient.isConnected();
-        if (mGoogleApiClient == null || !isConnected ||
-                mGeofenceList == null || mGeofenceList.size() == 0) {
+        boolean isConnected = googleApiClient.isConnected();
+        if (googleApiClient == null || !isConnected ||
+                geofences == null || geofences.size() == 0) {
             return;
         }
         try {
             LocationServices.GeofencingApi.addGeofences(
-                    mGoogleApiClient,
+                    googleApiClient,
                     getGeofencingRequest(),
                     getGeofencePendingIntent()
             ).setResultCallback(this);
@@ -61,13 +60,14 @@ public class Geofencing implements ResultCallback {
         }
     }
 
-    public void unRegisterAllGeofences() {
-        if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
+    public void unregisterAllGeofences() {
+
+        if (googleApiClient == null || !googleApiClient.isConnected()) {
             return;
         }
         try {
             LocationServices.GeofencingApi.removeGeofences(
-                    mGoogleApiClient,
+                    googleApiClient,
                     getGeofencePendingIntent()
             ).setResultCallback(this);
         } catch (SecurityException securityException) {
@@ -78,31 +78,32 @@ public class Geofencing implements ResultCallback {
     public void updateGeofencesList(Address address) {
 
             Geofence geofence = new Geofence.Builder()
-                    .setRequestId(address.getAddressUUID())
+                    .setRequestId(address.getId().toString())
                     .setExpirationDuration(GEOFENCE_TIMEOUT)
                     .setCircularRegion(address.getLatitude(), address.getLongitude(), GEOFENCE_RADIUS)
                     .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
                     .build();
 
-            mGeofenceList.add(geofence);
+            geofences.add(geofence);
 
     }
 
     private GeofencingRequest getGeofencingRequest() {
+
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
         builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
-        builder.addGeofences(mGeofenceList);
+        builder.addGeofences(geofences);
         return builder.build();
     }
 
     private PendingIntent getGeofencePendingIntent() {
 
-        if (mGeofencePendingIntent != null) {
-            return mGeofencePendingIntent;
+        if (pendingIntent != null) {
+            return pendingIntent;
         }
-        Intent intent = new Intent(mContext, GeofenceBroadcastReceiver.class);
-        mGeofencePendingIntent = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        return mGeofencePendingIntent;
+        Intent intent = new Intent(context, GeofenceBroadcastReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return pendingIntent;
     }
 
 

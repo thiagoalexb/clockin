@@ -18,10 +18,10 @@ import io.reactivex.Single;
 public interface  ScheduleDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    Completable insert(Schedule schedule);
+    Single<Long> insert(Schedule schedule);
 
     @Update
-    Completable update(Schedule schedule);
+    Single<Integer> update(Schedule schedule);
 
     @Query("SELECT * FROM Schedule WHERE year = :year AND month = :month AND day = :day LIMIT 1")
     Single<Schedule> getByDay(int year, int month, int day);

@@ -26,18 +26,16 @@ public class AddressViewModel extends ViewModel {
     private final Geocoder geocoder;
     private final AddressRepository addressRepository;
     private final MutableLiveData<Long> statusInsert;
-    private MutableLiveData<Address> address;
-
-    private Integer addressId;
-    private String addressUUID;
+    private final MutableLiveData<Address> address;
 
     @Inject
     public AddressViewModel(Geocoder geocoder, AddressRepository addressRepository) {
         this.geocoder = geocoder;
         this.addressRepository = addressRepository;
-        this.address = new MutableLiveData<>();
+
         this.statusInsert = new MutableLiveData<>();
-        this.addressId = 0;
+        this.address = new MutableLiveData<>();
+        this.address.setValue(new Address());
     }
 
     public void checkAddress() {
@@ -45,18 +43,15 @@ public class AddressViewModel extends ViewModel {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((addressDb, throwable) -> {
                     if (addressDb == null) return;
-                    
                     address.setValue(addressDb);
-                    setAddressId(addressDb.getId());
-                    setAddressUUID(addressUUID = addressDb.getAddressUUID());
-
                 });
     }
 
-    public void insert(Address address) {
-        Address addressLocation = getLocation(address);
-        if (addressLocation == null) return;
-        address = addressLocation;
+    public void insert() {
+
+        Address address = getLocation(getAddress().getValue());
+
+        if (address == null) return;
 
         addressRepository.insert(address)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -76,10 +71,7 @@ public class AddressViewModel extends ViewModel {
             address.setLatitude(location.getLatitude());
             address.setLongitude(location.getLongitude());
 
-            if (getAddressId() > 0) {
-                address.setId(getAddressId());
-                address.setAddressUUID(getAddressUUID());
-            } else
+            if(address.getAddressUUID() == null)
                 address.setAddressUUID(UUID.randomUUID().toString());
 
             return address;
@@ -99,31 +91,11 @@ public class AddressViewModel extends ViewModel {
         return addressFormatted;
     }
 
-    public Address getAddress() {
-        return address.getValue();
-    }
-
-    public void setAddress(Address address) {
-        this.address.setValue(address);
+    public LiveData<Address> getAddress(){
+        return address;
     }
 
     public LiveData<Long> getStatusInsert() {
         return statusInsert;
-    }
-
-    public Integer getAddressId() {
-        return addressId;
-    }
-
-    public String getAddressUUID() {
-        return addressUUID;
-    }
-
-    public void setAddressId(Integer addressId) {
-        this.addressId = addressId;
-    }
-
-    public void setAddressUUID(String addressUUID) {
-        this.addressUUID = addressUUID;
     }
 }

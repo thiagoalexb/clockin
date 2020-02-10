@@ -15,6 +15,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,6 +100,7 @@ public class MainFragment extends DaggerFragment implements
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+        Log.d(TAG, "onConnected: CONNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNECTED MALUCOW");
 
         setGeofencing();
 
@@ -127,6 +129,8 @@ public class MainFragment extends DaggerFragment implements
                     .addApi(Places.GEO_DATA_API)
                     .enableAutoManage(getActivity(), this)
                     .build();
+        else
+            googleApiClient.connect();
     }
 
     private void setGeofencing() {
@@ -180,6 +184,7 @@ public class MainFragment extends DaggerFragment implements
             navigateToAddress(getView());
         else {
             geofencing.updateGeofencesList(address);
+            geofencing.unregisterAllGeofences();
             geofencing.registerAllGeofences();
         }
     }

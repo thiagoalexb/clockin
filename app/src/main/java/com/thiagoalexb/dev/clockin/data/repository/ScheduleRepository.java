@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
 @Singleton
@@ -23,8 +24,23 @@ public class ScheduleRepository {
         _appDatabase = AppDatabase.getInstance(application);
     }
 
+    public Single<Long> insert(Schedule schedule){
+        return _appDatabase.scheduleDao().insert(schedule)
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<Integer> update(Schedule schedule){
+        return  _appDatabase.scheduleDao().update(schedule)
+                .subscribeOn(Schedulers.io());
+    }
+
     public Flowable<List<Schedule>> get(){
         return _appDatabase.scheduleDao().getByMonth()
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<Schedule> getByDay(int year, int month, int day){
+        return _appDatabase.scheduleDao().getByDay(year, month, day)
                 .subscribeOn(Schedulers.io());
     }
 }

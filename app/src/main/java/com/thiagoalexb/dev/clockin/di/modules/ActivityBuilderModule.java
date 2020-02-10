@@ -14,7 +14,7 @@ public abstract class ActivityBuilderModule {
 
     @MainScope
     @ContributesAndroidInjector(
-            modules = { MainFragmentBuilderModule.class, MainViewModelsModule.class, MainModule.class }
+            modules = { MainFragmentBuilderModule.class, MainViewModelsModule.class, MainModule.class}
     )
     abstract MainActivity contributeMainActivity();
 

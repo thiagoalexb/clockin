@@ -56,7 +56,7 @@ public class AddressFragment extends DaggerFragment {
 
         fragmentAddressBinding.setLifecycleOwner(this);
 
-        setObservers();
+        this.setObservers();
 
         addressViewModel.checkAddress();
 
