@@ -4,7 +4,6 @@ import android.app.Application;
 
 import com.thiagoalexb.dev.clockin.data.AppDatabase;
 import com.thiagoalexb.dev.clockin.data.models.Address;
-import com.thiagoalexb.dev.clockin.data.models.Schedule;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

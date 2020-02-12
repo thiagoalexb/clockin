@@ -7,10 +7,13 @@ import com.thiagoalexb.dev.clockin.data.repository.ScheduleRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class ScheduleService {
 
@@ -19,6 +22,16 @@ public class ScheduleService {
     @Inject
     public ScheduleService(ScheduleRepository scheduleRepository) {
         this.scheduleRepository = scheduleRepository;
+    }
+
+    public Flowable<List<Schedule>> get(){
+        return scheduleRepository.getByMonth()
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Flowable<List<Schedule>> getByMonth(){
+        return scheduleRepository.getByMonth()
+                .subscribeOn(Schedulers.io());
     }
 
     public void saveEntry(){

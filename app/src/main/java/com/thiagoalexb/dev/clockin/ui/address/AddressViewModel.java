@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.thiagoalexb.dev.clockin.data.models.Address;
-import com.thiagoalexb.dev.clockin.data.repository.AddressRepository;
+import com.thiagoalexb.dev.clockin.service.AddressService;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,14 +24,14 @@ public class AddressViewModel extends ViewModel {
     private static final String TAG = "AddressViewModel";
 
     private final Geocoder geocoder;
-    private final AddressRepository addressRepository;
+    private final AddressService addressService;
     private final MutableLiveData<Long> statusInsert;
     private final MutableLiveData<Address> address;
 
     @Inject
-    public AddressViewModel(Geocoder geocoder, AddressRepository addressRepository) {
+    public AddressViewModel(Geocoder geocoder, AddressService addressService) {
         this.geocoder = geocoder;
-        this.addressRepository = addressRepository;
+        this.addressService = addressService;
 
         this.statusInsert = new MutableLiveData<>();
         this.address = new MutableLiveData<>();
@@ -39,7 +39,7 @@ public class AddressViewModel extends ViewModel {
     }
 
     public void checkAddress() {
-        addressRepository.get()
+        addressService.get()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((addressDb, throwable) -> {
                     if (addressDb == null) return;
@@ -53,7 +53,7 @@ public class AddressViewModel extends ViewModel {
 
         if (address == null) return;
 
-        addressRepository.insert(address)
+        addressService.insert(address)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((status, throwable) -> {
                     statusInsert.setValue(status);

@@ -34,7 +34,7 @@ public class ScheduleRepository {
                 .subscribeOn(Schedulers.io());
     }
 
-    public Flowable<List<Schedule>> get(){
+    public Flowable<List<Schedule>> getByMonth(){
         return _appDatabase.scheduleDao().getByMonth()
                 .subscribeOn(Schedulers.io());
     }

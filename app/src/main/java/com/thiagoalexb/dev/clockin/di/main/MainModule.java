@@ -5,12 +5,10 @@ import android.location.Geocoder;
 
 import com.thiagoalexb.dev.clockin.data.repository.AddressRepository;
 import com.thiagoalexb.dev.clockin.data.repository.ScheduleRepository;
+import com.thiagoalexb.dev.clockin.service.AddressService;
 import com.thiagoalexb.dev.clockin.service.ScheduleService;
 import com.thiagoalexb.dev.clockin.ui.main.ScheduleAdapter;
 
-import java.util.ArrayList;
-
-import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -26,11 +24,17 @@ public class MainModule {
 
     @MainScope
     @Provides
+    static AddressService providerAddressService(AddressRepository addressRepository){
+        return new AddressService(addressRepository);
+    }
+
+    @MainScope
+    @Provides
     static AddressRepository providerAddressRepository(Application application){
         return new AddressRepository(application);
     }
 
-    @Singleton
+    @MainScope
     @Provides
     static ScheduleService providerScheduleService(ScheduleRepository scheduleRepository){
         return new ScheduleService(scheduleRepository);

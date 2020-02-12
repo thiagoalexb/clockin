@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ClockIn</string>
+    <string name="app_name"></string>
     <string name="state">Estado</string>
     <string name="city">Cidade</string>
     <string name="neighborhood">Bairro</string>
@@ -12,7 +12,9 @@
     <string name="back_to_normal">Back to normal</string>
     <string name="entry">Entrada</string>
     <string name="departure">Saída</string>
+    <string name="location">Localização</string>
     <string name="address_mandatory">Você será redirecionado para tela de cadastro de endereço. \n Obrigado!</string>
+    <string name="location_permission_mandatory">Para o app funcionar é necessário permissão de localização.</string>
     <string name="ok">ok</string>
     <string name="day">Dia</string>
     <string name="address_not_found">Endereço não encontrado</string>

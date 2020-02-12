@@ -6,10 +6,9 @@ import androidx.lifecycle.ViewModel;
 
 import com.thiagoalexb.dev.clockin.data.models.Address;
 import com.thiagoalexb.dev.clockin.data.models.Schedule;
-import com.thiagoalexb.dev.clockin.data.repository.AddressRepository;
-import com.thiagoalexb.dev.clockin.data.repository.ScheduleRepository;
+import com.thiagoalexb.dev.clockin.service.AddressService;
+import com.thiagoalexb.dev.clockin.service.ScheduleService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -20,25 +19,25 @@ import io.reactivex.disposables.CompositeDisposable;
 public class MainViewModel extends ViewModel {
 
     private final String TAG;
-    private final AddressRepository addressRepository;
-    private final ScheduleRepository scheduleRepository;
+    private final AddressService addressService;
+    private final ScheduleService scheduleService;
     private final CompositeDisposable disposable;
     private final MutableLiveData<Address> address;
     private final MutableLiveData<List<Schedule>> schedules;
 
     @Inject
-    public MainViewModel(AddressRepository addressRepository, ScheduleRepository scheduleRepository) {
+    public MainViewModel(AddressService addressService, ScheduleService scheduleService) {
 
         this.TAG = MainViewModel.class.getSimpleName();
-        this.addressRepository = addressRepository;
-        this.scheduleRepository = scheduleRepository;
+        this.addressService = addressService;
+        this.scheduleService = scheduleService;
         this.disposable = new CompositeDisposable();
         this.address = new MutableLiveData<>();
         this.schedules = new MutableLiveData<>();
     }
 
     public void checkAddress(){
-                addressRepository.get()
+        addressService.get()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe((addressDb, throwable) -> {
                             address.setValue(addressDb);
@@ -47,7 +46,7 @@ public class MainViewModel extends ViewModel {
 
     public void checkSchedules(){
         disposable.add(
-                scheduleRepository.get()
+                scheduleService.getByMonth()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(schedulesDb ->{
                             schedules.setValue(schedulesDb);
