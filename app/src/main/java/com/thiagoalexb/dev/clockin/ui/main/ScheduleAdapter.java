@@ -12,7 +12,9 @@ import com.thiagoalexb.dev.clockin.R;
 import com.thiagoalexb.dev.clockin.data.models.Schedule;
 
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
+import java.util.Locale;
 
 public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ScheduleViewHolder> {
 
@@ -55,7 +57,9 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
         }
 
         public void bind(Schedule schedule){
-            String dateFormatted = schedule.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+           String dateFormatted = schedule.getDate().format(
+                    DateTimeFormatter.ofLocalizedDate( FormatStyle.MEDIUM )
+                            .withLocale(new Locale("pt", "br")));
             day.setText(dateFormatted);
             DateTimeFormatter pattern = DateTimeFormatter.ofPattern("HH:mm");
             String entryTimeFormatted = schedule.getEntryTime().format(pattern);

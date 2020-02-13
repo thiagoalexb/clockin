@@ -9,6 +9,8 @@ import com.thiagoalexb.dev.clockin.data.models.Schedule;
 import com.thiagoalexb.dev.clockin.service.AddressService;
 import com.thiagoalexb.dev.clockin.service.ScheduleService;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -49,7 +51,16 @@ public class MainViewModel extends ViewModel {
                 scheduleService.getByMonth()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(schedulesDb ->{
-                            schedules.setValue(schedulesDb);
+                            List<Schedule> list = new ArrayList<>();
+                            for (int i = 1; i < 10; i++){
+                                LocalDateTime now = LocalDateTime.now();
+                                now = now.plusDays(i);
+                                Schedule sc = new Schedule(now, now, now.getDayOfMonth(), now.getMonthValue(), now.getYear());
+                                now = now = now.plusHours(8);
+                                sc.setDepartureTime(now);
+                                list.add(sc);
+                            }
+                            schedules.setValue(list);
                         } ));
     }
 

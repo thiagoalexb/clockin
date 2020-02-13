@@ -17,6 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -66,6 +69,8 @@ public class MainFragment extends DaggerFragment {
 
         setElements();
 
+        setHasOptionsMenu(true);
+
         return fragmentMainBinding.getRoot();
     }
 
@@ -86,6 +91,27 @@ public class MainFragment extends DaggerFragment {
             mainViewModel.checkAddress();
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.menu, menu);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.address_menu_item:
+                navigateToAddress(getView());
+                return true;
+            case R.id.reports_menu_item:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     private void getLocationPermission() {
         if (!hasLocationPermission())
             requestPermissions(new String[]{ android.Manifest.permission.ACCESS_FINE_LOCATION }, PERMISSIONS_REQUEST_FINE_LOCATION_CODE);
@@ -97,10 +123,7 @@ public class MainFragment extends DaggerFragment {
     }
 
     private void setElements() {
-        fragmentMainBinding.placeBtn.setOnClickListener(view -> navigateToAddress(view));
         fragmentMainBinding.schedulesRecyclerView.setAdapter(scheduleAdapter);
-        fragmentMainBinding.schedulesRecyclerView.addItemDecoration(
-                new DividerItemDecoration(getContext(), DividerItemDecoration.HORIZONTAL));
     }
 
     private void navigateToAddress(View view) {

@@ -4,29 +4,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/place_btn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/address"
-            app:layout_constraintBottom_toTopOf="@+id/schedules_recycler_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent"
+        android:background="@color/backgroundDefault">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/schedules_recycler_view"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/place_btn">
+            app:layout_constraintTop_toTopOf="parent"
+            tools:listitem="@layout/item_schedule">
 
         </androidx.recyclerview.widget.RecyclerView>
 
