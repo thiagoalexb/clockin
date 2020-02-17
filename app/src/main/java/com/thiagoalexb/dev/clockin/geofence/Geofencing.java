@@ -19,11 +19,12 @@ import com.thiagoalexb.dev.clockin.data.models.Address;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class Geofencing implements ResultCallback {
 
     public static final String TAG = Geofencing.class.getSimpleName();
-    private static final float GEOFENCE_RADIUS = 50;
-    private static final long GEOFENCE_TIMEOUT = 24 * 60 * 60 * 1000;
+    private static final float GEOFENCE_RADIUS = 100;
 
     private List<Geofence> geofences;
     private PendingIntent pendingIntent;
@@ -35,6 +36,7 @@ public class Geofencing implements ResultCallback {
         Log.e(TAG, result.getStatus().toString());
     }
 
+    @Inject
     public Geofencing(Context context, GoogleApiClient client) {
         this.context = context;
         googleApiClient = client;
@@ -79,7 +81,7 @@ public class Geofencing implements ResultCallback {
 
             Geofence geofence = new Geofence.Builder()
                     .setRequestId(address.getAddressUUID())
-                    .setExpirationDuration(GEOFENCE_TIMEOUT)
+                    .setExpirationDuration(Geofence.NEVER_EXPIRE)
                     .setCircularRegion(address.getLatitude(), address.getLongitude(), GEOFENCE_RADIUS)
                     .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
                     .build();
@@ -91,7 +93,7 @@ public class Geofencing implements ResultCallback {
     private GeofencingRequest getGeofencingRequest() {
 
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
-        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_DWELL);
         builder.addGeofences(geofences);
         return builder.build();
     }

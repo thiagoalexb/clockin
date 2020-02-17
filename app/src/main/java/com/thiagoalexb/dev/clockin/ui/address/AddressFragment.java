@@ -24,23 +24,23 @@ import com.thiagoalexb.dev.clockin.data.models.Address;
 import com.thiagoalexb.dev.clockin.databinding.FragmentAddressBinding;
 import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelProviderFactory;
 import com.thiagoalexb.dev.clockin.geofence.Geofencing;
+import com.thiagoalexb.dev.clockin.ui.BaseFragment;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import dagger.android.support.DaggerFragment;
 
-public class AddressFragment extends DaggerFragment implements
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener{
+public class AddressFragment extends BaseFragment {
 
     @Inject
-    ViewModelProviderFactory modelProviderFactory;
+    public ViewModelProviderFactory modelProviderFactory;
+
+    @Inject
+    public GoogleApiClient googleApiClient;
 
     private AddressViewModel addressViewModel;
     private FragmentAddressBinding fragmentAddressBinding;
-    private GoogleApiClient googleApiClient;
-    private Geofencing geofencing;
-
 
     public AddressFragment() {
     }
@@ -48,6 +48,8 @@ public class AddressFragment extends DaggerFragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        setLoading(false);
 
         addressViewModel = ViewModelProviders.of(this, modelProviderFactory).get(AddressViewModel.class);
 
@@ -64,38 +66,6 @@ public class AddressFragment extends DaggerFragment implements
         return fragmentAddressBinding.getRoot();
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        if(googleApiClient != null  && googleApiClient.isConnected()) {
-            googleApiClient.stopAutoManage(getActivity());
-            googleApiClient.disconnect();
-        }
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-        geofencing = new Geofencing(getContext(), googleApiClient);
-
-        Address address = addressViewModel.getAddress().getValue();
-
-        geofencing.unregisterAllGeofences();
-        geofencing.updateGeofencesList(address);
-        geofencing.registerAllGeofences();
-
-        Navigation.findNavController(getView()).navigate(R.id.action_addressFragment_to_mainFragment);
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-    }
-
     private void setObservers() {
 
         addressViewModel.getStatusInsert().removeObservers(getViewLifecycleOwner());
@@ -110,19 +80,6 @@ public class AddressFragment extends DaggerFragment implements
             return;
         }
 
-        setGoogleClient();
-    }
-
-    private void setGoogleClient() {
-        if(googleApiClient == null)
-            googleApiClient = new GoogleApiClient.Builder(getContext())
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .addApi(Places.GEO_DATA_API)
-                    .enableAutoManage(getActivity(), this)
-                    .build();
-        else
-            googleApiClient.connect();
+        Navigation.findNavController(getView()).navigate(R.id.action_addressFragment_to_mainFragment);
     }
 }

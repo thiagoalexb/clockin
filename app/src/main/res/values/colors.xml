@@ -4,5 +4,7 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="backgroundDefault">#fff3f2</color>
-    <color name="colorTitle">#ED8F8D</color>
+    <color name="backgroundLoading">#99000000</color>
+    <color name="colorDefault">#ED8F8D</color>
+    <color name="colorDisabled">#cccccc</color>
 </resources>

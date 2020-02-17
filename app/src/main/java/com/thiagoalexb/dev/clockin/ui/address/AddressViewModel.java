@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.thiagoalexb.dev.clockin.data.models.Address;
 import com.thiagoalexb.dev.clockin.service.AddressService;
+import com.thiagoalexb.dev.clockin.util.TextHelper;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +28,7 @@ public class AddressViewModel extends ViewModel {
     private final AddressService addressService;
     private final MutableLiveData<Long> statusInsert;
     private final MutableLiveData<Address> address;
+    private final MutableLiveData<Boolean> isValid;
 
     @Inject
     public AddressViewModel(Geocoder geocoder, AddressService addressService) {
@@ -36,6 +38,7 @@ public class AddressViewModel extends ViewModel {
         this.statusInsert = new MutableLiveData<>();
         this.address = new MutableLiveData<>();
         this.address.setValue(new Address());
+        this.isValid = new MutableLiveData<>(false);
     }
 
     public void checkAddress() {
@@ -59,6 +62,7 @@ public class AddressViewModel extends ViewModel {
                     statusInsert.setValue(status);
                 });
     }
+
 
     @Nullable
     private Address getLocation(Address address) {
@@ -92,10 +96,16 @@ public class AddressViewModel extends ViewModel {
     }
 
     public LiveData<Address> getAddress(){
+        isValid.setValue(addressService.isValid(address.getValue()));
         return address;
     }
 
     public LiveData<Long> getStatusInsert() {
         return statusInsert;
+    }
+
+    public LiveData<Boolean> getIsValid(){
+        return isValid;
+
     }
 }

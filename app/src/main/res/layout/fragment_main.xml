@@ -3,25 +3,50 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <variable
+            name="mainViewModel"
+            type="com.thiagoalexb.dev.clockin.ui.main.MainViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/backgroundDefault">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/schedules_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="16dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <TextView
+            android:id="@+id/current_month_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_margin"
+            android:text="@{mainViewModel.currentMonth}"
+            android:textColor="@color/colorDefault"
+            android:textSize="@dimen/title"
+            android:gravity="center"
+            android:elevation="3dp"
+            android:paddingBottom="@dimen/half_padding"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            tools:text="Fevereiro" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/schedules_recycler_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/current_month_text_view"
+            app:layout_constraintVertical_bias="0.0"
             tools:listitem="@layout/item_schedule">
 
         </androidx.recyclerview.widget.RecyclerView>
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

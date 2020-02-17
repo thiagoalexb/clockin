@@ -6,16 +6,11 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,25 +18,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.Places;
 import com.thiagoalexb.dev.clockin.data.models.Address;
 import com.thiagoalexb.dev.clockin.data.models.Schedule;
 import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelProviderFactory;
-import com.thiagoalexb.dev.clockin.geofence.Geofencing;
 import com.thiagoalexb.dev.clockin.R;
 import com.thiagoalexb.dev.clockin.databinding.FragmentMainBinding;
+import com.thiagoalexb.dev.clockin.ui.BaseFragment;
+import com.thiagoalexb.dev.clockin.util.Resource;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import dagger.android.support.DaggerFragment;
-import dagger.multibindings.ElementsIntoSet;
 
-public class MainFragment extends DaggerFragment {
+public class MainFragment extends BaseFragment {
 
     private static final int PERMISSIONS_REQUEST_FINE_LOCATION_CODE = 111;
 
@@ -49,6 +40,8 @@ public class MainFragment extends DaggerFragment {
     public ViewModelProviderFactory modelProviderFactory;
     @Inject
     public ScheduleAdapter scheduleAdapter;
+    @Inject
+    public GoogleApiClient googleApiClient;
 
     private MainViewModel mainViewModel;
     private FragmentMainBinding fragmentMainBinding;
@@ -59,9 +52,13 @@ public class MainFragment extends DaggerFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        mainViewModel = ViewModelProviders.of(this, modelProviderFactory).get(MainViewModel.class);
+
         fragmentMainBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false);
 
-        mainViewModel = ViewModelProviders.of(this, modelProviderFactory).get(MainViewModel.class);
+        fragmentMainBinding.setMainViewModel(mainViewModel);
+
+        fragmentMainBinding.setLifecycleOwner(this);
 
         getLocationPermission();
 
@@ -70,6 +67,8 @@ public class MainFragment extends DaggerFragment {
         setElements();
 
         setHasOptionsMenu(true);
+
+        setGoogleApiClient(googleApiClient);
 
         return fragmentMainBinding.getRoot();
     }
@@ -154,8 +153,9 @@ public class MainFragment extends DaggerFragment {
         });
 
         mainViewModel.getSchedules().removeObservers(getViewLifecycleOwner());
-        mainViewModel.getSchedules().observe(getViewLifecycleOwner(), schedules -> {
-            validateSchedules(schedules);
+        mainViewModel.getSchedules().observe(getViewLifecycleOwner(), resource -> {
+            setLoading(resource.status == Resource.Status.LOADING);
+            validateSchedules(resource.data);
         });
     }
 
