@@ -66,7 +66,7 @@ public class MainViewModel extends ViewModel {
                                 sc.setDepartureTime(now);
                                 list.add(sc);
                             }
-                            schedules.setValue(Resource.success(list));
+                            schedules.setValue(Resource.success(schedulesDb));
                         } ));
     }
 

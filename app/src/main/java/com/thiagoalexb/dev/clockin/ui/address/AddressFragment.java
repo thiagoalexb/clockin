@@ -15,10 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.Places;
 import com.thiagoalexb.dev.clockin.R;
 import com.thiagoalexb.dev.clockin.data.models.Address;
 import com.thiagoalexb.dev.clockin.databinding.FragmentAddressBinding;
@@ -30,17 +26,16 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import dagger.android.support.DaggerFragment;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class AddressFragment extends BaseFragment {
 
     @Inject
     public ViewModelProviderFactory modelProviderFactory;
 
-    @Inject
-    public GoogleApiClient googleApiClient;
-
     private AddressViewModel addressViewModel;
     private FragmentAddressBinding fragmentAddressBinding;
+    private Geofencing geofencing;
 
     public AddressFragment() {
     }
@@ -79,6 +74,14 @@ public class AddressFragment extends BaseFragment {
             Toast.makeText(getContext(), getString(R.string.error_address_not_save), Toast.LENGTH_LONG).show();
             return;
         }
+
+        Address address = addressViewModel.getAddress().getValue();
+
+        geofencing = new Geofencing(getContext());
+
+        geofencing.updateGeofencesList(address);
+
+        geofencing.registerAllGeofences();
 
         Navigation.findNavController(getView()).navigate(R.id.action_addressFragment_to_mainFragment);
     }

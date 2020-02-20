@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.thiagoalexb.dev.clockin.data.models.Address;
 import com.thiagoalexb.dev.clockin.data.models.Schedule;
 import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelProviderFactory;
@@ -34,14 +33,12 @@ import javax.inject.Inject;
 
 public class MainFragment extends BaseFragment {
 
-    private static final int PERMISSIONS_REQUEST_FINE_LOCATION_CODE = 111;
+    private static final int PERMISSIONS_REQUEST_LOCATION_CODE = 177;
 
     @Inject
     public ViewModelProviderFactory modelProviderFactory;
     @Inject
     public ScheduleAdapter scheduleAdapter;
-    @Inject
-    public GoogleApiClient googleApiClient;
 
     private MainViewModel mainViewModel;
     private FragmentMainBinding fragmentMainBinding;
@@ -68,8 +65,6 @@ public class MainFragment extends BaseFragment {
 
         setHasOptionsMenu(true);
 
-        setGoogleApiClient(googleApiClient);
-
         return fragmentMainBinding.getRoot();
     }
 
@@ -77,7 +72,7 @@ public class MainFragment extends BaseFragment {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if(requestCode == PERMISSIONS_REQUEST_FINE_LOCATION_CODE && grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+        if(hasLocationPermission())
             mainViewModel.checkAddress();
         else
             createDialogLocationNotification();
@@ -113,12 +108,13 @@ public class MainFragment extends BaseFragment {
 
     private void getLocationPermission() {
         if (!hasLocationPermission())
-            requestPermissions(new String[]{ android.Manifest.permission.ACCESS_FINE_LOCATION }, PERMISSIONS_REQUEST_FINE_LOCATION_CODE);
+            requestPermissions(new String[]{ android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION }, PERMISSIONS_REQUEST_LOCATION_CODE);
     }
 
     private boolean hasLocationPermission(){
-        int permissionLocation = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
-        return permissionLocation == PackageManager.PERMISSION_GRANTED;
+        int permissionLocationFine = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
+        int permissionLocationCoarse = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
+        return permissionLocationFine == PackageManager.PERMISSION_GRANTED && permissionLocationCoarse == PackageManager.PERMISSION_GRANTED;
     }
 
     private void setElements() {

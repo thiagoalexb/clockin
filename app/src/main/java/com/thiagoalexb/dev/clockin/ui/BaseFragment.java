@@ -25,13 +25,4 @@ public class BaseFragment extends DaggerFragment {
     protected void setLoading(Boolean isVisible){
         containerLoading.setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
-
-    protected void setGoogleApiClient(GoogleApiClient googleApiClient){
-        if(googleApiClient == null) return;
-
-        if(googleApiClient.isConnected())
-            googleApiClient.disconnect();
-
-        googleApiClient.connect();
-    }
 }
