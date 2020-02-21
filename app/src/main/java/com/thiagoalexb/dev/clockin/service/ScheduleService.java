@@ -12,6 +12,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -24,14 +25,12 @@ public class ScheduleService {
         this.scheduleRepository = scheduleRepository;
     }
 
-    public Flowable<List<Schedule>> get(){
-        return scheduleRepository.getByMonth()
-                .subscribeOn(Schedulers.io());
+    public Single<Schedule> getById(int id){
+        return scheduleRepository.getById(id);
     }
 
     public Flowable<List<Schedule>> getByMonth(){
-        return scheduleRepository.getByMonth()
-                .subscribeOn(Schedulers.io());
+        return scheduleRepository.getByMonth();
     }
 
     public void saveEntry(){
@@ -68,5 +67,9 @@ public class ScheduleService {
                                 Log.d("", "saveDeparture: ");
                             });
                 });
+    }
+
+    public Single<Long> save(Schedule schedule){
+        return scheduleRepository.insert(schedule);
     }
 }

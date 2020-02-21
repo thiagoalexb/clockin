@@ -14,6 +14,9 @@
             app:destination="@id/addressFragment2"
             app:popUpTo="@+id/mainFragment"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_mainFragment_to_editScheduleFragment"
+            app:destination="@id/editScheduleFragment" />
     </fragment>
     <fragment
         android:id="@+id/addressFragment2"
@@ -24,5 +27,14 @@
             android:id="@+id/action_addressFragment_to_mainFragment"
             app:destination="@id/mainFragment"
             app:popUpTo="@+id/mainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editScheduleFragment"
+        android:name="com.thiagoalexb.dev.clockin.ui.schedule.EditScheduleFragment"
+        android:label="fragment_edit_schedule"
+        tools:layout="@layout/fragment_edit_schedule" >
+        <action
+            android:id="@+id/action_editScheduleFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
     </fragment>
 </navigation>

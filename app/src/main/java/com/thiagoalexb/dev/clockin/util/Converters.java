@@ -2,6 +2,8 @@ package com.thiagoalexb.dev.clockin.util;
 
 import androidx.databinding.InverseMethod;
 
+import java.time.LocalDateTime;
+
 
 public class Converters {
 
@@ -19,6 +21,23 @@ public class Converters {
             return Integer.parseInt(value);
         } catch (Exception e) {
             return 0;
+        }
+    }
+
+    @InverseMethod("toLocalDateTime")
+    public static String dateToString(LocalDateTime value) {
+        try {
+            return value.toString();
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    public static LocalDateTime toLocalDateTime(String value) {
+        try {
+            return LocalDateTime.parse(value);
+        } catch (Exception e) {
+            return LocalDateTime.now();
         }
     }
 }

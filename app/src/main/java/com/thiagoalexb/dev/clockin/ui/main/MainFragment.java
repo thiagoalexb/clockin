@@ -92,7 +92,6 @@ public class MainFragment extends BaseFragment {
         inflater.inflate(R.menu.menu, menu);
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

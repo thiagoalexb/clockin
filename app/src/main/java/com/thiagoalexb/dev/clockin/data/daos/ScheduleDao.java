@@ -26,6 +26,9 @@ public interface  ScheduleDao {
     @Query("SELECT * FROM Schedule WHERE year = :year AND month = :month AND day = :day LIMIT 1")
     Single<Schedule> getByDay(int year, int month, int day);
 
+    @Query("SELECT * FROM Schedule WHERE id = :id")
+    Single<Schedule> getById(int id);
+
     @Query("SELECT * FROM Schedule")
     Flowable<List<Schedule>> getByMonth();
 }

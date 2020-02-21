@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel;
 
 import com.thiagoalexb.dev.clockin.data.models.Address;
 import com.thiagoalexb.dev.clockin.service.AddressService;
-import com.thiagoalexb.dev.clockin.util.TextHelper;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +28,7 @@ public class AddressViewModel extends ViewModel {
     private final MutableLiveData<Long> statusInsert;
     private final MutableLiveData<Address> address;
     private final MutableLiveData<Boolean> isValid;
+    private final MutableLiveData<Boolean> isLoading;
 
     @Inject
     public AddressViewModel(Geocoder geocoder, AddressService addressService) {
@@ -39,27 +39,34 @@ public class AddressViewModel extends ViewModel {
         this.address = new MutableLiveData<>();
         this.address.setValue(new Address());
         this.isValid = new MutableLiveData<>(false);
+        this.isLoading = new MutableLiveData<>();
     }
 
     public void checkAddress() {
+        isLoading.setValue(true);
         addressService.get()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((addressDb, throwable) -> {
+                    isLoading.setValue(false);
                     if (addressDb == null) return;
                     address.setValue(addressDb);
                 });
     }
 
     public void insert() {
-
+        isLoading.setValue(true);
         Address address = getLocation(getAddress().getValue());
 
-        if (address == null) return;
+        if (address == null) {
+            isLoading.setValue(false);
+            return;
+        }
 
         addressService.insert(address)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((status, throwable) -> {
                     statusInsert.setValue(status);
+                    isLoading.setValue(false);
                 });
     }
 
@@ -107,5 +114,9 @@ public class AddressViewModel extends ViewModel {
     public LiveData<Boolean> getIsValid(){
         return isValid;
 
+    }
+
+    public LiveData<Boolean> getIsLoading(){
+        return isLoading;
     }
 }

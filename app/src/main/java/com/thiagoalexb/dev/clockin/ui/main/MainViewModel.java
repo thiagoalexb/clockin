@@ -57,17 +57,8 @@ public class MainViewModel extends ViewModel {
                 scheduleService.getByMonth()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(schedulesDb ->{
-                            List<Schedule> list = new ArrayList<>();
-                            for (int i = 1; i < 10; i++){
-                                LocalDateTime now = LocalDateTime.now();
-                                now = now.plusDays(i);
-                                Schedule sc = new Schedule(now, now, now.getDayOfMonth(), now.getMonthValue(), now.getYear());
-                                now = now = now.plusHours(8);
-                                sc.setDepartureTime(now);
-                                list.add(sc);
-                            }
                             schedules.setValue(Resource.success(schedulesDb));
-                        } ));
+                        }));
     }
 
     private String setCaptalize(String text){

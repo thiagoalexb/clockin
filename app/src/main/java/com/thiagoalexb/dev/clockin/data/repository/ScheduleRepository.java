@@ -43,6 +43,11 @@ public class ScheduleRepository {
         return _appDatabase.scheduleDao().getByDay(year, month, day)
                 .subscribeOn(Schedulers.io());
     }
+
+    public Single<Schedule> getById(int id){
+        return  _appDatabase.scheduleDao().getById(id)
+                .subscribeOn(Schedulers.io());
+    }
 }
 
 

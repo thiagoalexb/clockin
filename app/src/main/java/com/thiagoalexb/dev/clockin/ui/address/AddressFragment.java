@@ -1,11 +1,8 @@
 package com.thiagoalexb.dev.clockin.ui.address;
 
 
-import android.app.Activity;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
@@ -23,10 +20,6 @@ import com.thiagoalexb.dev.clockin.geofence.Geofencing;
 import com.thiagoalexb.dev.clockin.ui.BaseFragment;
 
 import javax.inject.Inject;
-import javax.inject.Named;
-
-import dagger.android.support.DaggerFragment;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class AddressFragment extends BaseFragment {
 
@@ -43,8 +36,6 @@ public class AddressFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        setLoading(false);
 
         addressViewModel = ViewModelProviders.of(this, modelProviderFactory).get(AddressViewModel.class);
 
@@ -67,9 +58,15 @@ public class AddressFragment extends BaseFragment {
         addressViewModel.getStatusInsert().observe(getViewLifecycleOwner(), status -> {
             validateInsert(status);
         });
+
+        addressViewModel.getIsLoading().removeObservers(getViewLifecycleOwner());
+        addressViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            setLoading(isLoading);
+        });
     }
 
     private void validateInsert(Long status){
+
         if(status == null) {
             Toast.makeText(getContext(), getString(R.string.error_address_not_save), Toast.LENGTH_LONG).show();
             return;

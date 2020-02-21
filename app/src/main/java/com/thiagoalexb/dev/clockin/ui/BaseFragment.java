@@ -6,7 +6,6 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.thiagoalexb.dev.clockin.R;
 
 import dagger.android.support.DaggerFragment;
