@@ -55,7 +55,7 @@ public class EditScheduleViewModel extends ViewModel {
         return scheduleResource;
     }
 
-    public LiveData<Schedule> getSchedule(){
+    public LiveData<Schedule> getSchedule() {
         return schedule;
     }
 

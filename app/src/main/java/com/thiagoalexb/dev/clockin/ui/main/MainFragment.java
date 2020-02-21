@@ -99,6 +99,7 @@ public class MainFragment extends BaseFragment {
                 navigateToAddress(getView());
                 return true;
             case R.id.reports_menu_item:
+                navigateToReport(getView());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -122,6 +123,10 @@ public class MainFragment extends BaseFragment {
 
     private void navigateToAddress(View view) {
         Navigation.findNavController(view).navigate(R.id.action_mainFragment_to_addressFragment);
+    }
+
+    private void navigateToReport(View view) {
+        Navigation.findNavController(view).navigate(R.id.action_mainFragment_to_reportFragment);
     }
 
     private void createDialogLocationNotification(){

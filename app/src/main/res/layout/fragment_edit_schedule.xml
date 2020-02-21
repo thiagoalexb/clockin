@@ -68,7 +68,7 @@
                         android:id="@+id/entry_text_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@{Converters.dateToString(editScheduleViewModel.schedule.entryTime)}"
+                        android:text="@={Converters.dateToString(editScheduleViewModel.schedule.entryTime)}"
                         android:hint="@string/entry" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -82,7 +82,7 @@
                         android:id="@+id/departure_text_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@{Converters.dateToString(editScheduleViewModel.schedule.departureTime)}"
+                        android:text="@={Converters.dateToString(editScheduleViewModel.schedule.departureTime)}"
                         android:hint="@string/departure" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
@@ -91,7 +91,7 @@
         </androidx.cardview.widget.CardView>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/save_schedule_button"
+            android:id="@+id/search_button"
             style="@style/MaterialButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

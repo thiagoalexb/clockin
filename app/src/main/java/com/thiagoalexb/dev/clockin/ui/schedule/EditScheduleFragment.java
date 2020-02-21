@@ -47,21 +47,28 @@ public class EditScheduleFragment extends DaggerFragment {
 
         editScheduleViewModel = ViewModelProviders.of(this, modelProviderFactory).get(EditScheduleViewModel.class);
 
+        this.checkBundle();
+
+        fragmentEditScheduleBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_edit_schedule, container, false);
+
+        fragmentEditScheduleBinding.setEditScheduleViewModel(editScheduleViewModel);
+
+        fragmentEditScheduleBinding.setLifecycleOwner(this);
+
+        this.setSubscribes();
+
+        this.setEvents();
+
+        return fragmentEditScheduleBinding.getRoot();
+    }
+
+    private void checkBundle(){
         Bundle bundle = getArguments();
 
         if(bundle.containsKey(ScheduleAdapter.ID_KEY)){
             Integer scheduleId = bundle.getInt(ScheduleAdapter.ID_KEY);
             editScheduleViewModel.checkSchedule(scheduleId);
         }
-
-
-        fragmentEditScheduleBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_edit_schedule, container, false);
-
-        setSubscribes();
-
-        setEvents();
-
-        return fragmentEditScheduleBinding.getRoot();
     }
 
     private void setSubscribes(){
@@ -91,6 +98,13 @@ public class EditScheduleFragment extends DaggerFragment {
             timePickerDialog = new TimePickerDialog(getContext(), this::onEntryTimeSet, now.getHour(), now.getMinute(), true);
         else
             timePickerDialog = new TimePickerDialog(getContext(), this::onDepartureTimeSet, now.getHour(), now.getMinute(), true);
+
+        timePickerDialog.setTitle("Coloque o seu horário");
+
+        timePickerDialog.setOnDismissListener(dialog -> {
+            fragmentEditScheduleBinding.entryTextView.clearFocus();
+            fragmentEditScheduleBinding.departureTextView.clearFocus();
+        });
 
         timePickerDialog.show();
     }

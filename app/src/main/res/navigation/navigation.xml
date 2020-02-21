@@ -17,6 +17,9 @@
         <action
             android:id="@+id/action_mainFragment_to_editScheduleFragment"
             app:destination="@id/editScheduleFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_reportFragment"
+            app:destination="@id/reportFragment" />
     </fragment>
     <fragment
         android:id="@+id/addressFragment2"
@@ -35,6 +38,15 @@
         tools:layout="@layout/fragment_edit_schedule" >
         <action
             android:id="@+id/action_editScheduleFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/reportFragment"
+        android:name="com.thiagoalexb.dev.clockin.ui.report.ReportFragment"
+        android:label="fragment_report"
+        tools:layout="@layout/fragment_report" >
+        <action
+            android:id="@+id/action_reportFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
     </fragment>
 </navigation>

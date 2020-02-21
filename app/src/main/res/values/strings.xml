@@ -24,4 +24,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="edit_schedule">Editar Horário</string>
+    <string name="year">Ano</string>
+    <string name="month">Mês</string>
+    <string name="search">Buscar</string>
 </resources>
