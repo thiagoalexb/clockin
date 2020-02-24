@@ -26,6 +26,8 @@ import com.thiagoalexb.dev.clockin.databinding.FragmentMainBinding;
 import com.thiagoalexb.dev.clockin.ui.BaseFragment;
 import com.thiagoalexb.dev.clockin.util.Resource;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -118,6 +120,7 @@ public class MainFragment extends BaseFragment {
     }
 
     private void setElements() {
+        scheduleAdapter.setSchedules(new ArrayList<>());
         fragmentMainBinding.schedulesRecyclerView.setAdapter(scheduleAdapter);
     }
 
@@ -163,7 +166,7 @@ public class MainFragment extends BaseFragment {
         if(address == null)
             navigateToAddress(getView());
         else
-            mainViewModel.checkSchedules();
+            mainViewModel.checkSchedules(LocalDateTime.now().getMonthValue());
     }
 
     private void validateSchedules(List<Schedule> schedules){

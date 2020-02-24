@@ -1,8 +1,10 @@
 package com.thiagoalexb.dev.clockin.service;
 
 import android.util.Log;
+import android.util.Pair;
 
 import com.thiagoalexb.dev.clockin.data.models.Schedule;
+import com.thiagoalexb.dev.clockin.data.models.ScheduleYearMonth;
 import com.thiagoalexb.dev.clockin.data.repository.ScheduleRepository;
 
 import java.time.LocalDate;
@@ -29,8 +31,12 @@ public class ScheduleService {
         return scheduleRepository.getById(id);
     }
 
-    public Flowable<List<Schedule>> getByMonth(){
-        return scheduleRepository.getByMonth();
+    public Flowable<List<Schedule>> getByMonth(int month){
+        return scheduleRepository.getByMonth(month);
+    }
+
+    public Flowable<List<Schedule>> getByYearMonth(int year, int month){
+        return scheduleRepository.getByYearMonth(year, month);
     }
 
     public void saveEntry(){
@@ -71,5 +77,9 @@ public class ScheduleService {
 
     public Single<Long> save(Schedule schedule){
         return scheduleRepository.insert(schedule);
+    }
+
+    public Flowable<List<ScheduleYearMonth>> getYearsMonths(){
+        return scheduleRepository.getYearsMonths();
     }
 }

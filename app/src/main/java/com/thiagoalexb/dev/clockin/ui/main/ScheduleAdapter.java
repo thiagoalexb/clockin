@@ -24,12 +24,17 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
 
     public static final String ID_KEY = "ID_KEY";
     private List<Schedule> schedules;
+    private Boolean showEdit;
+
+    public ScheduleAdapter(Boolean showEdit){
+        this.showEdit = showEdit;
+    }
 
     @NonNull
     @Override
     public ScheduleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new ScheduleViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_schedule, parent, false));
+                .inflate(R.layout.item_schedule, parent, false), showEdit);
     }
 
     @Override
@@ -54,14 +59,16 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
         TextView entryValue;
         TextView departureValue;
         ImageView editSchedule;
+        Boolean showEdit;
 
 
-        public ScheduleViewHolder(@NonNull View itemView) {
+        public ScheduleViewHolder(@NonNull View itemView, Boolean showEdit) {
             super(itemView);
             day = itemView.findViewById(R.id.day_text_view);
             entryValue = itemView.findViewById(R.id.entry_value_text_view);
             departureValue = itemView.findViewById(R.id.departure_value_text_view);
             editSchedule = itemView.findViewById(R.id.edit_schedule_image_view);
+            this.showEdit = showEdit;
         }
 
         public void bind(Schedule schedule){
@@ -76,11 +83,14 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
             if(schedule.getDepartureTime() != null)
                 departureValue.setText(schedule.getDepartureTime().format(pattern));
 
-            editSchedule.setOnClickListener(v -> {
-                Bundle bundle = new Bundle();
-                bundle.putInt(ID_KEY, schedule.getId());
-                Navigation.findNavController(v).navigate(R.id.action_mainFragment_to_editScheduleFragment, bundle);
-            });
+            if(showEdit)
+                editSchedule.setOnClickListener(v -> {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(ID_KEY, schedule.getId());
+                    Navigation.findNavController(v).navigate(R.id.action_mainFragment_to_editScheduleFragment, bundle);
+                });
+            else
+                editSchedule.setVisibility(View.GONE);
         }
     }
 }

@@ -7,4 +7,10 @@ public class TextHelper {
         if(value.trim().isEmpty()) return true;
         return false;
     }
+
+    public static String Capitalize(String value){
+        if(isNullOrEmpty(value))
+            return  value;
+        return value.substring(0, 1).toUpperCase() + value.substring(1);
+    }
 }

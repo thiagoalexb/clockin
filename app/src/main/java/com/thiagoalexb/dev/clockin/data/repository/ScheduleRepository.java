@@ -1,9 +1,11 @@
 package com.thiagoalexb.dev.clockin.data.repository;
 
 import android.app.Application;
+import android.util.Pair;
 
 import com.thiagoalexb.dev.clockin.data.AppDatabase;
 import com.thiagoalexb.dev.clockin.data.models.Schedule;
+import com.thiagoalexb.dev.clockin.data.models.ScheduleYearMonth;
 
 import java.util.List;
 
@@ -34,8 +36,13 @@ public class ScheduleRepository {
                 .subscribeOn(Schedulers.io());
     }
 
-    public Flowable<List<Schedule>> getByMonth(){
-        return _appDatabase.scheduleDao().getByMonth()
+    public Flowable<List<Schedule>> getByMonth(int month){
+        return _appDatabase.scheduleDao().getByMonth(month)
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Flowable<List<Schedule>> getByYearMonth(int year, int month){
+        return _appDatabase.scheduleDao().getByYearMonth(year, month)
                 .subscribeOn(Schedulers.io());
     }
 
@@ -46,6 +53,11 @@ public class ScheduleRepository {
 
     public Single<Schedule> getById(int id){
         return  _appDatabase.scheduleDao().getById(id)
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Flowable<List<ScheduleYearMonth>> getYearsMonths(){
+        return _appDatabase.scheduleDao().getYearsMonths()
                 .subscribeOn(Schedulers.io());
     }
 }

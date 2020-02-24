@@ -28,7 +28,8 @@
                 android:id="@+id/year_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textAutoComplete"
+                android:inputType="none"
+                android:editable="false"
                 android:hint="@string/year" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -46,7 +47,8 @@
                 android:id="@+id/month_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textAutoComplete"
+                android:inputType="none"
+                android:editable="false"
                 android:hint="@string/month" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -59,6 +61,8 @@
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="17sp"
+            android:enabled="@{reportViewModel.isValid}"
+            android:onClick="@{() -> reportViewModel.search()}"
             android:layout_marginTop="@dimen/half_margin"
             android:layout_marginStart="@dimen/default_margin"
             android:layout_marginEnd="@dimen/default_margin"
@@ -72,6 +76,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/default_margin"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

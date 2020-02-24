@@ -1,8 +1,5 @@
 package com.thiagoalexb.dev.clockin.ui.report;
 
-import android.app.TimePickerDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
@@ -12,22 +9,31 @@ import androidx.lifecycle.ViewModelProviders;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 
 import com.thiagoalexb.dev.clockin.R;
+import com.thiagoalexb.dev.clockin.data.models.Schedule;
 import com.thiagoalexb.dev.clockin.databinding.FragmentReportBinding;
 import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelProviderFactory;
+import com.thiagoalexb.dev.clockin.ui.BaseFragment;
+import com.thiagoalexb.dev.clockin.ui.main.ScheduleAdapter;
+import com.thiagoalexb.dev.clockin.util.Resource;
 
-import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import dagger.android.support.DaggerFragment;
 
-public class ReportFragment extends DaggerFragment {
+public class ReportFragment extends BaseFragment {
 
     @Inject
     public ViewModelProviderFactory modelProviderFactory;
+    @Inject
+    @Named("search")
+    public ScheduleAdapter scheduleAdapter;
 
     public ReportViewModel reportViewModel;
 
@@ -48,57 +54,87 @@ public class ReportFragment extends DaggerFragment {
 
         fragmentReportBinding.setLifecycleOwner(this);
 
+        this.setObservers();
+
         this.setEvents();
+
+        this.setElements();
 
         return  fragmentReportBinding.getRoot();
     }
 
-    private void setEvents(){
-
-
-        fragmentReportBinding.yearTextView.setOnFocusChangeListener((view, hasFocus) ->{
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(fragmentReportBinding.yearTextView.getWindowToken(), 0);
-            imm.hideSoftInputFromWindow(fragmentReportBinding.monthTextView.getWindowToken(), 0);
-
-            if(!hasFocus) return;
-            setDialog(view);
-        });
-
-        fragmentReportBinding.monthTextView.setOnFocusChangeListener((view, hasFocus) ->{
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(fragmentReportBinding.yearTextView.getWindowToken(), 0);
-            imm.hideSoftInputFromWindow(fragmentReportBinding.monthTextView.getWindowToken(), 0);
-            
-            if(!hasFocus) return;
-            setDialog(view);
+    private void setObservers() {
+        reportViewModel.getSchedules().removeObservers(getViewLifecycleOwner());
+        reportViewModel.getSchedules().observe(getViewLifecycleOwner(), resource -> {
+            setLoading(resource.status == Resource.Status.LOADING);
+            validateSchedules(resource.data);
         });
     }
 
-    private void setDialog(View view){
+    private void validateSchedules(List<Schedule> schedules){
+        if(schedules == null) return;
 
-        AlertDialog.Builder b = new AlertDialog.Builder(getContext());
-        b.setTitle("Example");
-        String[] types = {"By Zip", "By Category"};
-        b.setItems(types, (dialog, which) -> {
+        scheduleAdapter.setSchedules(schedules);
+    }
+
+    private void setEvents(){
+
+        fragmentReportBinding.yearTextView.setOnFocusChangeListener((view, hasFocus) ->{
+            if(!hasFocus) return;
+            createYearDialog();
+        });
+
+        fragmentReportBinding.monthTextView.setOnFocusChangeListener((view, hasFocus) ->{
+            if(!hasFocus) return;
+            createMonthDialog();
+        });
+    }
+
+    private void setElements() {
+        scheduleAdapter.setSchedules(new ArrayList<>());
+        fragmentReportBinding.schedulesRecyclerView.setAdapter(scheduleAdapter);
+    }
+
+    private void createYearDialog(){
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+        final List<Integer> list = reportViewModel.getYears().getValue();
+        String[] years = new String[list.size()];
+
+        for (int i = 0; i < list.size(); i++) {
+            years[i] = String.valueOf(list.get(i));
+        }
+
+        alertDialog.setItems(years, (dialog, which) -> {
 
             dialog.dismiss();
-            switch(which){
-                case 0:
-                    break;
-                case 1:
-                    break;
-            }
+            reportViewModel.setYear(list.get(which));
+            fragmentReportBinding.yearTextView.setText(years[which]);
         });
 
-        b.setOnDismissListener(dialog -> {
+        alertDialog.setOnDismissListener(dialog -> {
             fragmentReportBinding.yearTextView.clearFocus();
-            fragmentReportBinding.monthTextView.clearFocus();
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(fragmentReportBinding.yearTextView.getWindowToken(), 0);
-            imm.hideSoftInputFromWindow(fragmentReportBinding.monthTextView.getWindowToken(), 0);
         });
 
-        b.show();
+        alertDialog.show();
+    }
+
+    private void createMonthDialog(){
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+        final List<String> list = reportViewModel.getMonthNames().getValue();
+        String[] months = list.toArray(new String[list.size()]);
+        alertDialog.setItems(months, (dialog, which) -> {
+
+            dialog.dismiss();
+            reportViewModel.setMonth(which);
+            fragmentReportBinding.monthTextView.setText(list.get(which));
+        });
+
+        alertDialog.setOnDismissListener(dialog -> {
+            fragmentReportBinding.monthTextView.clearFocus();
+        });
+
+        alertDialog.show();
     }
 }

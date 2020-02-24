@@ -52,9 +52,9 @@ public class MainViewModel extends ViewModel {
                         });
     }
 
-    public void checkSchedules(){
+    public void checkSchedules(int month){
         disposable.add(
-                scheduleService.getByMonth()
+                scheduleService.getByMonth(month)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(schedulesDb ->{
                             schedules.setValue(Resource.success(schedulesDb));
