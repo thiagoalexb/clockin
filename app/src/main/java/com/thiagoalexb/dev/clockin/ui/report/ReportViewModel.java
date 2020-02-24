@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.thiagoalexb.dev.clockin.data.models.Schedule;
 import com.thiagoalexb.dev.clockin.data.models.ScheduleYearMonth;
+import com.thiagoalexb.dev.clockin.service.ReportService;
 import com.thiagoalexb.dev.clockin.service.ScheduleService;
 import com.thiagoalexb.dev.clockin.util.DateHelper;
 import com.thiagoalexb.dev.clockin.util.Resource;
@@ -23,6 +24,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 public class ReportViewModel extends ViewModel {
 
     private final ScheduleService scheduleService;
+    private final ReportService reportService;
     private final MutableLiveData<List<Integer>> years;
     private final MutableLiveData<List<String>> monthNames;
     private final MutableLiveData<List<Integer>> months;
@@ -33,9 +35,10 @@ public class ReportViewModel extends ViewModel {
     private Integer month;
 
     @Inject
-    public ReportViewModel(ScheduleService scheduleService){
+    public ReportViewModel(ScheduleService scheduleService, ReportService reportService){
 
         this.scheduleService = scheduleService;
+        this.reportService = reportService;
         this.years = new MutableLiveData<>();
         this.monthNames = new MutableLiveData<>();
         this.months = new MutableLiveData<>();
@@ -70,6 +73,10 @@ public class ReportViewModel extends ViewModel {
                 .subscribe(schedules -> {
                     this.schedules.setValue(Resource.success(schedules));
                 });
+    }
+
+    public void print(){
+        reportService.buildSheet(year, month);
     }
 
     public void setYear(Integer value){

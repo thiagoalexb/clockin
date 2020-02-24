@@ -3,11 +3,11 @@ package com.thiagoalexb.dev.clockin.di.main;
 import android.app.Application;
 import android.location.Geocoder;
 
-import androidx.navigation.Navigator;
 
 import com.thiagoalexb.dev.clockin.data.repository.AddressRepository;
 import com.thiagoalexb.dev.clockin.data.repository.ScheduleRepository;
 import com.thiagoalexb.dev.clockin.service.AddressService;
+import com.thiagoalexb.dev.clockin.service.ReportService;
 import com.thiagoalexb.dev.clockin.service.ScheduleService;
 import com.thiagoalexb.dev.clockin.ui.main.ScheduleAdapter;
 
@@ -55,6 +55,12 @@ public class MainModule {
     @Provides
     static ScheduleRepository providerScheduleRepository(Application application){
         return new ScheduleRepository(application);
+    }
+
+    @MainScope
+    @Provides
+    static ReportService providerReportService(ScheduleService scheduleService){
+        return new ReportService(scheduleService);
     }
 
     @MainScope

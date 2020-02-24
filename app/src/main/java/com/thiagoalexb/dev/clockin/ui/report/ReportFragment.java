@@ -1,11 +1,17 @@
 package com.thiagoalexb.dev.clockin.ui.report;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +20,17 @@ import com.thiagoalexb.dev.clockin.R;
 import com.thiagoalexb.dev.clockin.data.models.Schedule;
 import com.thiagoalexb.dev.clockin.databinding.FragmentReportBinding;
 import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelProviderFactory;
+import com.thiagoalexb.dev.clockin.service.ReportService;
 import com.thiagoalexb.dev.clockin.ui.BaseFragment;
 import com.thiagoalexb.dev.clockin.ui.main.ScheduleAdapter;
 import com.thiagoalexb.dev.clockin.util.Resource;
 
+import java.io.File;
+import java.net.URLConnection;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -28,6 +38,8 @@ import javax.inject.Named;
 import dagger.android.support.DaggerFragment;
 
 public class ReportFragment extends BaseFragment {
+
+    private static final int PERMISSIONS_REQUEST_EXTERNAL_STORAGE_CODE = 771;
 
     @Inject
     public ViewModelProviderFactory modelProviderFactory;
@@ -72,8 +84,12 @@ public class ReportFragment extends BaseFragment {
     }
 
     private void validateSchedules(List<Schedule> schedules){
-        if(schedules == null) return;
+        if(schedules == null || (schedules != null && schedules.size() == 0)) {
+            fragmentReportBinding.printFloatingActionButton.hide();
+            return;
+        }
 
+        fragmentReportBinding.printFloatingActionButton.show();
         scheduleAdapter.setSchedules(schedules);
     }
 
@@ -93,6 +109,22 @@ public class ReportFragment extends BaseFragment {
     private void setElements() {
         scheduleAdapter.setSchedules(new ArrayList<>());
         fragmentReportBinding.schedulesRecyclerView.setAdapter(scheduleAdapter);
+
+        fragmentReportBinding.printFloatingActionButton.setOnClickListener(view -> {
+            if(!hasLocationPermission())
+                getExternalStoragePermission();
+            else{
+                reportViewModel.print();
+                try{
+                    Thread.sleep(1000);
+                    shareFile(ReportService.csv);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+        });
     }
 
     private void createYearDialog(){
@@ -136,5 +168,33 @@ public class ReportFragment extends BaseFragment {
         });
 
         alertDialog.show();
+    }
+
+    private void getExternalStoragePermission() {
+        if (!hasLocationPermission())
+            requestPermissions(new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE }, PERMISSIONS_REQUEST_EXTERNAL_STORAGE_CODE);
+    }
+
+    private boolean hasLocationPermission(){
+        int permissionExternalStorage = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        return permissionExternalStorage == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void shareFile(String path) {
+
+        File file = new File(path);
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+
+        Intent intentShareFile = new Intent(Intent.ACTION_SEND);
+
+        intentShareFile.setType(URLConnection.guessContentTypeFromName(file.getName()));
+        intentShareFile.putExtra(Intent.EXTRA_STREAM,
+                Uri.parse("file://"+file.getAbsolutePath()));
+
+        intentShareFile.putExtra(Intent.EXTRA_SUBJECT,"Horarios");
+
+        startActivity(Intent.createChooser(intentShareFile, "Share File"));
+
     }
 }
