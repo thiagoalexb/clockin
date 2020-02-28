@@ -20,11 +20,10 @@ import android.view.ViewGroup;
 
 import com.thiagoalexb.dev.clockin.data.models.Address;
 import com.thiagoalexb.dev.clockin.data.models.Schedule;
+import com.thiagoalexb.dev.clockin.databinding.FragmentScheduleBinding;
 import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelProviderFactory;
 import com.thiagoalexb.dev.clockin.R;
-import com.thiagoalexb.dev.clockin.databinding.FragmentMainBinding;
 import com.thiagoalexb.dev.clockin.ui.BaseFragment;
-import com.thiagoalexb.dev.clockin.util.Resource;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -46,21 +45,21 @@ public class ScheduleFragment extends BaseFragment {
     public ScheduleAdapter scheduleAdapter;
 
     private ScheduleViewModel scheduleViewModel;
-    private FragmentMainBinding fragmentMainBinding;
+    private FragmentScheduleBinding fragmentScheduleBinding;
 
     public ScheduleFragment() {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         scheduleViewModel = ViewModelProviders.of(this, modelProviderFactory).get(ScheduleViewModel.class);
 
-        fragmentMainBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false);
+        fragmentScheduleBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_schedule, container, false);
 
-        fragmentMainBinding.setMainViewModel(scheduleViewModel);
+        fragmentScheduleBinding.setScheduleViewModel(scheduleViewModel);
 
-        fragmentMainBinding.setLifecycleOwner(this);
+        fragmentScheduleBinding.setLifecycleOwner(this);
 
         getLocationPermission();
 
@@ -70,7 +69,7 @@ public class ScheduleFragment extends BaseFragment {
 
         setHasOptionsMenu(true);
 
-        return fragmentMainBinding.getRoot();
+        return fragmentScheduleBinding.getRoot();
     }
 
     @Override
@@ -124,7 +123,7 @@ public class ScheduleFragment extends BaseFragment {
 
     private void setElements() {
         scheduleAdapter.setSchedules(new ArrayList<>());
-        fragmentMainBinding.schedulesRecyclerView.setAdapter(scheduleAdapter);
+        fragmentScheduleBinding.schedulesRecyclerView.setAdapter(scheduleAdapter);
     }
 
     private void navigateToAddress(View view) {

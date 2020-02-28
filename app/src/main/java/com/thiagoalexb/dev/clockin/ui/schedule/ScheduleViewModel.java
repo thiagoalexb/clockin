@@ -66,6 +66,10 @@ public class ScheduleViewModel extends ViewModel {
                         }));
     }
 
+    public void addDay(){
+        scheduleService.saveEntry();
+    }
+
     public LiveData<Address> getAddress(){
         return address;
     }

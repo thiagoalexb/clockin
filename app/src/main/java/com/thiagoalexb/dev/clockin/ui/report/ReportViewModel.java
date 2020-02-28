@@ -20,9 +20,11 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 
 public class ReportViewModel extends ViewModel {
 
+    private final CompositeDisposable disposable;
     private final ScheduleService scheduleService;
     private final ReportService reportService;
     private final MutableLiveData<List<Integer>> years;
@@ -30,26 +32,35 @@ public class ReportViewModel extends ViewModel {
     private final MutableLiveData<List<Integer>> months;
     private final MutableLiveData<Boolean> isValid;
     private final MutableLiveData<Resource<List<Schedule>>> schedules;
+    private final MutableLiveData<Resource<List<Schedule>>> schedulesResource;
 
-    private Integer year;
-    private Integer month;
+    private Integer year = -1;
+    private Integer month = -1;
 
     @Inject
     public ReportViewModel(ScheduleService scheduleService, ReportService reportService){
 
+        this.disposable = new CompositeDisposable();
         this.scheduleService = scheduleService;
         this.reportService = reportService;
-        this.years = new MutableLiveData<>();
-        this.monthNames = new MutableLiveData<>();
-        this.months = new MutableLiveData<>();
+        this.years = new MutableLiveData<>(new ArrayList<>());
+        this.monthNames = new MutableLiveData<>(new ArrayList<>());
+        this.months = new MutableLiveData<>(new ArrayList<>());
         this.isValid = new MutableLiveData<>(false);
         this.schedules = new MutableLiveData<>();
+        this.schedulesResource = new MutableLiveData<>();
 
         init();
     }
 
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        disposable.clear();
+    }
+
     private void init(){
-        scheduleService.getYearsMonths()
+        disposable.add(scheduleService.getYearsMonths()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(scheduleYearMonths -> {
                     List<Integer> years = new ArrayList<>();
@@ -64,29 +75,36 @@ public class ReportViewModel extends ViewModel {
                     this.years.setValue(years);
                     this.monthNames.setValue(monthNames);
                     this.months.setValue(months);
-                });
+                }));
     }
 
     public void search(){
-        scheduleService.getByYearMonth(year, month)
+        this.schedules.setValue(Resource.loading(null));
+        disposable.add(scheduleService.getByYearMonth(year, month)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(schedules -> {
                     this.schedules.setValue(Resource.success(schedules));
-                });
+                }));
     }
 
     public void print(){
-        reportService.buildSheet(year, month);
+        this.schedulesResource.setValue(Resource.loading(null));
+        disposable.add(scheduleService.getByYearMonth(year, month)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(schedules ->{
+                            this.reportService.buildSheet(schedules, year, month);
+                            this.schedulesResource.setValue(Resource.success(null));
+                        }));
     }
 
     public void setYear(Integer value){
         year = value;
-        isValid.setValue(year != null && year > 0 && month != null && month > 0);
+        isValid.setValue(year > 0 && month > 0);
     }
 
     public void setMonth(Integer value){
         month = months.getValue().get(value);
-        isValid.setValue(year != null && year > 0 && month != null && month > 0);
+        isValid.setValue(year > 0 && month > 0);
     }
 
     public LiveData<Boolean> getIsValid(){
@@ -103,6 +121,10 @@ public class ReportViewModel extends ViewModel {
 
     public LiveData<Resource<List<Schedule>>> getSchedules() {
         return schedules;
+    }
+
+    public LiveData<Resource<List<Schedule>>> getSchedulesResource(){
+        return schedulesResource;
     }
 
 }

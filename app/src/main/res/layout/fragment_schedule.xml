@@ -5,7 +5,7 @@
 
     <data>
         <variable
-            name="mainViewModel"
+            name="scheduleViewModel"
             type="com.thiagoalexb.dev.clockin.ui.schedule.ScheduleViewModel" />
     </data>
 
@@ -20,7 +20,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/default_margin"
-            android:text="@{mainViewModel.currentMonth}"
+            android:text="@{scheduleViewModel.currentMonth}"
             android:textColor="@color/colorDefault"
             android:textSize="@dimen/title"
             android:gravity="center"
@@ -46,6 +46,20 @@
 
         </androidx.recyclerview.widget.RecyclerView>
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/add_day_floating_action_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorDefault"
+            android:clickable="true"
+            android:onClick="@{() -> scheduleViewModel.addDay()}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.93"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.97"
+            app:srcCompat="@drawable/ic_add" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

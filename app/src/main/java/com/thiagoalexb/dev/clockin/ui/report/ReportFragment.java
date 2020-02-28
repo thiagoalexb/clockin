@@ -81,6 +81,13 @@ public class ReportFragment extends BaseFragment {
             setLoading(resource.status);
             validateSchedules(resource.data);
         });
+
+        reportViewModel.getSchedulesResource().removeObservers(getViewLifecycleOwner());
+        reportViewModel.getSchedulesResource().observe(getViewLifecycleOwner(), resource -> {
+            setLoading(resource.status);
+            if(resource.status == Resource.Status.LOADING) return;
+            shareFile(ReportService.csv);
+        });
     }
 
     private void validateSchedules(List<Schedule> schedules){
@@ -111,19 +118,11 @@ public class ReportFragment extends BaseFragment {
         fragmentReportBinding.schedulesRecyclerView.setAdapter(scheduleAdapter);
 
         fragmentReportBinding.printFloatingActionButton.setOnClickListener(view -> {
+
             if(!hasLocationPermission())
                 getExternalStoragePermission();
-            else{
+            else
                 reportViewModel.print();
-                try{
-                    Thread.sleep(1000);
-                    shareFile(ReportService.csv);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
         });
     }
 
@@ -135,6 +134,11 @@ public class ReportFragment extends BaseFragment {
 
         for (int i = 0; i < list.size(); i++) {
             years[i] = String.valueOf(list.get(i));
+        }
+
+        if(years.length == 0) {
+            fragmentReportBinding.yearTextView.clearFocus();
+            return;
         }
 
         alertDialog.setItems(years, (dialog, which) -> {
@@ -156,6 +160,11 @@ public class ReportFragment extends BaseFragment {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
         final List<String> list = reportViewModel.getMonthNames().getValue();
         String[] months = Objects.requireNonNull(list).toArray(new String[list.size()]);
+
+        if(months.length == 0) {
+            fragmentReportBinding.monthTextView.clearFocus();
+            return;
+        };
 
         alertDialog.setItems(months, (dialog, which) -> {
 

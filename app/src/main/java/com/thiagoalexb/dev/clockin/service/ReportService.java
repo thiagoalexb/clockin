@@ -1,7 +1,5 @@
 package com.thiagoalexb.dev.clockin.service;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Environment;
 
 import com.opencsv.CSVWriter;
@@ -9,10 +7,8 @@ import com.thiagoalexb.dev.clockin.data.models.Schedule;
 import com.thiagoalexb.dev.clockin.util.DateHelper;
 import com.thiagoalexb.dev.clockin.util.TextHelper;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URLConnection;
 import java.time.LocalDateTime;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
@@ -20,9 +16,6 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 public class ReportService {
 
@@ -36,44 +29,37 @@ public class ReportService {
         this.scheduleService = scheduleService;
     }
 
-    public void buildSheet(Integer year, Integer month){
+    public void buildSheet(List<Schedule> schedules, int year, int month){
+        try {
+            CSVWriter writer = new CSVWriter(new FileWriter(csv));
 
-        scheduleService.getByYearMonth(year, month)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(schedules -> {
+            List<String[]> data = new ArrayList<>();
+            data.add(new String[]{"Data", "Dia", "Hora Entrada", "Hora Saida"});
 
-                    CSVWriter writer = null;
-                    try {
-                        writer = new CSVWriter(new FileWriter(csv));
+            Integer days = schedules.get(0).getDate().toLocalDate().lengthOfMonth();
+            Locale locale = DateHelper.getLocale();
 
-                        List<String[]> data = new ArrayList<String[]>();
-                        data.add(new String[]{"Data", "Dia", "Hora Entrada", "Hora Saida"});
+            for (int i = 1; i <= days; i++){
+                LocalDateTime localDateTime = LocalDateTime.of(year, month, i, 0, 0);
+                String date = DateHelper.getDate(localDateTime, "dd/MM/yyyy");
+                String dayOfWeek = TextHelper.capitalize(localDateTime.getDayOfWeek().getDisplayName(TextStyle.FULL, locale));
+                String dayOfWeekFormatted = TextHelper.unaccent(dayOfWeek);
+                Integer position = i - 1;
+                if(position >= schedules.size())
+                    data.add(new String[]{ date, dayOfWeekFormatted, "", "", "" });
+                else{
+                    Schedule schedule = schedules.get(position);
+                    data.add(new String[]{date, dayOfWeekFormatted, DateHelper.getHourMinute(schedule.getEntryTime()), DateHelper.getHourMinute(schedule.getDepartureTime()) });
+                }
+            }
 
-                        Integer days = schedules.get(0).getDate().toLocalDate().lengthOfMonth();
-                        Locale locale = new Locale("pt", "br");
-                        for (int i = 1; i <= days; i++){
-                            LocalDateTime localDateTime = LocalDateTime.of(year, month, i, 0, 0);
-                            String date = DateHelper.getDate(localDateTime, "dd/MM/yyyy");
-                            String dayOfWeek = TextHelper.capitalize(localDateTime.getDayOfWeek().getDisplayName(TextStyle.FULL, locale));
-                            String dayOfWeekFormatted = TextHelper.unaccent(dayOfWeek);
-                            Integer position = i - 1;
-                            if(position >= schedules.size())
-                                data.add(new String[]{ date, dayOfWeekFormatted, "", "", "" });
-                            else{
-                                Schedule schedule = schedules.get(position);
-                                data.add(new String[]{date, dayOfWeekFormatted, DateHelper.getHourMinute(schedule.getEntryTime()), DateHelper.getHourMinute(schedule.getDepartureTime()) });
-                            }
-                        }
+            writer.writeAll(data);
 
+            writer.close();
 
-                        writer.writeAll(data);
-
-                        writer.close();
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
