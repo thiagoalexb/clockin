@@ -89,12 +89,8 @@ public class ReportViewModel extends ViewModel {
 
     public void print(){
         this.schedulesResource.setValue(Resource.loading(null));
-        disposable.add(scheduleService.getByYearMonth(year, month)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(schedules ->{
-                            this.reportService.buildSheet(schedules, year, month);
-                            this.schedulesResource.setValue(Resource.success(null));
-                        }));
+        this.reportService.buildSheet(this.getSchedules().getValue().data, year, month);
+        this.schedulesResource.setValue(Resource.success(null));
     }
 
     public void setYear(Integer value){

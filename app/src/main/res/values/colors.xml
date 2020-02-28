@@ -3,8 +3,8 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
-    <color name="backgroundDefault">#fff3f2</color>
+    <color name="backgroundDefault">#FFF</color>
     <color name="backgroundLoading">#99000000</color>
     <color name="colorDefault">#ED8F8D</color>
-    <color name="colorDisabled">#cccccc</color>
+    <color name="colorDisabled">#CCCCCC</color>
 </resources>

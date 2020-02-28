@@ -91,27 +91,6 @@ public class ScheduleFragment extends BaseFragment {
             scheduleViewModel.checkAddress();
     }
 
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        menu.clear();
-        inflater.inflate(R.menu.menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.address_menu_item:
-                navigateToAddress(getView());
-                return true;
-            case R.id.reports_menu_item:
-                navigateToReport(getView());
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
     private void getLocationPermission() {
         if (!hasLocationPermission())
             requestPermissions(new String[]{ android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION }, PERMISSIONS_REQUEST_LOCATION_CODE);
@@ -126,11 +105,28 @@ public class ScheduleFragment extends BaseFragment {
     private void setElements() {
         scheduleAdapter.setSchedules(new ArrayList<>());
         fragmentScheduleBinding.schedulesRecyclerView.setAdapter(scheduleAdapter);
-        fragmentScheduleBinding.addDayFloatingActionButton.setOnClickListener(view -> {
+
+        ViewAnimation.init(fragmentScheduleBinding.reportFloatingActionButton, fragmentScheduleBinding.reportTextView);
+        ViewAnimation.init(fragmentScheduleBinding.addressFloatingActionButton, fragmentScheduleBinding.addressTextView);
+        ViewAnimation.init(fragmentScheduleBinding.addDayFloatingActionButton, fragmentScheduleBinding.addDayTextView);
+
+        fragmentScheduleBinding.actionsFloatingActionButton.setOnClickListener(view -> {
             isRotate = ViewAnimation.rotateFab(view, !isRotate);
-//            scheduleViewModel.addDay();
-            //https://medium.com/better-programming/animated-fab-button-with-more-options-2dcf7118fff6
+
+            if(isRotate){
+                ViewAnimation.showIn(fragmentScheduleBinding.reportFloatingActionButton, fragmentScheduleBinding.reportTextView);
+                ViewAnimation.showIn(fragmentScheduleBinding.addressFloatingActionButton, fragmentScheduleBinding.addressTextView);
+                ViewAnimation.showIn(fragmentScheduleBinding.addDayFloatingActionButton, fragmentScheduleBinding.addDayTextView);
+            }else{
+                ViewAnimation.showOut(fragmentScheduleBinding.reportFloatingActionButton, fragmentScheduleBinding.reportTextView);
+                ViewAnimation.showOut(fragmentScheduleBinding.addressFloatingActionButton, fragmentScheduleBinding.addressTextView);
+                ViewAnimation.showOut(fragmentScheduleBinding.addDayFloatingActionButton, fragmentScheduleBinding.addDayTextView);
+            }
         });
+
+        fragmentScheduleBinding.addressFloatingActionButton.setOnClickListener(this::navigateToAddress);
+        fragmentScheduleBinding.reportFloatingActionButton.setOnClickListener(this::navigateToReport);
+        fragmentScheduleBinding.addDayFloatingActionButton.setOnClickListener(view -> scheduleViewModel.addDay());
     }
 
     private void navigateToAddress(View view) {

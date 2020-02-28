@@ -26,4 +26,8 @@
     <string name="search">Buscar</string>
     <string name="schedules">Horários</string>
     <string name="schedules_email_title">Horários</string>
+    <string name="today_point">Ponto de hoje</string>
+    <string name="date">Data</string>
+    <string name="entryTime">Hora Entrada</string>
+    <string name="departureTime">Hora Saida</string>
 </resources>

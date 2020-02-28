@@ -22,12 +22,14 @@ public class DateHelper {
         return dateFormatted;
     }
 
-    public static String getDate(LocalDateTime localDateTime, String pattern){
+    public static String getMiniumDateDate(LocalDateTime localDateTime){
         if(localDateTime == null) return "";
 
-        DateTimeFormatter patterDateTimeFormattern = DateTimeFormatter.ofPattern(pattern);
-        String date = localDateTime.format(patterDateTimeFormattern);
-        return date;
+        String dateFormatted = localDateTime.format(
+                DateTimeFormatter.ofLocalizedDate( FormatStyle.SHORT )
+                        .withLocale(getLocale()));
+
+        return dateFormatted;
     }
 
     public static String getHourMinute(LocalDateTime localDateTime){

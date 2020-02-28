@@ -141,6 +141,8 @@ public class ReportFragment extends BaseFragment {
             return;
         }
 
+        alertDialog.setTitle(getString(R.string.year));
+
         alertDialog.setItems(years, (dialog, which) -> {
 
             dialog.dismiss();
@@ -165,6 +167,8 @@ public class ReportFragment extends BaseFragment {
             fragmentReportBinding.monthTextView.clearFocus();
             return;
         };
+
+        alertDialog.setTitle(getString(R.string.month));
 
         alertDialog.setItems(months, (dialog, which) -> {
 

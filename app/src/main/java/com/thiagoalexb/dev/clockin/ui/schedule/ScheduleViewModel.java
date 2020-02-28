@@ -14,6 +14,7 @@ import com.thiagoalexb.dev.clockin.util.TextHelper;
 
 import java.time.LocalDateTime;
 import java.time.format.TextStyle;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -61,9 +62,7 @@ public class ScheduleViewModel extends ViewModel {
         disposable.add(
                 scheduleService.getByMonth(month)
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(schedulesDb ->{
-                            schedules.setValue(Resource.success(schedulesDb));
-                        }));
+                        .subscribe(schedulesDb -> schedules.setValue(Resource.success(schedulesDb))));
     }
 
     public void addDay(){

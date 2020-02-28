@@ -14,6 +14,8 @@ import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -39,18 +41,26 @@ public class ReportService {
             Integer days = schedules.get(0).getDate().toLocalDate().lengthOfMonth();
             Locale locale = DateHelper.getLocale();
 
+
             for (int i = 1; i <= days; i++){
                 LocalDateTime localDateTime = LocalDateTime.of(year, month, i, 0, 0);
-                String date = DateHelper.getDate(localDateTime, "dd/MM/yyyy");
+                String date = DateHelper.getMiniumDateDate(localDateTime);
                 String dayOfWeek = TextHelper.capitalize(localDateTime.getDayOfWeek().getDisplayName(TextStyle.FULL, locale));
                 String dayOfWeekFormatted = TextHelper.unaccent(dayOfWeek);
-                Integer position = i - 1;
-                if(position >= schedules.size())
+
+                int count = i;
+
+                int yearrr = schedules.get(0).getDate().getYear();
+                int monthhh = schedules.get(0).getDate().getMonthValue();
+                int dayyy = schedules.get(0).getDate().getDayOfMonth();
+
+                Optional<Schedule> schedule = schedules.stream().filter(s ->  s.getDate().getYear() == year && s.getDate().getMonthValue() == month && s.getDate().getDayOfMonth() == count)
+                                                        .findFirst();
+
+                if(!schedule.isPresent())
                     data.add(new String[]{ date, dayOfWeekFormatted, "", "", "" });
-                else{
-                    Schedule schedule = schedules.get(position);
-                    data.add(new String[]{date, dayOfWeekFormatted, DateHelper.getHourMinute(schedule.getEntryTime()), DateHelper.getHourMinute(schedule.getDepartureTime()) });
-                }
+                else
+                    data.add(new String[]{ date, dayOfWeekFormatted, DateHelper.getHourMinute(schedule.get().getEntryTime()), DateHelper.getHourMinute(schedule.get().getDepartureTime()) });
             }
 
             writer.writeAll(data);
