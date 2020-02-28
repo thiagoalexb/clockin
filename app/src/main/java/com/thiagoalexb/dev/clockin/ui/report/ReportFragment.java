@@ -22,20 +22,19 @@ import com.thiagoalexb.dev.clockin.databinding.FragmentReportBinding;
 import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelProviderFactory;
 import com.thiagoalexb.dev.clockin.service.ReportService;
 import com.thiagoalexb.dev.clockin.ui.BaseFragment;
-import com.thiagoalexb.dev.clockin.ui.main.ScheduleAdapter;
+import com.thiagoalexb.dev.clockin.ui.schedule.ScheduleAdapter;
 import com.thiagoalexb.dev.clockin.util.Resource;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.net.URLConnection;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import dagger.android.support.DaggerFragment;
 
 public class ReportFragment extends BaseFragment {
 
@@ -43,6 +42,7 @@ public class ReportFragment extends BaseFragment {
 
     @Inject
     public ViewModelProviderFactory modelProviderFactory;
+
     @Inject
     @Named("search")
     public ScheduleAdapter scheduleAdapter;
@@ -55,7 +55,7 @@ public class ReportFragment extends BaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         reportViewModel = ViewModelProviders.of(this, modelProviderFactory).get(ReportViewModel.class);
@@ -78,13 +78,13 @@ public class ReportFragment extends BaseFragment {
     private void setObservers() {
         reportViewModel.getSchedules().removeObservers(getViewLifecycleOwner());
         reportViewModel.getSchedules().observe(getViewLifecycleOwner(), resource -> {
-            setLoading(resource.status == Resource.Status.LOADING);
+            setLoading(resource.status);
             validateSchedules(resource.data);
         });
     }
 
     private void validateSchedules(List<Schedule> schedules){
-        if(schedules == null || (schedules != null && schedules.size() == 0)) {
+        if(schedules == null || schedules.size() == 0) {
             fragmentReportBinding.printFloatingActionButton.hide();
             return;
         }
@@ -129,9 +129,9 @@ public class ReportFragment extends BaseFragment {
 
     private void createYearDialog(){
 
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
         final List<Integer> list = reportViewModel.getYears().getValue();
-        String[] years = new String[list.size()];
+        String[] years = new String[Objects.requireNonNull(list).size()];
 
         for (int i = 0; i < list.size(); i++) {
             years[i] = String.valueOf(list.get(i));
@@ -153,9 +153,10 @@ public class ReportFragment extends BaseFragment {
 
     private void createMonthDialog(){
 
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
         final List<String> list = reportViewModel.getMonthNames().getValue();
-        String[] months = list.toArray(new String[list.size()]);
+        String[] months = Objects.requireNonNull(list).toArray(new String[list.size()]);
+
         alertDialog.setItems(months, (dialog, which) -> {
 
             dialog.dismiss();
@@ -171,12 +172,13 @@ public class ReportFragment extends BaseFragment {
     }
 
     private void getExternalStoragePermission() {
-        if (!hasLocationPermission())
-            requestPermissions(new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE }, PERMISSIONS_REQUEST_EXTERNAL_STORAGE_CODE);
+        if (hasLocationPermission()) return;
+
+        requestPermissions(new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE }, PERMISSIONS_REQUEST_EXTERNAL_STORAGE_CODE);
     }
 
     private boolean hasLocationPermission(){
-        int permissionExternalStorage = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int permissionExternalStorage = ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.WRITE_EXTERNAL_STORAGE);
         return permissionExternalStorage == PackageManager.PERMISSION_GRANTED;
     }
 
@@ -189,12 +191,12 @@ public class ReportFragment extends BaseFragment {
         Intent intentShareFile = new Intent(Intent.ACTION_SEND);
 
         intentShareFile.setType(URLConnection.guessContentTypeFromName(file.getName()));
-        intentShareFile.putExtra(Intent.EXTRA_STREAM,
-                Uri.parse("file://"+file.getAbsolutePath()));
 
-        intentShareFile.putExtra(Intent.EXTRA_SUBJECT,"Horarios");
+        intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+file.getAbsolutePath()));
 
-        startActivity(Intent.createChooser(intentShareFile, "Share File"));
+        intentShareFile.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.schedules));
+
+        startActivity(Intent.createChooser(intentShareFile, getString(R.string.schedules_email_title)));
 
     }
 }

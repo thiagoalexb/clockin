@@ -6,7 +6,7 @@
     app:startDestination="@id/mainFragment">
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.thiagoalexb.dev.clockin.ui.main.MainFragment"
+        android:name="com.thiagoalexb.dev.clockin.ui.schedule.ScheduleFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
@@ -33,7 +33,7 @@
     </fragment>
     <fragment
         android:id="@+id/editScheduleFragment"
-        android:name="com.thiagoalexb.dev.clockin.ui.schedule.EditScheduleFragment"
+        android:name="com.thiagoalexb.dev.clockin.ui.editschedule.EditScheduleFragment"
         android:label="fragment_edit_schedule"
         tools:layout="@layout/fragment_edit_schedule" >
         <action

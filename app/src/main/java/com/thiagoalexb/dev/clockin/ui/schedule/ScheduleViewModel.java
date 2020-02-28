@@ -1,4 +1,4 @@
-package com.thiagoalexb.dev.clockin.ui.main;
+package com.thiagoalexb.dev.clockin.ui.schedule;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -8,11 +8,12 @@ import com.thiagoalexb.dev.clockin.data.models.Address;
 import com.thiagoalexb.dev.clockin.data.models.Schedule;
 import com.thiagoalexb.dev.clockin.service.AddressService;
 import com.thiagoalexb.dev.clockin.service.ScheduleService;
+import com.thiagoalexb.dev.clockin.util.DateHelper;
 import com.thiagoalexb.dev.clockin.util.Resource;
+import com.thiagoalexb.dev.clockin.util.TextHelper;
 
 import java.time.LocalDateTime;
 import java.time.format.TextStyle;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -21,35 +22,39 @@ import javax.inject.Inject;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 
-public class MainViewModel extends ViewModel {
+public class ScheduleViewModel extends ViewModel {
 
-    private final String TAG;
+    private final CompositeDisposable disposable;
     private final AddressService addressService;
     private final ScheduleService scheduleService;
-    private final CompositeDisposable disposable;
     private final MutableLiveData<Address> address;
     private final MutableLiveData<Resource<List<Schedule>>> schedules;
     private final MutableLiveData<String> currentMonth;
 
     @Inject
-    public MainViewModel(AddressService addressService, ScheduleService scheduleService) {
+    public ScheduleViewModel(AddressService addressService, ScheduleService scheduleService) {
 
-        this.TAG = MainViewModel.class.getSimpleName();
+        this.disposable = new CompositeDisposable();
         this.addressService = addressService;
         this.scheduleService = scheduleService;
-        this.disposable = new CompositeDisposable();
         this.address = new MutableLiveData<>();
         this.schedules = new MutableLiveData<>();
         this.currentMonth = new MutableLiveData<>();
-        this.currentMonth.setValue(setCaptalize(LocalDateTime.now().getMonth().getDisplayName(TextStyle.FULL, new Locale("pt", "br"))));
+        this.currentMonth.setValue(TextHelper.capitalize(DateHelper.getCurrentMonth()));
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        disposable.clear();
     }
 
     public void checkAddress(){
-        addressService.get()
+        disposable.add(addressService.get()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe((addressDb, throwable) -> {
                             address.setValue(addressDb);
-                        });
+                        }));
     }
 
     public void checkSchedules(int month){
@@ -59,12 +64,6 @@ public class MainViewModel extends ViewModel {
                         .subscribe(schedulesDb ->{
                             schedules.setValue(Resource.success(schedulesDb));
                         }));
-    }
-
-    private String setCaptalize(String text){
-        StringBuilder sb = new StringBuilder(text);
-        sb.setCharAt(0, Character.toUpperCase(sb.charAt(0)));
-        return sb.toString();
     }
 
     public LiveData<Address> getAddress(){

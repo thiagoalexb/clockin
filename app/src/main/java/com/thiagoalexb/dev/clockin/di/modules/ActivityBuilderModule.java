@@ -1,10 +1,10 @@
 package com.thiagoalexb.dev.clockin.di.modules;
 
 import com.thiagoalexb.dev.clockin.MainActivity;
-import com.thiagoalexb.dev.clockin.di.main.MainFragmentBuilderModule;
-import com.thiagoalexb.dev.clockin.di.main.MainModule;
-import com.thiagoalexb.dev.clockin.di.main.MainScope;
-import com.thiagoalexb.dev.clockin.di.main.MainViewModelsModule;
+import com.thiagoalexb.dev.clockin.di.modules.schedule.ScheduleFragmentBuilderModule;
+import com.thiagoalexb.dev.clockin.di.modules.schedule.ScheduleModule;
+import com.thiagoalexb.dev.clockin.di.modules.schedule.ScheduleScope;
+import com.thiagoalexb.dev.clockin.di.modules.schedule.ScheduleViewModelsModule;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -12,9 +12,9 @@ import dagger.android.ContributesAndroidInjector;
 @Module
 public abstract class ActivityBuilderModule {
 
-    @MainScope
+    @ScheduleScope
     @ContributesAndroidInjector(
-            modules = { MainFragmentBuilderModule.class, MainViewModelsModule.class, MainModule.class}
+            modules = { ScheduleFragmentBuilderModule.class, ScheduleViewModelsModule.class, ScheduleModule.class}
     )
     abstract MainActivity contributeMainActivity();
 

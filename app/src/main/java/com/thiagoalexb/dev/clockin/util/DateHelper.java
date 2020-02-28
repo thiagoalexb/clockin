@@ -13,22 +13,36 @@ public class DateHelper {
     }
 
     public static String getMediumDate(LocalDateTime localDateTime){
+        if(localDateTime == null) return "";
+
         String dateFormatted = localDateTime.format(
                 DateTimeFormatter.ofLocalizedDate( FormatStyle.MEDIUM )
-                        .withLocale(new Locale("pt", "br")));
+                        .withLocale(getLocale()));
 
         return dateFormatted;
     }
 
     public static String getDate(LocalDateTime localDateTime, String pattern){
+        if(localDateTime == null) return "";
+
         DateTimeFormatter patterDateTimeFormattern = DateTimeFormatter.ofPattern(pattern);
         String date = localDateTime.format(patterDateTimeFormattern);
         return date;
     }
 
     public static String getHourMinute(LocalDateTime localDateTime){
+        if(localDateTime == null) return "";
+
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern("HH:mm");
         String hourMinute = localDateTime.format(pattern);
         return hourMinute;
+    }
+
+    public static Locale getLocale(){
+        return new Locale("pt", "br");
+    }
+
+    public static String getCurrentMonth(){
+        return LocalDateTime.now().getMonth().getDisplayName(TextStyle.FULL, DateHelper.getLocale());
     }
 }

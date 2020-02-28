@@ -1,18 +1,18 @@
-package com.thiagoalexb.dev.clockin.di.main;
+package com.thiagoalexb.dev.clockin.di.modules.schedule;
 
 import com.thiagoalexb.dev.clockin.ui.address.AddressFragment;
-import com.thiagoalexb.dev.clockin.ui.main.MainFragment;
+import com.thiagoalexb.dev.clockin.ui.schedule.ScheduleFragment;
 import com.thiagoalexb.dev.clockin.ui.report.ReportFragment;
-import com.thiagoalexb.dev.clockin.ui.schedule.EditScheduleFragment;
+import com.thiagoalexb.dev.clockin.ui.editschedule.EditScheduleFragment;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 
 @Module
-public abstract class MainFragmentBuilderModule {
+public abstract class ScheduleFragmentBuilderModule {
 
     @ContributesAndroidInjector
-    abstract MainFragment constributeMainFragment();
+    abstract ScheduleFragment constributeMainFragment();
 
     @ContributesAndroidInjector
     abstract AddressFragment constributeAddressFragment();

@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.thiagoalexb.dev.clockin.data.models.Address;
 import com.thiagoalexb.dev.clockin.service.AddressService;
+import com.thiagoalexb.dev.clockin.util.Resource;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,56 +19,65 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 
 public class AddressViewModel extends ViewModel {
 
-    private static final String TAG = "AddressViewModel";
-
+    private final CompositeDisposable disposable;
     private final Geocoder geocoder;
     private final AddressService addressService;
     private final MutableLiveData<Long> statusInsert;
     private final MutableLiveData<Address> address;
+    private final MutableLiveData<Resource<Address>> addressResource;
     private final MutableLiveData<Boolean> isValid;
-    private final MutableLiveData<Boolean> isLoading;
 
     @Inject
     public AddressViewModel(Geocoder geocoder, AddressService addressService) {
+
+        this.disposable = new CompositeDisposable();
         this.geocoder = geocoder;
         this.addressService = addressService;
-
         this.statusInsert = new MutableLiveData<>();
-        this.address = new MutableLiveData<>();
-        this.address.setValue(new Address());
+        this.address = new MutableLiveData<>(new Address());
+        this.addressResource = new MutableLiveData<>();
         this.isValid = new MutableLiveData<>(false);
-        this.isLoading = new MutableLiveData<>();
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        disposable.clear();
     }
 
     public void checkAddress() {
-        isLoading.setValue(true);
-        addressService.get()
+        addressResource.setValue(Resource.loading(null));
+        disposable.add(addressService.get()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((addressDb, throwable) -> {
-                    isLoading.setValue(false);
-                    if (addressDb == null) return;
-                    address.setValue(addressDb);
-                });
+                .subscribe((address, throwable) -> {
+                    if (address == null || throwable != null) {
+                        addressResource.setValue(Resource.success(null));
+                        return;
+                    }
+                    this.address.setValue(address);
+                    addressResource.setValue(Resource.success(address));
+                }));
     }
 
     public void insert() {
-        isLoading.setValue(true);
+        addressResource.setValue(Resource.loading(null));
         Address address = getLocation(getAddress().getValue());
 
         if (address == null) {
-            isLoading.setValue(false);
+            addressResource.setValue(Resource.success(null));
             return;
         }
 
-        addressService.insert(address)
+        disposable.add(addressService.insert(address)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((status, throwable) -> {
                     statusInsert.setValue(status);
-                    isLoading.setValue(false);
-                });
+                    addressResource.setValue(Resource.success(null));
+                }));
     }
 
 
@@ -93,13 +103,12 @@ public class AddressViewModel extends ViewModel {
     }
 
     private String getAddressFormatted(@NotNull Address address) {
-        String addressFormatted = address.getStreet()
+
+        return address.getStreet()
                 + ", " + address.getNumber()
                 + ", " + address.getNeighborhood()
                 + " - " + address.getCity()
                 + ", " + address.getState();
-
-        return addressFormatted;
     }
 
     public LiveData<Address> getAddress(){
@@ -116,7 +125,7 @@ public class AddressViewModel extends ViewModel {
 
     }
 
-    public LiveData<Boolean> getIsLoading(){
-        return isLoading;
+    public LiveData<Resource<Address>> getAddressResource(){
+        return addressResource;
     }
 }

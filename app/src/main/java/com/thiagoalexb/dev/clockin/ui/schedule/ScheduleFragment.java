@@ -1,4 +1,4 @@
-package com.thiagoalexb.dev.clockin.ui.main;
+package com.thiagoalexb.dev.clockin.ui.schedule;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -26,14 +26,17 @@ import com.thiagoalexb.dev.clockin.databinding.FragmentMainBinding;
 import com.thiagoalexb.dev.clockin.ui.BaseFragment;
 import com.thiagoalexb.dev.clockin.util.Resource;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
 
-public class MainFragment extends BaseFragment {
+public class ScheduleFragment extends BaseFragment {
 
     private static final int PERMISSIONS_REQUEST_LOCATION_CODE = 177;
 
@@ -42,20 +45,20 @@ public class MainFragment extends BaseFragment {
     @Inject
     public ScheduleAdapter scheduleAdapter;
 
-    private MainViewModel mainViewModel;
+    private ScheduleViewModel scheduleViewModel;
     private FragmentMainBinding fragmentMainBinding;
 
-    public MainFragment() {
+    public ScheduleFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        mainViewModel = ViewModelProviders.of(this, modelProviderFactory).get(MainViewModel.class);
+        scheduleViewModel = ViewModelProviders.of(this, modelProviderFactory).get(ScheduleViewModel.class);
 
         fragmentMainBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false);
 
-        fragmentMainBinding.setMainViewModel(mainViewModel);
+        fragmentMainBinding.setMainViewModel(scheduleViewModel);
 
         fragmentMainBinding.setLifecycleOwner(this);
 
@@ -75,7 +78,7 @@ public class MainFragment extends BaseFragment {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if(hasLocationPermission())
-            mainViewModel.checkAddress();
+            scheduleViewModel.checkAddress();
         else
             createDialogLocationNotification();
     }
@@ -84,7 +87,7 @@ public class MainFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
         if (hasLocationPermission())
-            mainViewModel.checkAddress();
+            scheduleViewModel.checkAddress();
     }
 
     @Override
@@ -95,7 +98,7 @@ public class MainFragment extends BaseFragment {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.address_menu_item:
                 navigateToAddress(getView());
@@ -114,8 +117,8 @@ public class MainFragment extends BaseFragment {
     }
 
     private boolean hasLocationPermission(){
-        int permissionLocationFine = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
-        int permissionLocationCoarse = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
+        int permissionLocationFine = ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.ACCESS_FINE_LOCATION);
+        int permissionLocationCoarse = ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.ACCESS_FINE_LOCATION);
         return permissionLocationFine == PackageManager.PERMISSION_GRANTED && permissionLocationCoarse == PackageManager.PERMISSION_GRANTED;
     }
 
@@ -133,7 +136,7 @@ public class MainFragment extends BaseFragment {
     }
 
     private void createDialogLocationNotification(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
 
         builder.setTitle(R.string.location);
         builder.setMessage(R.string.location_permission_mandatory);
@@ -150,14 +153,12 @@ public class MainFragment extends BaseFragment {
 
     private void setObservers(){
 
-        mainViewModel.getAddress().removeObservers(getViewLifecycleOwner());
-        mainViewModel.getAddress().observe(getViewLifecycleOwner(), address -> {
-            validateAddress(address);
-        });
+        scheduleViewModel.getAddress().removeObservers(getViewLifecycleOwner());
+        scheduleViewModel.getAddress().observe(getViewLifecycleOwner(), this::validateAddress);
 
-        mainViewModel.getSchedules().removeObservers(getViewLifecycleOwner());
-        mainViewModel.getSchedules().observe(getViewLifecycleOwner(), resource -> {
-            setLoading(resource.status == Resource.Status.LOADING);
+        scheduleViewModel.getSchedules().removeObservers(getViewLifecycleOwner());
+        scheduleViewModel.getSchedules().observe(getViewLifecycleOwner(), resource -> {
+            setLoading(resource.status);
             validateSchedules(resource.data);
         });
     }
@@ -166,7 +167,7 @@ public class MainFragment extends BaseFragment {
         if(address == null)
             navigateToAddress(getView());
         else
-            mainViewModel.checkSchedules(LocalDateTime.now().getMonthValue());
+            scheduleViewModel.checkSchedules(LocalDateTime.now().getMonthValue());
     }
 
     private void validateSchedules(List<Schedule> schedules){

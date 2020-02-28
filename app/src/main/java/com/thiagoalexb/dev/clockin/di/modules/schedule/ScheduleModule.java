@@ -1,4 +1,4 @@
-package com.thiagoalexb.dev.clockin.di.main;
+package com.thiagoalexb.dev.clockin.di.modules.schedule;
 
 import android.app.Application;
 import android.location.Geocoder;
@@ -9,7 +9,7 @@ import com.thiagoalexb.dev.clockin.data.repository.ScheduleRepository;
 import com.thiagoalexb.dev.clockin.service.AddressService;
 import com.thiagoalexb.dev.clockin.service.ReportService;
 import com.thiagoalexb.dev.clockin.service.ScheduleService;
-import com.thiagoalexb.dev.clockin.ui.main.ScheduleAdapter;
+import com.thiagoalexb.dev.clockin.ui.schedule.ScheduleAdapter;
 
 
 import javax.inject.Named;
@@ -18,52 +18,40 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-public class MainModule {
+public class ScheduleModule {
 
-    @MainScope
+    @ScheduleScope
     @Provides
     @Named("search")
     static ScheduleAdapter provideAdapter(){
         return new ScheduleAdapter(false);
     }
 
-    @MainScope
+    @ScheduleScope
     @Provides
     static ScheduleAdapter provideAdapterSearch(){
         return new ScheduleAdapter(true);
     }
 
-    @MainScope
+    @ScheduleScope
     @Provides
-    static AddressService providerAddressService(AddressRepository addressRepository){
-        return new AddressService(addressRepository);
+    static AddressService providerAddressService(Application application){
+        return new AddressService(new AddressRepository(application));
     }
 
-    @MainScope
+    @ScheduleScope
     @Provides
-    static AddressRepository providerAddressRepository(Application application){
-        return new AddressRepository(application);
+    static ScheduleService providerScheduleService(Application application){
+        return new ScheduleService(new ScheduleRepository(application));
     }
 
-    @MainScope
-    @Provides
-    static ScheduleService providerScheduleService(ScheduleRepository scheduleRepository){
-        return new ScheduleService(scheduleRepository);
-    }
-
-    @MainScope
-    @Provides
-    static ScheduleRepository providerScheduleRepository(Application application){
-        return new ScheduleRepository(application);
-    }
-
-    @MainScope
+    @ScheduleScope
     @Provides
     static ReportService providerReportService(ScheduleService scheduleService){
         return new ReportService(scheduleService);
     }
 
-    @MainScope
+    @ScheduleScope
     @Provides
     static Geocoder providerGeocoder(Application application){
         return new Geocoder(application);

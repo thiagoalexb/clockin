@@ -8,7 +8,7 @@
 
         <variable
             name="editScheduleViewModel"
-            type="com.thiagoalexb.dev.clockin.ui.schedule.EditScheduleViewModel" />
+            type="com.thiagoalexb.dev.clockin.ui.editschedule.EditScheduleViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

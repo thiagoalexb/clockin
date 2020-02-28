@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 
 import com.thiagoalexb.dev.clockin.R;
+import com.thiagoalexb.dev.clockin.util.Resource;
 
 import dagger.android.support.DaggerFragment;
 
@@ -21,7 +22,7 @@ public class BaseFragment extends DaggerFragment {
         containerLoading = getActivity().findViewById(R.id.container_loading_linear_layout);
     }
 
-    protected void setLoading(Boolean isVisible){
-        containerLoading.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    protected void setLoading(Resource.Status status){
+        containerLoading.setVisibility(status == Resource.Status.LOADING ? View.VISIBLE : View.GONE);
     }
 }

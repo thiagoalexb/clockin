@@ -1,12 +1,10 @@
-package com.thiagoalexb.dev.clockin.ui.schedule;
+package com.thiagoalexb.dev.clockin.ui.editschedule;
 
 
 import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
@@ -16,20 +14,22 @@ import android.view.ViewGroup;
 import android.widget.TimePicker;
 
 import com.thiagoalexb.dev.clockin.R;
-import com.thiagoalexb.dev.clockin.databinding.FragmentAddressBinding;
 import com.thiagoalexb.dev.clockin.databinding.FragmentEditScheduleBinding;
 import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelProviderFactory;
-import com.thiagoalexb.dev.clockin.ui.main.ScheduleAdapter;
+import com.thiagoalexb.dev.clockin.ui.BaseFragment;
+import com.thiagoalexb.dev.clockin.ui.schedule.ScheduleAdapter;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
-import java.util.function.Function;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 
 
-public class EditScheduleFragment extends DaggerFragment {
+public class EditScheduleFragment extends BaseFragment {
 
     @Inject
     public ViewModelProviderFactory modelProviderFactory;
@@ -42,7 +42,7 @@ public class EditScheduleFragment extends DaggerFragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         editScheduleViewModel = ViewModelProviders.of(this, modelProviderFactory).get(EditScheduleViewModel.class);
@@ -65,8 +65,8 @@ public class EditScheduleFragment extends DaggerFragment {
     private void checkBundle(){
         Bundle bundle = getArguments();
 
-        if(bundle.containsKey(ScheduleAdapter.ID_KEY)){
-            Integer scheduleId = bundle.getInt(ScheduleAdapter.ID_KEY);
+        if(bundle != null && bundle.containsKey(ScheduleAdapter.ID_KEY)){
+            int scheduleId = bundle.getInt(ScheduleAdapter.ID_KEY);
             editScheduleViewModel.checkSchedule(scheduleId);
         }
     }
@@ -75,7 +75,12 @@ public class EditScheduleFragment extends DaggerFragment {
         editScheduleViewModel.getStatusInsert().removeObservers(getViewLifecycleOwner());
         editScheduleViewModel.getStatusInsert().observe(getViewLifecycleOwner(), status -> {
             if(status != null)
-                Navigation.findNavController(getView()).navigate(R.id.action_editScheduleFragment_to_mainFragment);
+                Navigation.findNavController(Objects.requireNonNull(getView())).navigate(R.id.action_editScheduleFragment_to_mainFragment);
+        });
+
+        editScheduleViewModel.getScheduleResource().removeObservers(getViewLifecycleOwner());
+        editScheduleViewModel.getScheduleResource().observe(getViewLifecycleOwner(), resource -> {
+           setLoading(resource.status);
         });
     }
 
@@ -99,8 +104,6 @@ public class EditScheduleFragment extends DaggerFragment {
         else
             timePickerDialog = new TimePickerDialog(getContext(), this::onDepartureTimeSet, now.getHour(), now.getMinute(), true);
 
-        timePickerDialog.setTitle("Coloque o seu horário");
-
         timePickerDialog.setOnDismissListener(dialog -> {
             fragmentEditScheduleBinding.entryTextView.clearFocus();
             fragmentEditScheduleBinding.departureTextView.clearFocus();
@@ -109,13 +112,15 @@ public class EditScheduleFragment extends DaggerFragment {
         timePickerDialog.show();
     }
 
-    public void onEntryTimeSet(TimePicker view, int hourOfDay, int minute){
-        fragmentEditScheduleBinding.entryTextView.setText(hourOfDay + ":" + minute);
+    private void onEntryTimeSet(TimePicker view, int hourOfDay, int minute){
+        String entryTime = hourOfDay + ":" + minute;
+        fragmentEditScheduleBinding.entryTextView.setText(entryTime);
         fragmentEditScheduleBinding.entryTextView.clearFocus();
     }
 
-    public void onDepartureTimeSet(TimePicker view, int hourOfDay, int minute){
-        fragmentEditScheduleBinding.departureTextView.setText(hourOfDay + ":" + minute);
+    private void onDepartureTimeSet(TimePicker view, int hourOfDay, int minute){
+        String departureTime = hourOfDay + ":" + minute;
+        fragmentEditScheduleBinding.departureTextView.setText(departureTime);
         fragmentEditScheduleBinding.departureTextView.clearFocus();
     }
 

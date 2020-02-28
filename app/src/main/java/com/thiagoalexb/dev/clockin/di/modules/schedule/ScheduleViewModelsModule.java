@@ -1,24 +1,24 @@
-package com.thiagoalexb.dev.clockin.di.main;
+package com.thiagoalexb.dev.clockin.di.modules.schedule;
 
 import androidx.lifecycle.ViewModel;
 
 import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelKey;
 import com.thiagoalexb.dev.clockin.ui.address.AddressViewModel;
-import com.thiagoalexb.dev.clockin.ui.main.MainViewModel;
+import com.thiagoalexb.dev.clockin.ui.schedule.ScheduleViewModel;
 import com.thiagoalexb.dev.clockin.ui.report.ReportViewModel;
-import com.thiagoalexb.dev.clockin.ui.schedule.EditScheduleViewModel;
+import com.thiagoalexb.dev.clockin.ui.editschedule.EditScheduleViewModel;
 
 import dagger.Binds;
 import dagger.Module;
 import dagger.multibindings.IntoMap;
 
 @Module
-public abstract class MainViewModelsModule {
+public abstract class ScheduleViewModelsModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(MainViewModel.class)
-    public abstract ViewModel bindMainViewModel(MainViewModel viewModel);
+    @ViewModelKey(ScheduleViewModel.class)
+    public abstract ViewModel bindMainViewModel(ScheduleViewModel viewModel);
 
     @Binds
     @IntoMap

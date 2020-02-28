@@ -1,4 +1,4 @@
-package com.thiagoalexb.dev.clockin.di.main;
+package com.thiagoalexb.dev.clockin.di.modules.schedule;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -9,5 +9,5 @@ import javax.inject.Scope;
 @Scope
 @Documented
 @Retention(value = RetentionPolicy.RUNTIME)
-public @interface MainScope {
+public @interface ScheduleScope {
 }

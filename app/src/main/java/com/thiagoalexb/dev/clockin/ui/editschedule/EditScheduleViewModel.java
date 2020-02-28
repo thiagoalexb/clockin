@@ -1,4 +1,4 @@
-package com.thiagoalexb.dev.clockin.ui.schedule;
+package com.thiagoalexb.dev.clockin.ui.editschedule;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -12,10 +12,12 @@ import com.thiagoalexb.dev.clockin.util.Resource;
 import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 
 
 public class EditScheduleViewModel extends ViewModel {
 
+    private final CompositeDisposable disposable;
     private final MutableLiveData<Resource<Schedule>> scheduleResource;
     private final MutableLiveData<Schedule> schedule;
     private final MutableLiveData<Long> statusInsert;
@@ -25,30 +27,37 @@ public class EditScheduleViewModel extends ViewModel {
     @Inject
     public EditScheduleViewModel(ScheduleService scheduleService) {
 
+        this.disposable = new CompositeDisposable();
         this.scheduleResource = new MutableLiveData<>();
         this.schedule = new MutableLiveData<>();
         this.statusInsert = new MutableLiveData<>();
         this.scheduleService = scheduleService;
     }
 
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        disposable.clear();
+    }
+
     public void checkSchedule(int id){
+
         scheduleResource.setValue(Resource.loading(null));
-        scheduleService.getById(id)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((scheduleDb, throwable) -> {
-                    scheduleResource.setValue(Resource.success(scheduleDb));
-                    schedule.setValue(scheduleDb);
-                });
+        disposable.add(scheduleService.getById(id)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe((scheduleDb, throwable) -> {
+                            scheduleResource.setValue(Resource.success(scheduleDb));
+                            schedule.setValue(scheduleDb);
+                        }));
     }
 
     public void save(){
-        Schedule schedule = this.schedule.getValue();
 
-        scheduleService.save(schedule)
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe((status, throwable) -> {
-                                statusInsert.setValue(status);
-                            });
+        disposable.add(scheduleService.save(this.schedule.getValue())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe((status, throwable) -> {
+                            statusInsert.setValue(status);
+                        }));
     }
 
     public LiveData<Resource<Schedule>> getScheduleResource(){

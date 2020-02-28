@@ -19,6 +19,8 @@ import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelProviderFactory;
 import com.thiagoalexb.dev.clockin.geofence.Geofencing;
 import com.thiagoalexb.dev.clockin.ui.BaseFragment;
 
+import java.util.Objects;
+
 import javax.inject.Inject;
 
 public class AddressFragment extends BaseFragment {
@@ -55,13 +57,11 @@ public class AddressFragment extends BaseFragment {
     private void setObservers() {
 
         addressViewModel.getStatusInsert().removeObservers(getViewLifecycleOwner());
-        addressViewModel.getStatusInsert().observe(getViewLifecycleOwner(), status -> {
-            validateInsert(status);
-        });
+        addressViewModel.getStatusInsert().observe(getViewLifecycleOwner(), this::validateInsert);
 
-        addressViewModel.getIsLoading().removeObservers(getViewLifecycleOwner());
-        addressViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            setLoading(isLoading);
+        addressViewModel.getAddressResource().removeObservers(getViewLifecycleOwner());
+        addressViewModel.getAddressResource().observe(getViewLifecycleOwner(), resource -> {
+            setLoading(resource.status);
         });
     }
 
@@ -72,14 +72,19 @@ public class AddressFragment extends BaseFragment {
             return;
         }
 
+        setGeofencing();
+    }
+
+    private void setGeofencing(){
+
         Address address = addressViewModel.getAddress().getValue();
 
         geofencing = new Geofencing(getContext());
 
-        geofencing.updateGeofencesList(address);
+        geofencing.updateGeofencesList(Objects.requireNonNull(address));
 
         geofencing.registerAllGeofences();
 
-        Navigation.findNavController(getView()).navigate(R.id.action_addressFragment_to_mainFragment);
+        Navigation.findNavController(Objects.requireNonNull(getView())).navigate(R.id.action_addressFragment_to_mainFragment);
     }
 }
