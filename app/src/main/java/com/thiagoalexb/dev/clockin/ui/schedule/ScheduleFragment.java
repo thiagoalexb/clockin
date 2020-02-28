@@ -24,6 +24,7 @@ import com.thiagoalexb.dev.clockin.databinding.FragmentScheduleBinding;
 import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelProviderFactory;
 import com.thiagoalexb.dev.clockin.R;
 import com.thiagoalexb.dev.clockin.ui.BaseFragment;
+import com.thiagoalexb.dev.clockin.ui.animation.ViewAnimation;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -46,6 +47,7 @@ public class ScheduleFragment extends BaseFragment {
 
     private ScheduleViewModel scheduleViewModel;
     private FragmentScheduleBinding fragmentScheduleBinding;
+    private Boolean isRotate = false;
 
     public ScheduleFragment() {
     }
@@ -124,6 +126,11 @@ public class ScheduleFragment extends BaseFragment {
     private void setElements() {
         scheduleAdapter.setSchedules(new ArrayList<>());
         fragmentScheduleBinding.schedulesRecyclerView.setAdapter(scheduleAdapter);
+        fragmentScheduleBinding.addDayFloatingActionButton.setOnClickListener(view -> {
+            isRotate = ViewAnimation.rotateFab(view, !isRotate);
+//            scheduleViewModel.addDay();
+            //https://medium.com/better-programming/animated-fab-button-with-more-options-2dcf7118fff6
+        });
     }
 
     private void navigateToAddress(View view) {
