@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.thiagoalexb.dev.clockin.R;
 import com.thiagoalexb.dev.clockin.broadcasts.GeofenceBroadcastReceiver;
 import com.thiagoalexb.dev.clockin.data.models.Address;
 
@@ -30,7 +31,7 @@ import javax.inject.Inject;
 public class Geofencing implements ResultCallback {
 
     public static final String TAG = Geofencing.class.getSimpleName();
-    private static final float GEOFENCE_RADIUS = 150;
+    private static final float GEOFENCE_RADIUS = 300f;
 
     private List<Geofence> geofences;
     private PendingIntent pendingIntent;
@@ -39,7 +40,7 @@ public class Geofencing implements ResultCallback {
 
     @Override
     public void onResult(@NonNull Result result) {
-        Log.e(TAG, result.getStatus().toString());
+        Log.d(TAG, "STATUS GEOFENCE = " + result.getStatus().toString());
     }
 
 
@@ -57,7 +58,7 @@ public class Geofencing implements ResultCallback {
 
                     })
                     .addOnFailureListener(e -> {
-                        Toast.makeText(context, "Não foi possível ativar o geofence, salve novamente o endereço", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, context.getString(R.string.error_geofence), Toast.LENGTH_LONG).show();
                     });
         });
     }

@@ -24,6 +24,7 @@
             app:srcCompat="@drawable/background"
             tools:srcCompat="@drawable/background"
             android:scaleType="centerCrop"
+            android:contentDescription="@string/content_description_background"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

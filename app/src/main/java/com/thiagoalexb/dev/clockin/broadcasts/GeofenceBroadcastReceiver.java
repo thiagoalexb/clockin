@@ -42,7 +42,6 @@ public class GeofenceBroadcastReceiver extends DaggerBroadcastReceiver {
 
         mDisposable = new CompositeDisposable();
 
-
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
         sendNotification(context, geofenceTransition);
@@ -53,22 +52,22 @@ public class GeofenceBroadcastReceiver extends DaggerBroadcastReceiver {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
-        NotificationChannel notificationChannel = new NotificationChannel("ID", "Name", importance);
+        NotificationChannel notificationChannel = new NotificationChannel(context.getString(R.string.id_channel), context.getString(R.string.name_channel), importance);
         notificationManager.createNotificationChannel(notificationChannel);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, notificationChannel.getId());
 
         if (transitionType == Geofence.GEOFENCE_TRANSITION_ENTER) {
-            builder.setSmallIcon(R.drawable.ic_volume_off_white_24dp)
+            builder.setSmallIcon(R.drawable.ic_entry)
                     .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-                            R.drawable.ic_volume_off_white_24dp))
-                    .setContentTitle("Entrou na empresa");
+                            R.drawable.ic_entry))
+                    .setContentTitle(context.getString(R.string.entry_company));
 
             scheduleService.saveEntry();
         } else if (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT) {
-            builder.setSmallIcon(R.drawable.ic_volume_up_white_24dp)
+            builder.setSmallIcon(R.drawable.ic_departure)
                     .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-                            R.drawable.ic_volume_up_white_24dp))
-                    .setContentTitle("Saiu da empresa");
+                            R.drawable.ic_departure))
+                    .setContentTitle(context.getString(R.string.departure_company));
 
             scheduleService.saveDeparture();
         }

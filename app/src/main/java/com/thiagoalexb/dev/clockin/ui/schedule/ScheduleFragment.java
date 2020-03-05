@@ -3,6 +3,7 @@ package com.thiagoalexb.dev.clockin.ui.schedule;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,9 +13,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -38,7 +36,7 @@ import javax.inject.Inject;
 
 public class ScheduleFragment extends BaseFragment {
 
-    private static final int PERMISSIONS_REQUEST_LOCATION_CODE = 177;
+    private static final int PERMISSIONS_REQUEST = 177;
 
     @Inject
     public ViewModelProviderFactory modelProviderFactory;
@@ -92,14 +90,28 @@ public class ScheduleFragment extends BaseFragment {
     }
 
     private void getLocationPermission() {
-        if (!hasLocationPermission())
-            requestPermissions(new String[]{ android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION }, PERMISSIONS_REQUEST_LOCATION_CODE);
+        if (hasLocationPermission()) return;
+
+        requestPermissions(getPermissionsToAsk(), PERMISSIONS_REQUEST);
+    }
+
+    private String[] getPermissionsToAsk(){
+        if(Build.VERSION.SDK_INT >=  Build.VERSION_CODES.Q)
+            return new String[]{ android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION };
+        else
+            return new String[]{ android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION };
     }
 
     private boolean hasLocationPermission(){
         int permissionLocationFine = ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.ACCESS_FINE_LOCATION);
-        int permissionLocationCoarse = ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.ACCESS_FINE_LOCATION);
-        return permissionLocationFine == PackageManager.PERMISSION_GRANTED && permissionLocationCoarse == PackageManager.PERMISSION_GRANTED;
+        int permissionLocationCoarse = ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.ACCESS_COARSE_LOCATION);
+        if(Build.VERSION.SDK_INT <  Build.VERSION_CODES.Q)
+            return permissionLocationFine == PackageManager.PERMISSION_GRANTED && permissionLocationCoarse == PackageManager.PERMISSION_GRANTED;
+
+        int permissionBackgroundLocation = ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+        return permissionLocationFine == PackageManager.PERMISSION_GRANTED && permissionLocationCoarse == PackageManager.PERMISSION_GRANTED && permissionBackgroundLocation == PackageManager.PERMISSION_GRANTED;
+
+
     }
 
     private void setElements() {
@@ -143,7 +155,7 @@ public class ScheduleFragment extends BaseFragment {
         builder.setTitle(R.string.location);
         builder.setMessage(R.string.location_permission_mandatory);
 
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 getLocationPermission();
             }

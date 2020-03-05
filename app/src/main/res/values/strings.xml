@@ -15,7 +15,7 @@
     <string name="location">Localização</string>
     <string name="address_mandatory">Você será redirecionado para tela de cadastro de endereço. \n Obrigado!</string>
     <string name="location_permission_mandatory">Para o app funcionar é necessário permissão de localização.</string>
-    <string name="ok">ok</string>
+    <string name="OK">OK</string>
     <string name="day">Dia</string>
     <string name="address_not_found">Endereço não encontrado</string>
     <string name="error_address_not_save">Erro ao cadastrar endereço, tente novamente</string>
@@ -30,4 +30,11 @@
     <string name="date">Data</string>
     <string name="entryTime">Hora Entrada</string>
     <string name="departureTime">Hora Saida</string>
+    <string name="error_geofence">Não foi possível ativar o geofence, salve novamente o endereço</string>
+    <string name="entry_company">Entrou na empresa</string>
+    <string name="departure_company">Saiu da empresa</string>
+    <string name="id_channel">159</string>
+    <string name="name_channel">clockinChannel</string>
+    <string name="content_description_background">Imagem de fundo do cabeçalho</string>
+    <string name="content_description_edit">Imagem de edição do horario</string>
 </resources>
