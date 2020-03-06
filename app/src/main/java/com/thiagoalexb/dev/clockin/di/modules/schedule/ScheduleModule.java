@@ -6,6 +6,7 @@ import android.location.Geocoder;
 
 import com.thiagoalexb.dev.clockin.data.repository.AddressRepository;
 import com.thiagoalexb.dev.clockin.data.repository.ScheduleRepository;
+import com.thiagoalexb.dev.clockin.network.AddressApi;
 import com.thiagoalexb.dev.clockin.service.AddressService;
 import com.thiagoalexb.dev.clockin.service.ReportService;
 import com.thiagoalexb.dev.clockin.service.ScheduleService;
@@ -16,6 +17,7 @@ import javax.inject.Named;
 
 import dagger.Module;
 import dagger.Provides;
+import retrofit2.Retrofit;
 
 @Module
 public class ScheduleModule {
@@ -35,8 +37,21 @@ public class ScheduleModule {
 
     @ScheduleScope
     @Provides
-    static AddressService providerAddressService(Application application){
-        return new AddressService(new AddressRepository(application));
+    static AddressApi provideAddressApi(Retrofit retrofit){
+        return retrofit.create(AddressApi.class);
+    }
+
+    @ScheduleScope
+    @Provides
+    static AddressRepository providerAddressRepository(Application application, AddressApi addressApi){
+        return new AddressRepository(application, addressApi);
+    }
+
+
+    @ScheduleScope
+    @Provides
+    static AddressService providerAddressService(AddressRepository addressRepository){
+        return new AddressService(addressRepository);
     }
 
     @ScheduleScope

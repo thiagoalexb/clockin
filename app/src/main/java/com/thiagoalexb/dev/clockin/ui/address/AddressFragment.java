@@ -1,6 +1,9 @@
 package com.thiagoalexb.dev.clockin.ui.address;
 
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import androidx.databinding.DataBindingUtil;
@@ -49,9 +52,27 @@ public class AddressFragment extends BaseFragment {
 
         this.setObservers();
 
+        this.setEvents();
+
         addressViewModel.checkAddress();
 
         return fragmentAddressBinding.getRoot();
+    }
+
+    private void setEvents() {
+        fragmentAddressBinding.insertAddressButton.setOnClickListener(view ->{
+            if(!isNetworkAvailable()) {
+                Toast.makeText(getContext(), getString(R.string.internet_warning), Toast.LENGTH_LONG).show();
+                return;
+            }
+            addressViewModel.insert();
+        });
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     private void setObservers() {

@@ -1,6 +1,7 @@
 package com.thiagoalexb.dev.clockin.ui.address;
 
 import android.location.Geocoder;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -64,51 +65,37 @@ public class AddressViewModel extends ViewModel {
     }
 
     public void insert() {
+
+        Address address = getAddress().getValue();
         addressResource.setValue(Resource.loading(null));
-        Address address = getLocation(getAddress().getValue());
+        disposable.add(addressService.get(address)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe((addressApiResponses, throwable) -> {
+                    if(throwable != null) {
+                        statusInsert.setValue(null);
+                        return;
+                    }
 
-        if (address == null) {
-            addressResource.setValue(Resource.success(null));
-            return;
-        }
+                    if(addressApiResponses.size() == 0) {
+                        statusInsert.setValue(null);
+                        return;
+                    }
 
-        disposable.add(addressService.insert(address)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((status, throwable) -> {
-                    statusInsert.setValue(status);
-                    addressResource.setValue(Resource.success(null));
-                }));
-    }
+                    address.setLatitude(Float.parseFloat(addressApiResponses.get(0).getLat()));
+                    address.setLongitude(Float.parseFloat(addressApiResponses.get(0).getLon()));
 
+                    if(address.getAddressUUID() == null)
+                        address.setAddressUUID(UUID.randomUUID().toString());
 
-    @Nullable
-    private Address getLocation(Address address) {
-        try {
-            List<android.location.Address> addresses;
-            addresses = geocoder.getFromLocationName(getAddressFormatted(address), 1);
+                    disposable.add(addressService.insert(address)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe((status, throwableInsert) -> {
+                                statusInsert.setValue(status);
+                                addressResource.setValue(Resource.success(null));
+                            }));
+                })
+        );
 
-            android.location.Address location = addresses.get(0);
-
-            address.setLatitude(location.getLatitude());
-            address.setLongitude(location.getLongitude());
-
-            if(address.getAddressUUID() == null)
-                address.setAddressUUID(UUID.randomUUID().toString());
-
-            return address;
-        } catch (Exception e) {
-            statusInsert.setValue(null);
-            return null;
-        }
-    }
-
-    private String getAddressFormatted(@NotNull Address address) {
-
-        return address.getStreet()
-                + ", " + address.getNumber()
-                + ", " + address.getNeighborhood()
-                + " - " + address.getCity()
-                + ", " + address.getState();
     }
 
     public LiveData<Address> getAddress(){

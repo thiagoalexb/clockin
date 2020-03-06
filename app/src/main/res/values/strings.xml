@@ -37,4 +37,5 @@
     <string name="name_channel">clockinChannel</string>
     <string name="content_description_background">Imagem de fundo do cabeçalho</string>
     <string name="content_description_edit">Imagem de edição do horario</string>
+    <string name="internet_warning">É necessário internet para cadastrar o endereço</string>
 </resources>
