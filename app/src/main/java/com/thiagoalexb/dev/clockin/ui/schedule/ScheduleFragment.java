@@ -67,9 +67,14 @@ public class ScheduleFragment extends BaseFragment {
 
         setElements();
 
-        setHasOptionsMenu(true);
-
         return fragmentScheduleBinding.getRoot();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (hasLocationPermission())
+            scheduleViewModel.checkAddress();
     }
 
     @Override
@@ -80,13 +85,6 @@ public class ScheduleFragment extends BaseFragment {
             scheduleViewModel.checkAddress();
         else
             createDialogLocationNotification();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (hasLocationPermission())
-            scheduleViewModel.checkAddress();
     }
 
     private void getLocationPermission() {
@@ -105,13 +103,25 @@ public class ScheduleFragment extends BaseFragment {
     private boolean hasLocationPermission(){
         int permissionLocationFine = ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.ACCESS_FINE_LOCATION);
         int permissionLocationCoarse = ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.ACCESS_COARSE_LOCATION);
-        if(Build.VERSION.SDK_INT <  Build.VERSION_CODES.Q)
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
             return permissionLocationFine == PackageManager.PERMISSION_GRANTED && permissionLocationCoarse == PackageManager.PERMISSION_GRANTED;
 
         int permissionBackgroundLocation = ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.ACCESS_BACKGROUND_LOCATION);
         return permissionLocationFine == PackageManager.PERMISSION_GRANTED && permissionLocationCoarse == PackageManager.PERMISSION_GRANTED && permissionBackgroundLocation == PackageManager.PERMISSION_GRANTED;
 
 
+    }
+
+    private void setObservers(){
+
+        scheduleViewModel.getAddress().removeObservers(getViewLifecycleOwner());
+        scheduleViewModel.getAddress().observe(getViewLifecycleOwner(), this::validateAddress);
+
+        scheduleViewModel.getSchedules().removeObservers(getViewLifecycleOwner());
+        scheduleViewModel.getSchedules().observe(getViewLifecycleOwner(), resource -> {
+            setLoading(resource.status);
+            validateSchedules(resource.data);
+        });
     }
 
     private void setElements() {
@@ -123,29 +133,38 @@ public class ScheduleFragment extends BaseFragment {
         ViewAnimation.init(fragmentScheduleBinding.addDayFloatingActionButton, fragmentScheduleBinding.addDayTextView);
 
         fragmentScheduleBinding.actionsFloatingActionButton.setOnClickListener(view -> {
-            isRotate = ViewAnimation.rotateFab(view, !isRotate);
-
-            if(isRotate){
-                ViewAnimation.showIn(fragmentScheduleBinding.reportFloatingActionButton, fragmentScheduleBinding.reportTextView);
-                ViewAnimation.showIn(fragmentScheduleBinding.addressFloatingActionButton, fragmentScheduleBinding.addressTextView);
-                ViewAnimation.showIn(fragmentScheduleBinding.addDayFloatingActionButton, fragmentScheduleBinding.addDayTextView);
-            }else{
-                ViewAnimation.showOut(fragmentScheduleBinding.reportFloatingActionButton, fragmentScheduleBinding.reportTextView);
-                ViewAnimation.showOut(fragmentScheduleBinding.addressFloatingActionButton, fragmentScheduleBinding.addressTextView);
-                ViewAnimation.showOut(fragmentScheduleBinding.addDayFloatingActionButton, fragmentScheduleBinding.addDayTextView);
-            }
+            setAnimationActionsFabButton();
         });
 
         fragmentScheduleBinding.addressFloatingActionButton.setOnClickListener(this::navigateToAddress);
         fragmentScheduleBinding.reportFloatingActionButton.setOnClickListener(this::navigateToReport);
-        fragmentScheduleBinding.addDayFloatingActionButton.setOnClickListener(view -> scheduleViewModel.addDay());
+        fragmentScheduleBinding.addDayFloatingActionButton.setOnClickListener(view -> {
+            setAnimationActionsFabButton();
+            scheduleViewModel.addDay();
+        });
+    }
+
+    private void setAnimationActionsFabButton(){
+        isRotate = ViewAnimation.rotateFab(fragmentScheduleBinding.actionsFloatingActionButton, !isRotate);
+
+        if(isRotate){
+            ViewAnimation.showIn(fragmentScheduleBinding.reportFloatingActionButton, fragmentScheduleBinding.reportTextView);
+            ViewAnimation.showIn(fragmentScheduleBinding.addressFloatingActionButton, fragmentScheduleBinding.addressTextView);
+            ViewAnimation.showIn(fragmentScheduleBinding.addDayFloatingActionButton, fragmentScheduleBinding.addDayTextView);
+        }else{
+            ViewAnimation.showOut(fragmentScheduleBinding.reportFloatingActionButton, fragmentScheduleBinding.reportTextView);
+            ViewAnimation.showOut(fragmentScheduleBinding.addressFloatingActionButton, fragmentScheduleBinding.addressTextView);
+            ViewAnimation.showOut(fragmentScheduleBinding.addDayFloatingActionButton, fragmentScheduleBinding.addDayTextView);
+        }
     }
 
     private void navigateToAddress(View view) {
+        setAnimationActionsFabButton();
         Navigation.findNavController(view).navigate(R.id.action_mainFragment_to_addressFragment);
     }
 
     private void navigateToReport(View view) {
+        setAnimationActionsFabButton();
         Navigation.findNavController(view).navigate(R.id.action_mainFragment_to_reportFragment);
     }
 
@@ -165,23 +184,11 @@ public class ScheduleFragment extends BaseFragment {
         dialog.show();
     }
 
-    private void setObservers(){
-
-        scheduleViewModel.getAddress().removeObservers(getViewLifecycleOwner());
-        scheduleViewModel.getAddress().observe(getViewLifecycleOwner(), this::validateAddress);
-
-        scheduleViewModel.getSchedules().removeObservers(getViewLifecycleOwner());
-        scheduleViewModel.getSchedules().observe(getViewLifecycleOwner(), resource -> {
-            setLoading(resource.status);
-            validateSchedules(resource.data);
-        });
-    }
-
     private void validateAddress(Address address){
         if(address == null)
             navigateToAddress(getView());
         else
-            scheduleViewModel.checkSchedules(LocalDateTime.now().getMonthValue());
+            scheduleViewModel.checkSchedules();
     }
 
     private void validateSchedules(List<Schedule> schedules){

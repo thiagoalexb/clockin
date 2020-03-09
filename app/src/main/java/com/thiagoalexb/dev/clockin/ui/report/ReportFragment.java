@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
@@ -75,6 +76,16 @@ public class ReportFragment extends BaseFragment {
         return  fragmentReportBinding.getRoot();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if(requestCode == PERMISSIONS_REQUEST_EXTERNAL_STORAGE_CODE && hasExternalStoragePermission())
+            reportViewModel.print();
+        else
+            getExternalStoragePermission();
+    }
+
     private void setObservers() {
         reportViewModel.getSchedules().removeObservers(getViewLifecycleOwner());
         reportViewModel.getSchedules().observe(getViewLifecycleOwner(), resource -> {
@@ -85,7 +96,7 @@ public class ReportFragment extends BaseFragment {
         reportViewModel.getSchedulesResource().removeObservers(getViewLifecycleOwner());
         reportViewModel.getSchedulesResource().observe(getViewLifecycleOwner(), resource -> {
             setLoading(resource.status);
-            if(resource.status == Resource.Status.LOADING) return;
+            if(resource.status == Resource.Status.LOADING || resource.data == null) return;
             shareFile(ReportService.csv);
         });
     }
@@ -119,7 +130,7 @@ public class ReportFragment extends BaseFragment {
 
         fragmentReportBinding.printFloatingActionButton.setOnClickListener(view -> {
 
-            if(!hasLocationPermission())
+            if(!hasExternalStoragePermission())
                 getExternalStoragePermission();
             else
                 reportViewModel.print();
@@ -185,12 +196,12 @@ public class ReportFragment extends BaseFragment {
     }
 
     private void getExternalStoragePermission() {
-        if (hasLocationPermission()) return;
+        if (hasExternalStoragePermission()) return;
 
         requestPermissions(new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE }, PERMISSIONS_REQUEST_EXTERNAL_STORAGE_CODE);
     }
 
-    private boolean hasLocationPermission(){
+    private boolean hasExternalStoragePermission(){
         int permissionExternalStorage = ContextCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.WRITE_EXTERNAL_STORAGE);
         return permissionExternalStorage == PackageManager.PERMISSION_GRANTED;
     }

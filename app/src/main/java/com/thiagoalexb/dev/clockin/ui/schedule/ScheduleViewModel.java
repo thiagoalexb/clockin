@@ -12,11 +12,7 @@ import com.thiagoalexb.dev.clockin.util.DateHelper;
 import com.thiagoalexb.dev.clockin.util.Resource;
 import com.thiagoalexb.dev.clockin.util.TextHelper;
 
-import java.time.LocalDateTime;
-import java.time.format.TextStyle;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -58,9 +54,9 @@ public class ScheduleViewModel extends ViewModel {
                         }));
     }
 
-    public void checkSchedules(int month){
+    public void checkSchedules(){
         disposable.add(
-                scheduleService.getByMonth(month)
+                scheduleService.getByMonth(DateHelper.getCurrentMonthValue())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(schedulesDb -> schedules.setValue(Resource.success(schedulesDb))));
     }

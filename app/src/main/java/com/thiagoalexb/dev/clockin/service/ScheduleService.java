@@ -16,15 +16,18 @@ import javax.inject.Inject;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class ScheduleService {
 
+    private final CompositeDisposable disposable;
     private final ScheduleRepository scheduleRepository;
 
     @Inject
     public ScheduleService(ScheduleRepository scheduleRepository) {
         this.scheduleRepository = scheduleRepository;
+        this.disposable = new CompositeDisposable();
     }
 
     public Single<Schedule> getById(int id){
@@ -44,35 +47,37 @@ public class ScheduleService {
 
         Schedule scheduleDb = new Schedule(now, now, now.getDayOfMonth(), now.getMonthValue(), now.getYear());
 
-        scheduleRepository.getByDay(now.getYear(), now.getMonthValue(), now.getDayOfMonth())
+        disposable.add(scheduleRepository.getByDay(now.getYear(), now.getMonthValue(), now.getDayOfMonth())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(schedule -> {
+                    disposable.clear();
                 }, throwable -> {
-                    scheduleRepository.insert(scheduleDb)
+                    disposable.add(scheduleRepository.insert(scheduleDb)
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe((aLong, throwable1) -> {
-                                Log.d("", "saveEntry: ");
-                            });
-                });
+                                disposable.clear();
+                            }));
+                }));
     }
 
     public void saveDeparture(){
         LocalDate now = LocalDate.now();
 
-        scheduleRepository.getByDay(now.getYear(), now.getMonthValue(), now.getDayOfMonth())
+        disposable.add(scheduleRepository.getByDay(now.getYear(), now.getMonthValue(), now.getDayOfMonth())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((schedule, throwable) -> {
+                    disposable.clear();
                     if(throwable != null) return;
                     if(schedule.getEntryTime() == null) return;
                     if(schedule.getDepartureTime() != null) return;
 
                     schedule.setDepartureTime(LocalDateTime.now());
-                    scheduleRepository.update(schedule)
+                    disposable.add(scheduleRepository.update(schedule)
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe((aInt, throwableUpdate) -> {
-                                Log.d("", "saveDeparture: ");
-                            });
-                });
+                                disposable.clear();
+                            }));
+                }));
     }
 
     public Single<Long> save(Schedule schedule){

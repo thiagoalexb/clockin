@@ -47,4 +47,8 @@ public class DateHelper {
     public static String getCurrentMonth(){
         return LocalDateTime.now().getMonth().getDisplayName(TextStyle.FULL, DateHelper.getLocale());
     }
+
+    public static Integer getCurrentMonthValue(){
+        return LocalDateTime.now().getMonthValue();
+    }
 }

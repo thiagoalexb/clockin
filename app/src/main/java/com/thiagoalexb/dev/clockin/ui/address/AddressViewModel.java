@@ -1,7 +1,6 @@
 package com.thiagoalexb.dev.clockin.ui.address;
 
 import android.location.Geocoder;
-import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -11,10 +10,6 @@ import com.thiagoalexb.dev.clockin.data.models.Address;
 import com.thiagoalexb.dev.clockin.service.AddressService;
 import com.thiagoalexb.dev.clockin.util.Resource;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -25,7 +20,6 @@ import io.reactivex.disposables.CompositeDisposable;
 public class AddressViewModel extends ViewModel {
 
     private final CompositeDisposable disposable;
-    private final Geocoder geocoder;
     private final AddressService addressService;
     private final MutableLiveData<Long> statusInsert;
     private final MutableLiveData<Address> address;
@@ -33,10 +27,9 @@ public class AddressViewModel extends ViewModel {
     private final MutableLiveData<Boolean> isValid;
 
     @Inject
-    public AddressViewModel(Geocoder geocoder, AddressService addressService) {
+    public AddressViewModel(AddressService addressService) {
 
         this.disposable = new CompositeDisposable();
-        this.geocoder = geocoder;
         this.addressService = addressService;
         this.statusInsert = new MutableLiveData<>();
         this.address = new MutableLiveData<>(new Address());

@@ -16,6 +16,7 @@ import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -60,6 +61,7 @@ public class ReportViewModel extends ViewModel {
     }
 
     private void init(){
+        this.schedulesResource.setValue(Resource.loading(null));
         disposable.add(scheduleService.getYearsMonths()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(scheduleYearMonths -> {
@@ -75,6 +77,7 @@ public class ReportViewModel extends ViewModel {
                     this.years.setValue(years);
                     this.monthNames.setValue(monthNames);
                     this.months.setValue(months);
+                    this.schedulesResource.setValue(Resource.success(null));
                 }));
     }
 
@@ -84,13 +87,15 @@ public class ReportViewModel extends ViewModel {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(schedules -> {
                     this.schedules.setValue(Resource.success(schedules));
+                    this.schedulesResource.setValue(Resource.success(null));
                 }));
     }
 
     public void print(){
         this.schedulesResource.setValue(Resource.loading(null));
-        this.reportService.buildSheet(this.getSchedules().getValue().data, year, month);
-        this.schedulesResource.setValue(Resource.success(null));
+        List<Schedule> data = Objects.requireNonNull(this.getSchedules().getValue()).data;
+        this.reportService.buildSheet(Objects.requireNonNull(data), year, month);
+        this.schedulesResource.setValue(Resource.success(data));
     }
 
     public void setYear(Integer value){

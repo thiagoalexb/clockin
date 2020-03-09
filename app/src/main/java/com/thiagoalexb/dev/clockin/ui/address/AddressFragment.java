@@ -59,6 +59,17 @@ public class AddressFragment extends BaseFragment {
         return fragmentAddressBinding.getRoot();
     }
 
+    private void setObservers() {
+
+        addressViewModel.getStatusInsert().removeObservers(getViewLifecycleOwner());
+        addressViewModel.getStatusInsert().observe(getViewLifecycleOwner(), this::validateInsert);
+
+        addressViewModel.getAddressResource().removeObservers(getViewLifecycleOwner());
+        addressViewModel.getAddressResource().observe(getViewLifecycleOwner(), resource -> {
+            setLoading(resource.status);
+        });
+    }
+
     private void setEvents() {
         fragmentAddressBinding.insertAddressButton.setOnClickListener(view ->{
             if(!isNetworkAvailable()) {
@@ -70,20 +81,9 @@ public class AddressFragment extends BaseFragment {
     }
 
     private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        ConnectivityManager connectivityManager = (ConnectivityManager) Objects.requireNonNull(getContext()).getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = Objects.requireNonNull(connectivityManager).getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-    private void setObservers() {
-
-        addressViewModel.getStatusInsert().removeObservers(getViewLifecycleOwner());
-        addressViewModel.getStatusInsert().observe(getViewLifecycleOwner(), this::validateInsert);
-
-        addressViewModel.getAddressResource().removeObservers(getViewLifecycleOwner());
-        addressViewModel.getAddressResource().observe(getViewLifecycleOwner(), resource -> {
-            setLoading(resource.status);
-        });
     }
 
     private void validateInsert(Long status){

@@ -52,10 +52,11 @@ public class EditScheduleViewModel extends ViewModel {
     }
 
     public void save(){
-
+        scheduleResource.setValue(Resource.loading(null));
         disposable.add(scheduleService.save(this.schedule.getValue())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe((status, throwable) -> {
+                            scheduleResource.setValue(Resource.success(null));
                             statusInsert.setValue(status);
                         }));
     }

@@ -31,7 +31,7 @@ import javax.inject.Inject;
 public class Geofencing implements ResultCallback {
 
     public static final String TAG = Geofencing.class.getSimpleName();
-    private static final float GEOFENCE_RADIUS = 150f;
+    private static final float GEOFENCE_RADIUS = 200f;
 
     private List<Geofence> geofences;
     private PendingIntent pendingIntent;

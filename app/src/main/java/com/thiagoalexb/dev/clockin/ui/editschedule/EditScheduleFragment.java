@@ -47,13 +47,13 @@ public class EditScheduleFragment extends BaseFragment {
 
         editScheduleViewModel = ViewModelProviders.of(this, modelProviderFactory).get(EditScheduleViewModel.class);
 
-        this.checkBundle();
-
         fragmentEditScheduleBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_edit_schedule, container, false);
 
         fragmentEditScheduleBinding.setEditScheduleViewModel(editScheduleViewModel);
 
         fragmentEditScheduleBinding.setLifecycleOwner(this);
+
+        this.checkBundle();
 
         this.setSubscribes();
 
