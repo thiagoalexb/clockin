@@ -1,4 +1,4 @@
-package com.thiagoalexb.dev.clockin.ui.editschedule;
+package com.thiagoalexb.dev.clockin.ui.dayschedules;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

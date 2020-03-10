@@ -6,7 +6,7 @@ import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelKey;
 import com.thiagoalexb.dev.clockin.ui.address.AddressViewModel;
 import com.thiagoalexb.dev.clockin.ui.schedule.ScheduleViewModel;
 import com.thiagoalexb.dev.clockin.ui.report.ReportViewModel;
-import com.thiagoalexb.dev.clockin.ui.editschedule.EditScheduleViewModel;
+import com.thiagoalexb.dev.clockin.ui.dayschedules.EditScheduleViewModel;
 
 import dagger.Binds;
 import dagger.Module;

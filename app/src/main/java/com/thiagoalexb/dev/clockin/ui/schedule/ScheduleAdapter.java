@@ -80,7 +80,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
                 itemScheduleBinding.editScheduleImageView.setOnClickListener(v -> {
                     Bundle bundle = new Bundle();
                     bundle.putInt(ID_KEY, schedule.getId());
-                    Navigation.findNavController(v).navigate(R.id.action_mainFragment_to_editScheduleFragment, bundle);
+                    Navigation.findNavController(v).navigate(R.id.action_mainFragment_to_daySchedulesFragment, bundle);
                 });
             else
                 itemScheduleBinding.editScheduleImageView.setVisibility(View.GONE);

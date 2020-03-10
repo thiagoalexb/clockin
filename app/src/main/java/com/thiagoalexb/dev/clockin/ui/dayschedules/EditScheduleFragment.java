@@ -1,7 +1,6 @@
-package com.thiagoalexb.dev.clockin.ui.editschedule;
+package com.thiagoalexb.dev.clockin.ui.dayschedules;
 
 
-import android.app.TimePickerDialog;
 import android.os.Bundle;
 
 import androidx.databinding.DataBindingUtil;
@@ -21,12 +20,9 @@ import com.thiagoalexb.dev.clockin.ui.schedule.ScheduleAdapter;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.inject.Inject;
-
-import dagger.android.support.DaggerFragment;
 
 
 public class EditScheduleFragment extends BaseFragment {
@@ -74,8 +70,8 @@ public class EditScheduleFragment extends BaseFragment {
     private void setSubscribes(){
         editScheduleViewModel.getStatusInsert().removeObservers(getViewLifecycleOwner());
         editScheduleViewModel.getStatusInsert().observe(getViewLifecycleOwner(), status -> {
-            if(status != null)
-                Navigation.findNavController(Objects.requireNonNull(getView())).navigate(R.id.action_editScheduleFragment_to_mainFragment);
+//            if(status != null)
+//                Navigation.findNavController(Objects.requireNonNull(getView())).navigate(R.id.action_editScheduleFragment_to_mainFragment);
         });
 
         editScheduleViewModel.getScheduleResource().removeObservers(getViewLifecycleOwner());

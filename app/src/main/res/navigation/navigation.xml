@@ -15,11 +15,11 @@
             app:popUpTo="@+id/mainFragment"
             app:popUpToInclusive="false" />
         <action
-            android:id="@+id/action_mainFragment_to_editScheduleFragment"
-            app:destination="@id/editScheduleFragment" />
-        <action
             android:id="@+id/action_mainFragment_to_reportFragment"
             app:destination="@id/reportFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_daySchedulesFragment"
+            app:destination="@id/daySchedulesFragment" />
     </fragment>
     <fragment
         android:id="@+id/addressFragment2"
@@ -33,13 +33,9 @@
     </fragment>
     <fragment
         android:id="@+id/editScheduleFragment"
-        android:name="com.thiagoalexb.dev.clockin.ui.editschedule.EditScheduleFragment"
+        android:name="com.thiagoalexb.dev.clockin.ui.dayschedules.EditScheduleFragment"
         android:label="fragment_edit_schedule"
-        tools:layout="@layout/fragment_edit_schedule" >
-        <action
-            android:id="@+id/action_editScheduleFragment_to_mainFragment"
-            app:destination="@id/mainFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_edit_schedule" />
     <fragment
         android:id="@+id/reportFragment"
         android:name="com.thiagoalexb.dev.clockin.ui.report.ReportFragment"
@@ -49,4 +45,9 @@
             android:id="@+id/action_reportFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/daySchedulesFragment"
+        android:name="com.thiagoalexb.dev.clockin.ui.dayschedules.DaySchedulesFragment"
+        android:label="fragment_day_schedules"
+        tools:layout="@layout/fragment_day_schedules" />
 </navigation>
