@@ -9,6 +9,9 @@ import com.thiagoalexb.dev.clockin.data.repository.ScheduleRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -45,13 +48,21 @@ public class ScheduleService {
     public void saveEntry(){
         LocalDateTime now = LocalDateTime.now();
 
-        Schedule scheduleDb = new Schedule(now, now, now.getDayOfMonth(), now.getMonthValue(), now.getYear());
-
         disposable.add(scheduleRepository.getByDay(now.getYear(), now.getMonthValue(), now.getDayOfMonth())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(schedule -> {
-                    disposable.clear();
+                    ArrayList<String> entryTimes = schedule.getEntryTimes();
+                    entryTimes.add(now.toString());
+                    schedule.setEntryTimes(entryTimes);
+                    disposable.add(scheduleRepository.update(schedule)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe((aLong, throwable1) -> {
+                                disposable.clear();
+                            }));
                 }, throwable -> {
+                    ArrayList<String> entryTimes = new ArrayList<>();
+                    entryTimes.add(now.toString());
+                    Schedule scheduleDb = new Schedule(now, entryTimes, now.getDayOfMonth(), now.getMonthValue(), now.getYear());
                     disposable.add(scheduleRepository.insert(scheduleDb)
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe((aLong, throwable1) -> {
@@ -61,17 +72,22 @@ public class ScheduleService {
     }
 
     public void saveDeparture(){
-        LocalDate now = LocalDate.now();
+        LocalDateTime now = LocalDateTime.now();
 
         disposable.add(scheduleRepository.getByDay(now.getYear(), now.getMonthValue(), now.getDayOfMonth())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((schedule, throwable) -> {
                     disposable.clear();
                     if(throwable != null) return;
-                    if(schedule.getEntryTime() == null) return;
-                    if(schedule.getDepartureTime() != null) return;
+                    if(schedule.getEntryTimes() == null) return;
 
-                    schedule.setDepartureTime(LocalDateTime.now());
+                    ArrayList<String> departureTimes = schedule.getDepartureTimes();
+                    if(departureTimes == null)
+                        departureTimes = new ArrayList<>();
+
+
+                    departureTimes.add(now.toString());
+
                     disposable.add(scheduleRepository.update(schedule)
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe((aInt, throwableUpdate) -> {

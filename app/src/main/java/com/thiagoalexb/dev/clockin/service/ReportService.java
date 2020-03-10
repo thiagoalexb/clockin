@@ -59,8 +59,8 @@ public class ReportService {
 
                 if(!schedule.isPresent())
                     data.add(new String[]{ date, dayOfWeekFormatted, "", "", "" });
-                else
-                    data.add(new String[]{ date, dayOfWeekFormatted, DateHelper.getHourMinute(schedule.get().getEntryTime()), DateHelper.getHourMinute(schedule.get().getDepartureTime()) });
+//                else
+//                    data.add(new String[]{ date, dayOfWeekFormatted, DateHelper.getHourMinute(schedule.get().getEntryTime()), DateHelper.getHourMinute(schedule.get().getDepartureTime()) });
             }
 
             writer.writeAll(data);

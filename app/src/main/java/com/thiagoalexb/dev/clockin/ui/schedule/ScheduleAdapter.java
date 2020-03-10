@@ -19,6 +19,7 @@ import com.thiagoalexb.dev.clockin.util.DateHelper;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -70,8 +71,10 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
         public void bind(Schedule schedule){
 
             itemScheduleBinding.dayTextView.setText(DateHelper.getMediumDate(schedule.getDate()));
-            itemScheduleBinding.entryValueTextView.setText(DateHelper.getHourMinute(schedule.getEntryTime()));
-            itemScheduleBinding.departureValueTextView.setText(DateHelper.getHourMinute(schedule.getDepartureTime()));
+            itemScheduleBinding.entryValueTextView.setText(DateHelper.getHourMinute(schedule.getEntryTimes().get(0)));
+            ArrayList<String> departureTimes = schedule.getDepartureTimes();
+            if(departureTimes != null)
+                itemScheduleBinding.departureValueTextView.setText(DateHelper.getHourMinute(departureTimes.get(departureTimes.size() - 1)));
 
             if(showEdit)
                 itemScheduleBinding.editScheduleImageView.setOnClickListener(v -> {

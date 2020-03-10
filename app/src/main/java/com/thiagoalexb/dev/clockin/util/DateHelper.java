@@ -40,6 +40,16 @@ public class DateHelper {
         return hourMinute;
     }
 
+    public static String getHourMinute(String stringLocalDateTime){
+        if(TextHelper.isNullOrEmpty(stringLocalDateTime)) return "";
+
+        LocalDateTime localDateTime = LocalDateTime.parse(stringLocalDateTime);
+
+        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("HH:mm");
+        String hourMinute = localDateTime.format(pattern);
+        return hourMinute;
+    }
+
     public static Locale getLocale(){
         return new Locale("pt", "br");
     }

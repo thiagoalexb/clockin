@@ -7,13 +7,14 @@ import androidx.room.PrimaryKey;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 
 @Entity
 public class Schedule {
 
-    public Schedule(LocalDateTime date, LocalDateTime entryTime, int day, int month, int year) {
+    public Schedule(LocalDateTime date, ArrayList<String> entryTimes, int day, int month, int year) {
         this.date = date;
-        this.entryTime = entryTime;
+        this.entryTimes = entryTimes;
         this.day = day;
         this.month = month;
         this.year = year;
@@ -22,8 +23,8 @@ public class Schedule {
     @PrimaryKey(autoGenerate = true)
     private int id;
     private LocalDateTime date;
-    private LocalDateTime entryTime;
-    private LocalDateTime departureTime;
+    private ArrayList<String> entryTimes;
+    private ArrayList<String> departureTimes;
     private int day;
     private int month;
     private int year;
@@ -44,20 +45,20 @@ public class Schedule {
         this.date = date;
     }
 
-    public LocalDateTime getEntryTime() {
-        return entryTime;
+    public ArrayList<String> getEntryTimes() {
+        return entryTimes;
     }
 
-    public void setEntryTime(LocalDateTime entryTime) {
-        this.entryTime = entryTime;
+    public void setEntryTimes(ArrayList<String> entryTimes) {
+        this.entryTimes = entryTimes;
     }
 
-    public LocalDateTime getDepartureTime() {
-        return departureTime;
+    public ArrayList<String> getDepartureTimes() {
+        return departureTimes;
     }
 
-    public void setDepartureTime(LocalDateTime departureTime) {
-        this.departureTime = departureTime;
+    public void setDepartureTimes(ArrayList<String> departureTimes) {
+        this.departureTimes = departureTimes;
     }
 
     public int getDay() {

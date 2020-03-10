@@ -85,43 +85,43 @@ public class EditScheduleFragment extends BaseFragment {
     }
 
     private void setEvents(){
-        fragmentEditScheduleBinding.entryTextView.setOnFocusChangeListener((view, hasFocus) ->{
-            if(!hasFocus) return;
-            setTimePickerDialog(view);
-        });
-
-        fragmentEditScheduleBinding.departureTextView.setOnFocusChangeListener((view, hasFocus) ->{
-            if(!hasFocus) return;
-            setTimePickerDialog(view);
-        });
+//        fragmentEditScheduleBinding.entryTextView.setOnFocusChangeListener((view, hasFocus) ->{
+//            if(!hasFocus) return;
+//            setTimePickerDialog(view);
+//        });
+//
+//        fragmentEditScheduleBinding.departureTextView.setOnFocusChangeListener((view, hasFocus) ->{
+//            if(!hasFocus) return;
+//            setTimePickerDialog(view);
+//        });
     }
 
     private void setTimePickerDialog(View view){
-        LocalDateTime now = LocalDateTime.now();
-        TimePickerDialog timePickerDialog = null;
-        if(view.getId() == fragmentEditScheduleBinding.entryTextView.getId())
-            timePickerDialog = new TimePickerDialog(getContext(), this::onEntryTimeSet, now.getHour(), now.getMinute(), true);
-        else
-            timePickerDialog = new TimePickerDialog(getContext(), this::onDepartureTimeSet, now.getHour(), now.getMinute(), true);
-
-        timePickerDialog.setOnDismissListener(dialog -> {
-            fragmentEditScheduleBinding.entryTextView.clearFocus();
-            fragmentEditScheduleBinding.departureTextView.clearFocus();
-        });
-
-        timePickerDialog.show();
+//        LocalDateTime now = LocalDateTime.now();
+//        TimePickerDialog timePickerDialog = null;
+//        if(view.getId() == fragmentEditScheduleBinding.entryTextView.getId())
+//            timePickerDialog = new TimePickerDialog(getContext(), this::onEntryTimeSet, now.getHour(), now.getMinute(), true);
+//        else
+//            timePickerDialog = new TimePickerDialog(getContext(), this::onDepartureTimeSet, now.getHour(), now.getMinute(), true);
+//
+//        timePickerDialog.setOnDismissListener(dialog -> {
+//            fragmentEditScheduleBinding.entryTextView.clearFocus();
+//            fragmentEditScheduleBinding.departureTextView.clearFocus();
+//        });
+//
+//        timePickerDialog.show();
     }
 
     private void onEntryTimeSet(TimePicker view, int hourOfDay, int minute){
-        String entryTime = hourOfDay + ":" + minute;
-        fragmentEditScheduleBinding.entryTextView.setText(entryTime);
-        fragmentEditScheduleBinding.entryTextView.clearFocus();
+//        String entryTime = hourOfDay + ":" + minute;
+//        fragmentEditScheduleBinding.entryTextView.setText(entryTime);
+//        fragmentEditScheduleBinding.entryTextView.clearFocus();
     }
 
     private void onDepartureTimeSet(TimePicker view, int hourOfDay, int minute){
-        String departureTime = hourOfDay + ":" + minute;
-        fragmentEditScheduleBinding.departureTextView.setText(departureTime);
-        fragmentEditScheduleBinding.departureTextView.clearFocus();
+//        String departureTime = hourOfDay + ":" + minute;
+//        fragmentEditScheduleBinding.departureTextView.setText(departureTime);
+//        fragmentEditScheduleBinding.departureTextView.clearFocus();
     }
 
 }
