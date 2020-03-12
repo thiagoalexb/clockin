@@ -6,5 +6,6 @@
     <color name="backgroundDefault">#FFF</color>
     <color name="backgroundLoading">#99000000</color>
     <color name="colorDefault">#ED8F8D</color>
+    <color name="backgroundSplash">#FE908D</color>
     <color name="colorDisabled">#CCCCCC</color>
 </resources>

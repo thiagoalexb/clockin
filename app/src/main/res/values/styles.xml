@@ -6,6 +6,13 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme.SplashScreen" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:statusBarColor">@color/backgroundSplash</item>
+    </style>
+
     <style name="InputTheme" parent="TextAppearance.AppCompat">
         <item name="android:textColorHint">@color/colorDefault</item>
         <item name="colorControlNormal">@color/colorDefault</item>
