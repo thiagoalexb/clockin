@@ -9,6 +9,8 @@ import com.thiagoalexb.dev.clockin.service.ScheduleService;
 import com.thiagoalexb.dev.clockin.util.Resource;
 
 
+import java.util.ArrayList;
+
 import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -51,8 +53,16 @@ public class EditScheduleViewModel extends ViewModel {
                         }));
     }
 
-    public void save(){
+    public void save(int position, boolean isEntry){
         scheduleResource.setValue(Resource.loading(null));
+
+        Schedule schedule = this.schedule.getValue();
+
+        if(isEntry){
+            ArrayList<String> entrySchedules = schedule.getEntryTimes();
+            String scheduleSelected = entrySchedules.get(position);
+        }
+
         disposable.add(scheduleService.save(this.schedule.getValue())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe((status, throwable) -> {

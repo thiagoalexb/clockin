@@ -65,7 +65,7 @@
                     app:layout_constraintEnd_toStartOf="@+id/departure_value_text_view"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/entry_value_text_view"
-                    app:layout_constraintTop_toTopOf="@+id/entry_text_view"
+                    app:layout_constraintTop_toTopOf="@+id/entry_value_text_view"
                     tools:text="Saída" />
 
                 <TextView
@@ -95,7 +95,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/departure_text_view"
-                    app:layout_constraintTop_toTopOf="@+id/entry_text_view"
+                    app:layout_constraintTop_toTopOf="@+id/entry_value_text_view"
                     tools:text="18:00" />
 
                 <ImageView

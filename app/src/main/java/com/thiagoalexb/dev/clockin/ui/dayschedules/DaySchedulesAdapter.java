@@ -1,30 +1,30 @@
 package com.thiagoalexb.dev.clockin.ui.dayschedules;
 
-import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import com.thiagoalexb.dev.clockin.data.models.Schedule;
+
 public class DaySchedulesAdapter extends FragmentStateAdapter {
 
-    public DaySchedulesAdapter(Fragment fragment) {
+    private static final int CARD_ITEM_SIZE = 2;
+    private final Schedule schedule;
+
+    public DaySchedulesAdapter(@NonNull Fragment fragment, Schedule schedule) {
         super(fragment);
+        this.schedule = schedule;
     }
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-
-        Fragment fragment = new DayScheduleFragment();
-        Bundle args = new Bundle();
-        args.putInt(DayScheduleFragment.ARG_OBJECT, position + 1);
-        fragment.setArguments(args);
-        return fragment;
+        boolean isEntry = position == 0;
+        return DayScheduleFragment.newInstance(isEntry ? schedule.getEntryTimes() : schedule.getDepartureTimes(), schedule.getId(), isEntry);
     }
 
     @Override
     public int getItemCount() {
-        return 100;
+        return CARD_ITEM_SIZE;
     }
 }

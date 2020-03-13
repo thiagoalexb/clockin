@@ -35,7 +35,11 @@
         android:id="@+id/editScheduleFragment"
         android:name="com.thiagoalexb.dev.clockin.ui.dayschedules.EditScheduleFragment"
         android:label="fragment_edit_schedule"
-        tools:layout="@layout/fragment_edit_schedule" />
+        tools:layout="@layout/fragment_edit_schedule" >
+        <action
+            android:id="@+id/action_editScheduleFragment_to_daySchedulesFragment"
+            app:destination="@id/daySchedulesFragment" />
+    </fragment>
     <fragment
         android:id="@+id/reportFragment"
         android:name="com.thiagoalexb.dev.clockin.ui.report.ReportFragment"
@@ -49,5 +53,9 @@
         android:id="@+id/daySchedulesFragment"
         android:name="com.thiagoalexb.dev.clockin.ui.dayschedules.DaySchedulesFragment"
         android:label="fragment_day_schedules"
-        tools:layout="@layout/fragment_day_schedules" />
+        tools:layout="@layout/fragment_day_schedules" >
+        <action
+            android:id="@+id/action_daySchedulesFragment_to_editScheduleFragment"
+            app:destination="@id/editScheduleFragment" />
+    </fragment>
 </navigation>

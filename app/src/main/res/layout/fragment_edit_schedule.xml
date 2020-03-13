@@ -11,112 +11,103 @@
             type="com.thiagoalexb.dev.clockin.ui.dayschedules.EditScheduleViewModel" />
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    </LinearLayout>
-
-<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:background="@color/backgroundDefault">-->
+        android:layout_height="match_parent"
+        android:background="@color/backgroundDefault">
 
 
-<!--        <ImageView-->
-<!--            android:id="@+id/top_background_image_view"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="150dp"-->
-<!--            app:srcCompat="@drawable/background"-->
-<!--            tools:srcCompat="@drawable/background"-->
-<!--            android:scaleType="centerCrop"-->
-<!--            android:contentDescription="@string/content_description_background"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent" />-->
+        <ImageView
+            android:id="@+id/top_background_image_view"
+            android:layout_width="0dp"
+            android:layout_height="150dp"
+            app:srcCompat="@drawable/background"
+            tools:srcCompat="@drawable/background"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/content_description_background"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-<!--        <TextView-->
-<!--            android:id="@+id/title_text_view"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:fontFamily="@font/roboto"-->
-<!--            android:text="@string/edit_schedule"-->
-<!--            android:textColor="@color/colorDefault"-->
-<!--            android:textSize="@dimen/title"-->
-<!--            app:layout_constraintBottom_toBottomOf="@+id/top_background_image_view"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:layout_constraintVertical_bias="0.3" />-->
+        <TextView
+            android:id="@+id/title_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto"
+            android:text="@string/edit_schedule"
+            android:textColor="@color/colorDefault"
+            android:textSize="@dimen/title"
+            app:layout_constraintBottom_toBottomOf="@+id/top_background_image_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.3" />
 
-<!--        <androidx.cardview.widget.CardView-->
-<!--            android:id="@+id/content_card_view"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="@dimen/default_margin"-->
-<!--            app:cardCornerRadius="8dp"-->
-<!--            app:cardElevation="8dp"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/title_text_view">-->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/content_card_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_margin"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_text_view">
 
-<!--            <LinearLayout-->
-<!--                android:id="@+id/container_schedule_card_view"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:orientation="vertical"-->
-<!--                android:padding="@dimen/default_padding">-->
+            <LinearLayout
+                android:id="@+id/container_schedule_card_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="@dimen/default_padding">
 
-<!--                <com.google.android.material.textfield.TextInputLayout-->
-<!--                    android:id="@+id/entry_text_input_layout"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:layout_margin="@dimen/half_margin"-->
-<!--                    style="@style/InputTheme">-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/entry_text_input_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/half_margin"
+                    style="@style/InputTheme">
 
-<!--                    <com.google.android.material.textfield.TextInputEditText-->
-<!--                        android:id="@+id/entry_text_view"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:background="@android:color/white"-->
-<!--                        android:text="@={Converters.dateToString(editScheduleViewModel.schedule.entryTime)}"-->
-<!--                        android:hint="@string/entry" />-->
-<!--                </com.google.android.material.textfield.TextInputLayout>-->
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/entry_text_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/white"
+                        android:hint="@string/entry" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-<!--                <com.google.android.material.textfield.TextInputLayout-->
-<!--                    android:id="@+id/departure_text_input_layout"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:layout_margin="@dimen/half_margin"-->
-<!--                    style="@style/InputTheme">-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/departure_text_input_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/half_margin"
+                    style="@style/InputTheme">
 
-<!--                    <com.google.android.material.textfield.TextInputEditText-->
-<!--                        android:id="@+id/departure_text_view"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:background="@android:color/white"-->
-<!--                        android:text="@={Converters.dateToString(editScheduleViewModel.schedule.departureTime)}"-->
-<!--                        android:hint="@string/departure" />-->
-<!--                </com.google.android.material.textfield.TextInputLayout>-->
-<!--            </LinearLayout>-->
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/departure_text_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/white"
+                        android:hint="@string/departure" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
 
 
-<!--        </androidx.cardview.widget.CardView>-->
+        </androidx.cardview.widget.CardView>
 
-<!--        <com.google.android.material.button.MaterialButton-->
-<!--            android:id="@+id/insert_address_button"-->
-<!--            style="@style/MaterialButtonStyle"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="@dimen/default_margin"-->
-<!--            android:text="@string/save"-->
-<!--            android:textAllCaps="false"-->
-<!--            android:textColor="@android:color/white"-->
-<!--            android:textSize="17sp"-->
-<!--            android:onClick="@{() -> editScheduleViewModel.save()}"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent" />-->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/insert_address_button"
+            style="@style/MaterialButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_margin"
+            android:text="@string/save"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="17sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
