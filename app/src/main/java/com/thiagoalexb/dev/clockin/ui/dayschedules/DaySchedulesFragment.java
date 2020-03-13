@@ -9,15 +9,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.viewpager2.widget.ViewPager2;
 
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
 import com.thiagoalexb.dev.clockin.R;
-import com.thiagoalexb.dev.clockin.data.TypeSchedule;
-import com.thiagoalexb.dev.clockin.data.models.Schedule;
 import com.thiagoalexb.dev.clockin.databinding.FragmentDaySchedulesBinding;
 import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelProviderFactory;
 import com.thiagoalexb.dev.clockin.ui.BaseFragment;
@@ -73,11 +67,11 @@ public class DaySchedulesFragment extends BaseFragment {
 
     private void setElements(){
 
-        dayEntryScheduleAdapter = new DayScheduleAdapter();
+        dayEntryScheduleAdapter = new DayScheduleAdapter(editScheduleViewModel);
 
         fragmentDaySchedulesBinding.entriesRecyclerView.setAdapter(dayEntryScheduleAdapter);
 
-        dayDepartureScheduleAdapter = new DayScheduleAdapter();
+        dayDepartureScheduleAdapter = new DayScheduleAdapter(editScheduleViewModel);
 
         fragmentDaySchedulesBinding.departuresRecyclerView.setAdapter(dayDepartureScheduleAdapter);
     }

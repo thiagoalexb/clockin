@@ -1,31 +1,20 @@
 package com.thiagoalexb.dev.clockin.ui.dayschedules;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.thiagoalexb.dev.clockin.R;
 import com.thiagoalexb.dev.clockin.data.TypeSchedule;
-import com.thiagoalexb.dev.clockin.data.models.Schedule;
 import com.thiagoalexb.dev.clockin.databinding.FragmentDayScheduleBinding;
 import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelProviderFactory;
 import com.thiagoalexb.dev.clockin.ui.BaseFragment;
-import com.thiagoalexb.dev.clockin.ui.schedule.ScheduleAdapter;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.lang.reflect.Array;
-import java.lang.reflect.Type;
-import java.sql.Types;
-import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -77,7 +66,7 @@ public class DayScheduleFragment extends BaseFragment {
 
         editScheduleViewModel.getSchedule().removeObservers(getViewLifecycleOwner());
         editScheduleViewModel.getSchedule().observe(getViewLifecycleOwner(), schedule -> {
-            DayScheduleAdapter dayScheduleAdapter = new DayScheduleAdapter();
+            DayScheduleAdapter dayScheduleAdapter = new DayScheduleAdapter(editScheduleViewModel);
 
             fragmentDayScheduleBinding.dayScheduleRecyclerView.setAdapter(dayScheduleAdapter);
 
