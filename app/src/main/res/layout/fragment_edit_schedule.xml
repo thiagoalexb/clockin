@@ -17,18 +17,6 @@
         android:background="@color/backgroundDefault">
 
 
-        <ImageView
-            android:id="@+id/top_background_image_view"
-            android:layout_width="0dp"
-            android:layout_height="150dp"
-            app:srcCompat="@drawable/background"
-            tools:srcCompat="@drawable/background"
-            android:scaleType="centerCrop"
-            android:contentDescription="@string/content_description_background"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <TextView
             android:id="@+id/title_text_view"
             android:layout_width="wrap_content"
@@ -37,11 +25,9 @@
             android:text="@string/edit_schedule"
             android:textColor="@color/colorDefault"
             android:textSize="@dimen/title"
-            app:layout_constraintBottom_toBottomOf="@+id/top_background_image_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.3" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/content_card_view"
@@ -62,33 +48,19 @@
                 android:padding="@dimen/default_padding">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/entry_text_input_layout"
+                    android:id="@+id/schedule_text_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="@dimen/half_margin"
                     style="@style/InputTheme">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/entry_text_view"
+                        android:id="@+id/schedule_text_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:text="@={Converters.dateToString(editScheduleViewModel.schedule.entryTime)}"
                         android:background="@android:color/white"
-                        android:hint="@string/entry" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/departure_text_input_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="@dimen/half_margin"
-                    style="@style/InputTheme">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/departure_text_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/white"
-                        android:hint="@string/departure" />
+                        android:hint="@string/schedule" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 

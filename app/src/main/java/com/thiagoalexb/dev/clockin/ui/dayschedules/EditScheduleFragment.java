@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.TimePicker;
 
 import com.thiagoalexb.dev.clockin.R;
+import com.thiagoalexb.dev.clockin.data.TypeSchedule;
 import com.thiagoalexb.dev.clockin.databinding.FragmentEditScheduleBinding;
 import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelProviderFactory;
 import com.thiagoalexb.dev.clockin.ui.BaseFragment;
@@ -35,7 +36,8 @@ public class EditScheduleFragment extends BaseFragment {
     public FragmentEditScheduleBinding fragmentEditScheduleBinding;
     public EditScheduleViewModel editScheduleViewModel;
     private int position;
-    private boolean isEntry;
+    private TypeSchedule typeSchedule;
+    private int scheduleId;
 
     public EditScheduleFragment() {
     }
@@ -65,25 +67,18 @@ public class EditScheduleFragment extends BaseFragment {
     private void checkBundle(){
         Bundle bundle = getArguments();
 
-        if(bundle != null && bundle.containsKey(DayScheduleAdapter.SCHEDULE_ID_KEY)){
-            int scheduleId = bundle.getInt(DayScheduleAdapter.SCHEDULE_ID_KEY);
-            editScheduleViewModel.checkSchedule(scheduleId);
-        }
-
-        if(bundle != null && bundle.containsKey(DayScheduleAdapter.POSITION_KEY)){
-            position = bundle.getInt(DayScheduleAdapter.POSITION_KEY);
-        }
-
-        if(bundle != null && bundle.containsKey(DayScheduleAdapter.IS_ENTRY_KEY)){
-            isEntry = bundle.getBoolean(DayScheduleAdapter.IS_ENTRY_KEY);
-        }
+        if(bundle == null) return;
     }
 
     private void setSubscribes(){
         editScheduleViewModel.getStatusInsert().removeObservers(getViewLifecycleOwner());
         editScheduleViewModel.getStatusInsert().observe(getViewLifecycleOwner(), status -> {
-            if(status != null)
-                Navigation.findNavController(Objects.requireNonNull(getView())).navigate(R.id.action_editScheduleFragment_to_daySchedulesFragment);
+            if(status != null){
+                Bundle bundle = new Bundle();
+                bundle.putInt(ScheduleAdapter.ID_KEY, scheduleId);
+                Navigation.findNavController(Objects.requireNonNull(getView())).navigate(R.id.action_editScheduleFragment_to_daySchedulesFragment, bundle);
+            }
+
         });
 
         editScheduleViewModel.getScheduleResource().removeObservers(getViewLifecycleOwner());
@@ -93,47 +88,31 @@ public class EditScheduleFragment extends BaseFragment {
     }
 
     private void setEvents(){
-        fragmentEditScheduleBinding.entryTextView.setOnFocusChangeListener((view, hasFocus) ->{
-            if(!hasFocus) return;
-            setTimePickerDialog(view);
-        });
-
-        fragmentEditScheduleBinding.departureTextView.setOnFocusChangeListener((view, hasFocus) ->{
+        fragmentEditScheduleBinding.scheduleTextView.setOnFocusChangeListener((view, hasFocus) ->{
             if(!hasFocus) return;
             setTimePickerDialog(view);
         });
 
         fragmentEditScheduleBinding.insertAddressButton.setOnClickListener(view ->{
-            editScheduleViewModel.save(position, isEntry);
+            editScheduleViewModel.save(position, typeSchedule);
         });
     }
 
     private void setTimePickerDialog(View view){
         LocalDateTime now = LocalDateTime.now();
-        TimePickerDialog timePickerDialog = null;
-        if(view.getId() == fragmentEditScheduleBinding.entryTextView.getId())
-            timePickerDialog = new TimePickerDialog(getContext(), this::onEntryTimeSet, now.getHour(), now.getMinute(), true);
-        else
-            timePickerDialog = new TimePickerDialog(getContext(), this::onDepartureTimeSet, now.getHour(), now.getMinute(), true);
+        TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), this::onScheduleTimeSet, now.getHour(), now.getMinute(), true);
 
         timePickerDialog.setOnDismissListener(dialog -> {
-            fragmentEditScheduleBinding.entryTextView.clearFocus();
-            fragmentEditScheduleBinding.departureTextView.clearFocus();
+            fragmentEditScheduleBinding.scheduleTextView.clearFocus();
         });
 
         timePickerDialog.show();
     }
 
-    private void onEntryTimeSet(TimePicker view, int hourOfDay, int minute){
+    private void onScheduleTimeSet(TimePicker view, int hourOfDay, int minute){
         String entryTime = hourOfDay + ":" + minute;
-        fragmentEditScheduleBinding.entryTextView.setText(entryTime);
-        fragmentEditScheduleBinding.entryTextView.clearFocus();
-    }
-
-    private void onDepartureTimeSet(TimePicker view, int hourOfDay, int minute){
-        String departureTime = hourOfDay + ":" + minute;
-        fragmentEditScheduleBinding.departureTextView.setText(departureTime);
-        fragmentEditScheduleBinding.departureTextView.clearFocus();
+        fragmentEditScheduleBinding.scheduleTextView.setText(entryTime);
+        fragmentEditScheduleBinding.scheduleTextView.clearFocus();
     }
 
 }

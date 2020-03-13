@@ -16,6 +16,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.thiagoalexb.dev.clockin.R;
+import com.thiagoalexb.dev.clockin.data.TypeSchedule;
 import com.thiagoalexb.dev.clockin.data.models.Schedule;
 import com.thiagoalexb.dev.clockin.databinding.FragmentDaySchedulesBinding;
 import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelProviderFactory;
@@ -26,14 +27,15 @@ import javax.inject.Inject;
 
 public class DaySchedulesFragment extends BaseFragment {
 
+    public DaySchedulesFragment() {
+    }
+
     @Inject
     public ViewModelProviderFactory modelProviderFactory;
     public EditScheduleViewModel editScheduleViewModel;
     private FragmentDaySchedulesBinding fragmentDaySchedulesBinding;
-    private Integer scheduleId;
-
-    public DaySchedulesFragment() {
-    }
+    private DayScheduleAdapter dayEntryScheduleAdapter;
+    private DayScheduleAdapter dayDepartureScheduleAdapter;
 
     @Nullable
     @Override
@@ -45,45 +47,38 @@ public class DaySchedulesFragment extends BaseFragment {
 
         checkBundle();
 
-        setObservers();
+        setSubscribes();
+
+        setElements();
 
         return fragmentDaySchedulesBinding.getRoot();
-    }
-
-    private void setObservers() {
-        editScheduleViewModel.getSchedule().removeObservers(getViewLifecycleOwner());
-        editScheduleViewModel.getSchedule().observe(getViewLifecycleOwner(), schedule -> {
-            if(schedule == null) return;
-            setElements(schedule);
-        });
     }
 
     private void checkBundle(){
         Bundle bundle = getArguments();
 
-        if(bundle != null && bundle.containsKey(ScheduleAdapter.ID_KEY)){
-            scheduleId = bundle.getInt(ScheduleAdapter.ID_KEY);
-            editScheduleViewModel.checkSchedule(scheduleId);
-        }
+        if(bundle == null) return;
+        if(bundle.containsKey(ScheduleAdapter.ID_KEY))
+            editScheduleViewModel.checkSchedule(bundle.getInt(ScheduleAdapter.ID_KEY));
     }
 
-    private void setElements(Schedule schedule){
-        fragmentDaySchedulesBinding.schedulesViewPager.setAdapter(createDaySchedulesAdapter(schedule));
-        new TabLayoutMediator(fragmentDaySchedulesBinding.tabsTabLayout, fragmentDaySchedulesBinding.schedulesViewPager,
-                (tab, position) -> {
-                    if(position == 0)
-                        tab.setText(R.string.entry);
-                    else
-                        tab.setText(R.string.departure);
-                }).attach();
+    private void setSubscribes() {
+
+        editScheduleViewModel.getSchedule().removeObservers(getViewLifecycleOwner());
+        editScheduleViewModel.getSchedule().observe(getViewLifecycleOwner(), schedule -> {
+            dayEntryScheduleAdapter.setSchedules(schedule.getEntryTimes());
+            dayDepartureScheduleAdapter.setSchedules(schedule.getDepartureTimes());
+        });
     }
 
-    private DaySchedulesAdapter createDaySchedulesAdapter(Schedule schedule) {
-        DaySchedulesAdapter adapter = new DaySchedulesAdapter(this, schedule);
-        return adapter;
+    private void setElements(){
+
+        dayEntryScheduleAdapter = new DayScheduleAdapter();
+
+        fragmentDaySchedulesBinding.entriesRecyclerView.setAdapter(dayEntryScheduleAdapter);
+
+        dayDepartureScheduleAdapter = new DayScheduleAdapter();
+
+        fragmentDaySchedulesBinding.departuresRecyclerView.setAdapter(dayDepartureScheduleAdapter);
     }
-
-
-
-
 }

@@ -4,11 +4,14 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.thiagoalexb.dev.clockin.data.TypeSchedule;
 import com.thiagoalexb.dev.clockin.data.models.Schedule;
 import com.thiagoalexb.dev.clockin.service.ScheduleService;
 import com.thiagoalexb.dev.clockin.util.Resource;
 
 
+import java.lang.reflect.Type;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -42,7 +45,7 @@ public class EditScheduleViewModel extends ViewModel {
         disposable.clear();
     }
 
-    public void checkSchedule(int id){
+    public void checkSchedule(int id, int position, TypeSchedule typeSchedule){
 
         scheduleResource.setValue(Resource.loading(null));
         disposable.add(scheduleService.getById(id)
@@ -50,20 +53,38 @@ public class EditScheduleViewModel extends ViewModel {
                         .subscribe((scheduleDb, throwable) -> {
                             scheduleResource.setValue(Resource.success(scheduleDb));
                             schedule.setValue(scheduleDb);
+                            if(typeSchedule == TypeSchedule.ENTRY)
+                                scheduleDb.setEntryTime(LocalDateTime.parse(scheduleDb.getEntryTimes().get(position)));
+                            else
+                                scheduleDb.setDepartureTime(LocalDateTime.parse(scheduleDb.getDepartureTimes().get(position)));
                         }));
     }
 
-    public void save(int position, boolean isEntry){
+    public void checkSchedule(int id){
+
+        scheduleResource.setValue(Resource.loading(null));
+        disposable.add(scheduleService.getById(id)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((scheduleDb, throwable) -> {
+                    scheduleResource.setValue(Resource.success(scheduleDb));
+                    schedule.setValue(scheduleDb);
+                }));
+    }
+
+    public void save(int position, TypeSchedule typeSchedule){
         scheduleResource.setValue(Resource.loading(null));
 
         Schedule schedule = this.schedule.getValue();
 
-        if(isEntry){
-            ArrayList<String> entrySchedules = schedule.getEntryTimes();
-            String scheduleSelected = entrySchedules.get(position);
+        if(typeSchedule == TypeSchedule.ENTRY){
+            schedule.getEntryTimes().remove(position);
+            schedule.getEntryTimes().add(position, schedule.getEntryTime().toString());
+        }else{
+            schedule.getDepartureTimes().remove(position);
+            schedule.getDepartureTimes().add(position, schedule.getDepartureTime().toString());
         }
 
-        disposable.add(scheduleService.save(this.schedule.getValue())
+        disposable.add(scheduleService.save(schedule)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe((status, throwable) -> {
                             scheduleResource.setValue(Resource.success(null));

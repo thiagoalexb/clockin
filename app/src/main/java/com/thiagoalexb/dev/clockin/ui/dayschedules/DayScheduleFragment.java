@@ -13,63 +13,77 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.thiagoalexb.dev.clockin.R;
+import com.thiagoalexb.dev.clockin.data.TypeSchedule;
 import com.thiagoalexb.dev.clockin.data.models.Schedule;
 import com.thiagoalexb.dev.clockin.databinding.FragmentDayScheduleBinding;
 import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelProviderFactory;
 import com.thiagoalexb.dev.clockin.ui.BaseFragment;
 import com.thiagoalexb.dev.clockin.ui.schedule.ScheduleAdapter;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
+import java.sql.Types;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
 
 public class DayScheduleFragment extends BaseFragment {
 
+    private static String TYPE_SCHEDULE_KEY = "TYPE_SCHEDULE_KEY";
+    private static String SCHEDULE_ID_KEY = "SCHEDULE_ID_KEY";
+
+    @Inject
+    public ViewModelProviderFactory modelProviderFactory;
+    public EditScheduleViewModel editScheduleViewModel;
     private FragmentDayScheduleBinding fragmentDayScheduleBinding;
-    private static final String ARG_SCHEDULES = "ARG_SCHEDULES";
-    private static final String ARG_SCHEDULE_ID = "ARG_SCHEDULE_ID";
-    private static final String ARG_IS_ENTRY = "ARG_IS_ENTRY";
-    private ArrayList<String> schedules;
     private int scheduleId;
-    private boolean isEntry;
+    private TypeSchedule typeSchedule;
 
-    public DayScheduleFragment() {
-    }
+    public static DayScheduleFragment newInstance(TypeSchedule typeSchedule, int scheduleId) {
 
-    public static DayScheduleFragment newInstance(ArrayList<String> schedules, int scheduleId, boolean isEntry) {
-        
         Bundle args = new Bundle();
-        args.putStringArrayList(ARG_SCHEDULES, schedules);
-        args.putInt(ARG_SCHEDULE_ID, scheduleId);
-        args.putBoolean(ARG_SCHEDULE_ID, isEntry);
+        args.putInt(TYPE_SCHEDULE_KEY, typeSchedule.ordinal());
+        args.putInt(SCHEDULE_ID_KEY, scheduleId);
         DayScheduleFragment fragment = new DayScheduleFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            schedules = getArguments().getStringArrayList(ARG_SCHEDULES);
-            scheduleId = getArguments().getInt(ARG_SCHEDULE_ID);
-            isEntry = getArguments().getBoolean(ARG_IS_ENTRY);
-        }
+    public DayScheduleFragment() {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+        Bundle bundle = getArguments();
+        if(bundle == null) return;
+
+        typeSchedule = TypeSchedule.values()[bundle.getInt(TYPE_SCHEDULE_KEY)];
+        scheduleId = bundle.getInt(SCHEDULE_ID_KEY);
+    }
+
+    @Override
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        editScheduleViewModel = ViewModelProviders.of(this, modelProviderFactory).get(EditScheduleViewModel.class);
 
         fragmentDayScheduleBinding =  DataBindingUtil.inflate(inflater, R.layout.fragment_day_schedule, container, false);
 
-        DayScheduleAdapter dayScheduleAdapter = new DayScheduleAdapter();
+        editScheduleViewModel.checkSchedule(scheduleId);
 
-        fragmentDayScheduleBinding.dayScheduleRecyclerView.setAdapter(dayScheduleAdapter);
+        editScheduleViewModel.getSchedule().removeObservers(getViewLifecycleOwner());
+        editScheduleViewModel.getSchedule().observe(getViewLifecycleOwner(), schedule -> {
+            DayScheduleAdapter dayScheduleAdapter = new DayScheduleAdapter();
 
-        dayScheduleAdapter.setSchedules(schedules);
-        dayScheduleAdapter.setArguments(scheduleId, isEntry);
+            fragmentDayScheduleBinding.dayScheduleRecyclerView.setAdapter(dayScheduleAdapter);
+
+            dayScheduleAdapter.setSchedules(typeSchedule == TypeSchedule.ENTRY ? schedule.getEntryTimes() : schedule.getDepartureTimes());
+        });
+
 
         return fragmentDayScheduleBinding.getRoot();
     }

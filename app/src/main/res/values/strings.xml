@@ -38,6 +38,7 @@
     <string name="content_description_background">Imagem de fundo do cabeçalho</string>
     <string name="content_description_edit">Imagem de edição do horario</string>
     <string name="internet_warning">É necessário internet para cadastrar o endereço</string>
+    <string name="schedule">Horário</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="content_description_splash">Imagem de fundo da splash screen</string>
