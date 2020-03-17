@@ -4,27 +4,29 @@ import android.app.TimePickerDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thiagoalexb.dev.clockin.R;
+import com.thiagoalexb.dev.clockin.data.TypeSchedule;
 import com.thiagoalexb.dev.clockin.databinding.ItemEditSheduleBinding;
 import com.thiagoalexb.dev.clockin.util.DateHelper;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class DayScheduleAdapter extends RecyclerView.Adapter<DayScheduleAdapter.DayScheduleViewHolder> {
+public class DaySchedulesAdapter extends RecyclerView.Adapter<DaySchedulesAdapter.DayScheduleViewHolder> {
 
+    private final DaySchedulesFragment daySchedulesFragment;
     private ArrayList<String> schedules;
-    private final EditScheduleViewModel editScheduleViewModel;
+    private TypeSchedule typeSchedule;
 
-    public DayScheduleAdapter(EditScheduleViewModel editScheduleViewModel) {
 
-        this.editScheduleViewModel = editScheduleViewModel;
+    public DaySchedulesAdapter(DaySchedulesFragment daySchedulesFragment) {
+
+        this.daySchedulesFragment = daySchedulesFragment;
     }
 
     @NonNull
@@ -48,8 +50,9 @@ public class DayScheduleAdapter extends RecyclerView.Adapter<DayScheduleAdapter.
         return schedules == null ? 0 : schedules.size();
     }
 
-    public void setSchedules(ArrayList<String> schedules) {
+    public void setArguments(ArrayList<String> schedules, TypeSchedule typeSchedule) {
         this.schedules = schedules;
+        this.typeSchedule = typeSchedule;
         notifyDataSetChanged();
     }
 
@@ -67,18 +70,13 @@ public class DayScheduleAdapter extends RecyclerView.Adapter<DayScheduleAdapter.
             LocalDateTime localDateTime = LocalDateTime.parse(schedule);
 
             itemEditSheduleBinding.scheduleValueTextView.setText(DateHelper.getHourMinute(localDateTime));
-
-            itemEditSheduleBinding.editScheduleImageView.setOnClickListener(view -> {
-
-                setTimePickerDialog(view, position);
-            });
         }
 
         private void setTimePickerDialog(View view, final int position){
             LocalDateTime now = LocalDateTime.now();
             TimePickerDialog timePickerDialog = new TimePickerDialog(view.getContext(), (timePicker, hourOfDay, minute) -> {
-                String entryTime = hourOfDay + ":" + minute;
-                editScheduleViewModel.save(position);
+                LocalDateTime newTime = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), hourOfDay, minute);
+                daySchedulesFragment.daySchedulesViewModel.updateTime(position, typeSchedule, newTime);
             }, now.getHour(), now.getMinute(), true);
 
             timePickerDialog.show();

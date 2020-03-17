@@ -13,6 +13,7 @@ import com.thiagoalexb.dev.clockin.util.Resource;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.inject.Inject;
 
@@ -20,7 +21,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 
 
-public class EditScheduleViewModel extends ViewModel {
+public class DaySchedulesViewModel extends ViewModel {
 
     private final CompositeDisposable disposable;
     private final MutableLiveData<Resource<Schedule>> scheduleResource;
@@ -30,7 +31,7 @@ public class EditScheduleViewModel extends ViewModel {
 
 
     @Inject
-    public EditScheduleViewModel(ScheduleService scheduleService) {
+    public DaySchedulesViewModel(ScheduleService scheduleService) {
 
         this.disposable = new CompositeDisposable();
         this.scheduleResource = new MutableLiveData<>();
@@ -45,21 +46,6 @@ public class EditScheduleViewModel extends ViewModel {
         disposable.clear();
     }
 
-    public void checkSchedule(int id, int position, TypeSchedule typeSchedule){
-
-        scheduleResource.setValue(Resource.loading(null));
-        disposable.add(scheduleService.getById(id)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe((scheduleDb, throwable) -> {
-                            scheduleResource.setValue(Resource.success(scheduleDb));
-                            schedule.setValue(scheduleDb);
-                            if(typeSchedule == TypeSchedule.ENTRY)
-                                scheduleDb.setEntryTime(LocalDateTime.parse(scheduleDb.getEntryTimes().get(position)));
-                            else
-                                scheduleDb.setDepartureTime(LocalDateTime.parse(scheduleDb.getDepartureTimes().get(position)));
-                        }));
-    }
-
     public void checkSchedule(int id){
 
         scheduleResource.setValue(Resource.loading(null));
@@ -67,21 +53,32 @@ public class EditScheduleViewModel extends ViewModel {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((scheduleDb, throwable) -> {
                     scheduleResource.setValue(Resource.success(scheduleDb));
+
+                    scheduleDb.setEntryTimes(sortSchedules(scheduleDb.getEntryTimes()));
+                    scheduleDb.setDepartureTimes(sortSchedules(scheduleDb.getDepartureTimes()));
+
                     schedule.setValue(scheduleDb);
                 }));
     }
 
-    public void save(int position, TypeSchedule typeSchedule){
+    private ArrayList<String> sortSchedules(ArrayList<String> schedules){
+        if(schedules == null) return new ArrayList<>();
+
+        Collections.sort(schedules);
+        return schedules;
+    }
+
+    public void updateTime(int position, TypeSchedule typeSchedule, LocalDateTime newTime){
         scheduleResource.setValue(Resource.loading(null));
 
         Schedule schedule = this.schedule.getValue();
 
         if(typeSchedule == TypeSchedule.ENTRY){
             schedule.getEntryTimes().remove(position);
-            schedule.getEntryTimes().add(position, schedule.getEntryTime().toString());
+            schedule.getEntryTimes().add(position, newTime.toString());
         }else{
             schedule.getDepartureTimes().remove(position);
-            schedule.getDepartureTimes().add(position, schedule.getDepartureTime().toString());
+            schedule.getDepartureTimes().add(position, newTime.toString());
         }
 
         disposable.add(scheduleService.save(schedule)
@@ -90,6 +87,37 @@ public class EditScheduleViewModel extends ViewModel {
                             scheduleResource.setValue(Resource.success(null));
                             statusInsert.setValue(status);
                         }));
+    }
+
+    public void insertEntry(LocalDateTime entryTime){
+        Schedule schedule = this.schedule.getValue();
+        schedule.getEntryTimes().add(entryTime.toString());
+
+        disposable.add(scheduleService.save(schedule)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((status, throwable) -> {
+                    scheduleResource.setValue(Resource.success(null));
+                    statusInsert.setValue(status);
+                }));
+    }
+
+    public void insertDeparture(LocalDateTime departureTime){
+        Schedule schedule = this.schedule.getValue();
+        ArrayList<String> departures = schedule.getDepartureTimes();
+
+        if(departures == null)
+            departures = new ArrayList<>();
+
+        departures.add(departureTime.toString());
+
+        schedule.setDepartureTimes(departures);
+
+        disposable.add(scheduleService.save(schedule)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((status, throwable) -> {
+                    scheduleResource.setValue(Resource.success(null));
+                    statusInsert.setValue(status);
+                }));
     }
 
     public LiveData<Resource<Schedule>> getScheduleResource(){

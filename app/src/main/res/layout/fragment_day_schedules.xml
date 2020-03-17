@@ -33,65 +33,125 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.3" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/content_card_view"
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/content_nested_scroll_view"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/default_margin"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="8dp"
-            app:contentPadding="@dimen/default_padding"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_height="0dp"
+            android:fillViewport="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/title_text_view"
-            app:layout_constraintVertical_bias="0.0">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_text_view">
 
-            <androidx.core.widget.NestedScrollView
-                android:id="@+id/content_nested_scroll_view"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fillViewport="true">
+                android:orientation="vertical">
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/entries_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_marginBottom="@dimen/half_margin"
+                    android:text="@string/entry"
+                    android:gravity="center"
+                    android:textColor="@color/colorDefault"
+                    android:textSize="@dimen/sub_title"/>
 
-                    <TextView
-                        android:id="@+id/entries_text_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/half_margin"
-                        android:text="@string/entry" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/entries_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/half_margin"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_edit_shedule" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/entries_recycler_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/half_margin"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/item_edit_shedule" />
+                <TextView
+                    android:id="@+id/departures_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/half_margin"
+                    android:text="@string/departure"
+                    android:gravity="center"
+                    android:textColor="@color/colorDefault"
+                    android:textSize="@dimen/sub_title"/>
 
-                    <TextView
-                        android:id="@+id/departures_text_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/half_margin"
-                        android:text="@string/departure" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/departures_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_edit_shedule"
+                    android:layout_marginBottom="@dimen/default_margin"/>
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/departures_recycler_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/item_edit_shedule" />
+            </LinearLayout>
 
-                </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
 
-            </androidx.core.widget.NestedScrollView>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/entry_floating_action_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="10dp"
+            android:backgroundTint="@color/colorDefault"
+            app:fabSize="mini"
+            app:layout_constraintBottom_toTopOf="@+id/departure_floating_action_button"
+            app:layout_constraintEnd_toEndOf="@+id/actions_floating_action_button"
+            app:layout_constraintStart_toStartOf="@+id/actions_floating_action_button"
+            app:srcCompat="@drawable/ic_entry"
+            app:tint="@android:color/white" />
 
-        </androidx.cardview.widget.CardView>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/departure_floating_action_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="@color/colorDefault"
+            app:fabSize="mini"
+            app:layout_constraintBottom_toTopOf="@+id/actions_floating_action_button"
+            app:layout_constraintEnd_toEndOf="@+id/actions_floating_action_button"
+            app:layout_constraintStart_toStartOf="@+id/actions_floating_action_button"
+            app:srcCompat="@drawable/ic_departure"
+            app:tint="@android:color/white" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/actions_floating_action_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorDefault"
+            android:clickable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.91"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.96"
+            app:srcCompat="@drawable/ic_add"
+            app:tint="@android:color/white" />
+
+        <TextView
+            android:id="@+id/entry_floating_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/half_margin"
+            android:text="@string/entry"
+            android:textColor="@color/colorDefault"
+            app:layout_constraintBottom_toBottomOf="@+id/entry_floating_action_button"
+            app:layout_constraintEnd_toStartOf="@+id/entry_floating_action_button"
+            app:layout_constraintTop_toTopOf="@+id/entry_floating_action_button" />
+
+        <TextView
+            android:id="@+id/departure_floating_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/half_margin"
+            android:text="@string/departure"
+            android:textColor="@color/colorDefault"
+            app:layout_constraintBottom_toBottomOf="@+id/departure_floating_action_button"
+            app:layout_constraintEnd_toStartOf="@+id/departure_floating_action_button"
+            app:layout_constraintTop_toTopOf="@+id/departure_floating_action_button" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

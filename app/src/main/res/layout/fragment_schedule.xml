@@ -83,14 +83,14 @@
             android:layout_margin="10dp"
             android:backgroundTint="@color/colorDefault"
             app:fabSize="mini"
-            app:layout_constraintBottom_toTopOf="@+id/address_floating_action_button"
+            app:layout_constraintBottom_toTopOf="@+id/addressFloatingActionButton"
             app:layout_constraintEnd_toEndOf="@+id/actions_floating_action_button"
             app:layout_constraintStart_toStartOf="@+id/actions_floating_action_button"
             app:srcCompat="@drawable/ic_print"
             app:tint="@android:color/white" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/address_floating_action_button"
+            android:id="@+id/addressFloatingActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -147,9 +147,9 @@
             android:layout_marginEnd="@dimen/half_margin"
             android:text="@string/address"
             android:textColor="@color/colorDefault"
-            app:layout_constraintBottom_toBottomOf="@+id/address_floating_action_button"
-            app:layout_constraintEnd_toStartOf="@+id/address_floating_action_button"
-            app:layout_constraintTop_toTopOf="@+id/address_floating_action_button" />
+            app:layout_constraintBottom_toBottomOf="@+id/addressFloatingActionButton"
+            app:layout_constraintEnd_toStartOf="@+id/addressFloatingActionButton"
+            app:layout_constraintTop_toTopOf="@+id/addressFloatingActionButton" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

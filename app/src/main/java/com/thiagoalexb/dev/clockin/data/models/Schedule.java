@@ -23,25 +23,6 @@ public class Schedule {
     @PrimaryKey(autoGenerate = true)
     private int id;
     private LocalDateTime date;
-
-    public LocalDateTime getEntryTime() {
-        return entryTime;
-    }
-
-    public void setEntryTime(LocalDateTime entryTime) {
-        this.entryTime = entryTime;
-    }
-
-    public LocalDateTime getDepartureTime() {
-        return departureTime;
-    }
-
-    public void setDepartureTime(LocalDateTime departureTime) {
-        this.departureTime = departureTime;
-    }
-
-    private LocalDateTime entryTime;
-    private LocalDateTime departureTime;
     private ArrayList<String> entryTimes;
     private ArrayList<String> departureTimes;
     private int day;

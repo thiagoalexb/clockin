@@ -6,7 +6,7 @@ import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelKey;
 import com.thiagoalexb.dev.clockin.ui.address.AddressViewModel;
 import com.thiagoalexb.dev.clockin.ui.schedule.ScheduleViewModel;
 import com.thiagoalexb.dev.clockin.ui.report.ReportViewModel;
-import com.thiagoalexb.dev.clockin.ui.dayschedules.EditScheduleViewModel;
+import com.thiagoalexb.dev.clockin.ui.dayschedules.DaySchedulesViewModel;
 
 import dagger.Binds;
 import dagger.Module;
@@ -27,8 +27,8 @@ public abstract class ScheduleViewModelsModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(EditScheduleViewModel.class)
-    public abstract ViewModel bindEditScheduleViewModel(EditScheduleViewModel viewModel);
+    @ViewModelKey(DaySchedulesViewModel.class)
+    public abstract ViewModel bindEditScheduleViewModel(DaySchedulesViewModel viewModel);
 
     @Binds
     @IntoMap
