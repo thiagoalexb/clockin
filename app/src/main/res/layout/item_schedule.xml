@@ -21,8 +21,9 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/container_schedules"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_margin="@dimen/default_margin">
 
                 <TextView
@@ -101,12 +102,98 @@
                     android:id="@+id/edit_schedule_image_view"
                     android:layout_width="20dp"
                     android:layout_height="0dp"
-                    android:tint="@color/colorDefault"
                     android:contentDescription="@string/content_description_edit"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:tint="@color/colorDefault"
+                    app:layout_constraintBottom_toBottomOf="@+id/entry_text_view"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/day_text_view"
                     app:srcCompat="@drawable/ic_edit" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/schedule_info_constraint"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/entry_text_view">
+
+                    <View
+                        android:id="@+id/divider_view"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/half_margin"
+                        android:background="@color/colorDefault"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <TextView
+                        android:id="@+id/entries_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto"
+                        android:text="@string/entries"
+                        android:textColor="@color/colorDefault"
+                        android:textSize="13sp"
+                        android:layout_marginTop="@dimen/half_padding"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/divider_view" />
+
+                    <TextView
+                        android:id="@+id/departures_text_view"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto"
+                        android:text="@string/departures"
+                        android:textColor="@color/colorDefault"
+                        android:textSize="13sp"
+                        android:layout_marginTop="@dimen/half_padding"
+                        app:layout_constraintStart_toStartOf="@+id/departure_guideline"
+                        app:layout_constraintTop_toBottomOf="@+id/divider_view" />
+
+                    <TextView
+                        android:id="@+id/entries_values_text_view"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto"
+                        android:textColor="@color/colorDefault"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/entries_text_view"
+                        app:layout_constraintStart_toStartOf="@+id/entries_text_view"
+                        app:layout_constraintTop_toBottomOf="@+id/entries_text_view"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintVertical_bias="0"
+                        tools:text="10:00" />
+
+                    <TextView
+                        android:id="@+id/departures_values_text_view"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto"
+                        android:textColor="@color/colorDefault"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/departures_text_view"
+                        app:layout_constraintStart_toStartOf="@+id/departures_text_view"
+                        app:layout_constraintTop_toBottomOf="@+id/departures_text_view"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintVertical_bias="0"
+                        tools:text="10:00" />
+
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/departure_guideline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="190dp" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

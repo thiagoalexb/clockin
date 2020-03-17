@@ -82,8 +82,16 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
                     bundle.putInt(ID_KEY, schedule.getId());
                     Navigation.findNavController(v).navigate(R.id.action_mainFragment_to_daySchedulesFragment, bundle);
                 });
-            else
+            else{
+                itemScheduleBinding.scheduleInfoConstraint.setVisibility(View.VISIBLE);
+                itemScheduleBinding.entriesValuesTextView.setText(String.join("\n", schedule.getEntryTimesFormatted()));
+
+                if(departureTimes != null)
+                    itemScheduleBinding.departuresValuesTextView.setText(String.join("\n", schedule.getDepartureTimesFormatted()));
+
                 itemScheduleBinding.editScheduleImageView.setVisibility(View.GONE);
+            }
+
         }
     }
 }

@@ -107,7 +107,6 @@ public class DaySchedulesFragment extends BaseFragment {
     }
 
     private void setRecyclerView(RecyclerView recyclerView, DaySchedulesAdapter dayDepartureScheduleAdapter, TypeSchedule typeSchedule) {
-        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         recyclerView.setAdapter(dayDepartureScheduleAdapter);
 
         RecyclerTouchListener touchListener = new RecyclerTouchListener(getActivity(), recyclerView);
@@ -115,7 +114,7 @@ public class DaySchedulesFragment extends BaseFragment {
                 .setClickable(new RecyclerTouchListener.OnRowClickListener() {
                     @Override
                     public void onRowClicked(int position) {
-                        touchListener.openSwipeOptions(position);
+
                     }
 
                     @Override
@@ -131,7 +130,7 @@ public class DaySchedulesFragment extends BaseFragment {
                             Toast.makeText(getContext(), "delete", Toast.LENGTH_SHORT).show();
                             break;
                         case R.id.edit_image_view:
-                            setTimePickerDialog(getView(), touchListener.getTypeSchedule());
+                            setTimePickerDialog(getView(), touchListener.getTypeSchedule(), position);
                             break;
 
                     }
@@ -150,20 +149,22 @@ public class DaySchedulesFragment extends BaseFragment {
 
         fragmentDaySchedulesBinding.entryFloatingActionButton.setOnClickListener(view -> {
             setAnimationActionsFabButton();
-            setTimePickerDialog(view, TypeSchedule.ENTRY);
+            setTimePickerDialog(view, TypeSchedule.ENTRY, null);
         });
 
         fragmentDaySchedulesBinding.departureFloatingActionButton.setOnClickListener(view -> {
             setAnimationActionsFabButton();
-            setTimePickerDialog(view, TypeSchedule.DEPARTURE);
+            setTimePickerDialog(view, TypeSchedule.DEPARTURE, null);
         });
     }
 
-    private void setTimePickerDialog(View view, final TypeSchedule typeSchedule) {
+    private void setTimePickerDialog(View view, final TypeSchedule typeSchedule, @Nullable Integer position) {
         LocalDateTime now = LocalDateTime.now();
         TimePickerDialog timePickerDialog = new TimePickerDialog(view.getContext(), (timePicker, hourOfDay, minute) -> {
             LocalDateTime newTime = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), hourOfDay, minute);
-            if (typeSchedule == TypeSchedule.ENTRY)
+            if(position != null)
+                daySchedulesViewModel.updateTime(position, typeSchedule, newTime);
+            else if (typeSchedule == TypeSchedule.ENTRY)
                 daySchedulesViewModel.insertEntry(newTime);
             else
                 daySchedulesViewModel.insertDeparture(newTime);

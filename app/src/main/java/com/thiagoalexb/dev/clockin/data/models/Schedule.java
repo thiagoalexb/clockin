@@ -4,6 +4,8 @@ package com.thiagoalexb.dev.clockin.data.models;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import com.thiagoalexb.dev.clockin.util.DateHelper;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -83,5 +85,21 @@ public class Schedule {
 
     public void setYear(int year) {
         this.year = year;
+    }
+
+    public ArrayList<String> getEntryTimesFormatted(){
+        ArrayList<String> formattedList = new ArrayList<>();
+        for (String entry : this.entryTimes){
+            formattedList.add(DateHelper.getHourMinute(entry));
+        }
+        return formattedList;
+    }
+
+    public ArrayList<String> getDepartureTimesFormatted(){
+        ArrayList<String> formattedList = new ArrayList<>();
+        for (String departure : this.departureTimes){
+            formattedList.add(DateHelper.getHourMinute(departure));
+        }
+        return formattedList;
     }
 }

@@ -87,6 +87,18 @@
                 android:layout_height="wrap_content"
                 android:padding="@dimen/default_padding">
 
+                <ImageView
+                    android:id="@+id/watch_image_view"
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:tint="@color/colorDefault"
+                    app:srcCompat="@drawable/ic_watch"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
                 <TextView
                     android:id="@+id/schedule_value_text_view"
                     android:layout_width="wrap_content"
@@ -95,12 +107,25 @@
                     android:text="@string/entry"
                     android:textColor="@color/colorDefault"
                     android:textSize="13sp"
+                    android:layout_marginStart="@dimen/half_margin"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/watch_image_view"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Entrada" />
+
+                <ImageView
+                    android:id="@+id/arrow_image_view"
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:tint="@color/colorDefault"
+                    app:srcCompat="@drawable/ic_arrow_right"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
