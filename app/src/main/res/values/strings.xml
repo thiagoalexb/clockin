@@ -41,6 +41,8 @@
     <string name="schedule">Horário</string>
     <string name="entries">Entradas</string>
     <string name="departures">Saídas</string>
+    <string name="no_entries_results">Nenhuma entrada encontrada</string>
+    <string name="no_departures_results">Nenhuma saída encontrada</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="content_description_splash">Imagem de fundo da splash screen</string>

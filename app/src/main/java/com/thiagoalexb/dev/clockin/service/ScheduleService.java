@@ -1,17 +1,11 @@
 package com.thiagoalexb.dev.clockin.service;
 
-import android.util.Log;
-import android.util.Pair;
-
 import com.thiagoalexb.dev.clockin.data.models.Schedule;
 import com.thiagoalexb.dev.clockin.data.models.ScheduleYearMonth;
 import com.thiagoalexb.dev.clockin.data.repository.ScheduleRepository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -20,7 +14,6 @@ import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class ScheduleService {
 
@@ -98,6 +91,10 @@ public class ScheduleService {
 
     public Single<Long> save(Schedule schedule){
         return scheduleRepository.insert(schedule);
+    }
+
+    public Single<Integer> delete(Schedule schedule){
+        return scheduleRepository.delete(schedule);
     }
 
     public Flowable<List<ScheduleYearMonth>> getYearsMonths(){

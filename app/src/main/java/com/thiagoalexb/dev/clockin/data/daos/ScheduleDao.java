@@ -3,6 +3,7 @@ package com.thiagoalexb.dev.clockin.data.daos;
 import android.util.Pair;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -25,6 +26,9 @@ public interface  ScheduleDao {
 
     @Update
     Single<Integer> update(Schedule schedule);
+
+    @Delete
+    Single<Integer> delete (Schedule schedule);
 
     @Query("SELECT * FROM Schedule WHERE year = :year AND month = :month AND day = :day LIMIT 1")
     Single<Schedule> getByDay(int year, int month, int day);

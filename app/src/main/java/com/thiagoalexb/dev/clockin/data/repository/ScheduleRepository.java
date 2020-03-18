@@ -36,6 +36,11 @@ public class ScheduleRepository {
                 .subscribeOn(Schedulers.io());
     }
 
+    public Single<Integer> delete(Schedule schedule){
+        return _appDatabase.scheduleDao().delete(schedule)
+                .subscribeOn(Schedulers.io());
+    }
+
     public Flowable<List<Schedule>> getByMonth(int month){
         return _appDatabase.scheduleDao().getByMonth(month)
                 .subscribeOn(Schedulers.io());

@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +26,7 @@ import com.thiagoalexb.dev.clockin.ui.animation.ViewAnimation;
 import com.thiagoalexb.dev.clockin.ui.schedule.ScheduleAdapter;
 import com.thiagoalexb.dev.clockin.util.RecyclerTouchListener;
 
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -75,10 +77,25 @@ public class DaySchedulesFragment extends BaseFragment {
 
         daySchedulesViewModel.getSchedule().removeObservers(getViewLifecycleOwner());
         daySchedulesViewModel.getSchedule().observe(getViewLifecycleOwner(), schedule -> {
-            if (schedule == null) return;
+            if (schedule == null) {
+                Navigation.findNavController(getView()).navigate(R.id.action_daySchedulesFragment_to_mainFragment);
+                return;
+            };
 
-            dayEntryScheduleAdapter.setArguments(schedule.getEntryTimes(), TypeSchedule.ENTRY);
-            dayDepartureScheduleAdapter.setArguments(schedule.getDepartureTimes(), TypeSchedule.DEPARTURE);
+            ArrayList<String> entries = schedule.getEntryTimes();
+            ArrayList<String> departures = schedule.getDepartureTimes();
+
+            dayEntryScheduleAdapter.setArguments(entries, TypeSchedule.ENTRY);
+            dayDepartureScheduleAdapter.setArguments(departures, TypeSchedule.DEPARTURE);
+
+            if(entries != null && entries.size() > 0)
+                fragmentDaySchedulesBinding.noEntriesResultsTextView.setVisibility(View.GONE);
+            else
+                fragmentDaySchedulesBinding.noEntriesResultsTextView.setVisibility(View.VISIBLE);
+            if(departures != null && departures.size() > 0)
+                fragmentDaySchedulesBinding.noDeparturesResultsTextView.setVisibility(View.GONE);
+            else
+                fragmentDaySchedulesBinding.noDeparturesResultsTextView.setVisibility(View.VISIBLE);
         });
 
         daySchedulesViewModel.getStatusInsert().removeObservers(getViewLifecycleOwner());
@@ -127,7 +144,7 @@ public class DaySchedulesFragment extends BaseFragment {
                 .setSwipeable(R.id.container_schedule, R.id.container_actions, (viewID, position) -> {
                     switch (viewID) {
                         case R.id.delete_image_view:
-                            Toast.makeText(getContext(), "delete", Toast.LENGTH_SHORT).show();
+                            daySchedulesViewModel.deleteSchedule(position, touchListener.getTypeSchedule());
                             break;
                         case R.id.edit_image_view:
                             setTimePickerDialog(getView(), touchListener.getTypeSchedule(), position);

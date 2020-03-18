@@ -54,6 +54,12 @@ public class DaySchedulesViewModel extends ViewModel {
                 .subscribe((scheduleDb, throwable) -> {
                     scheduleResource.setValue(Resource.success(scheduleDb));
 
+                    if(throwable != null)
+                    {
+                        schedule.setValue(null);
+                        return;
+                    }
+
                     scheduleDb.setEntryTimes(sortSchedules(scheduleDb.getEntryTimes()));
                     scheduleDb.setDepartureTimes(sortSchedules(scheduleDb.getDepartureTimes()));
 
@@ -118,6 +124,33 @@ public class DaySchedulesViewModel extends ViewModel {
                     scheduleResource.setValue(Resource.success(null));
                     statusInsert.setValue(status);
                 }));
+    }
+
+    public void deleteSchedule(int position, TypeSchedule typeSchedule){
+        scheduleResource.setValue(Resource.loading(null));
+
+        Schedule schedule = this.schedule.getValue();
+
+        if(typeSchedule == TypeSchedule.ENTRY)
+            schedule.getEntryTimes().remove(position);
+        else
+            schedule.getDepartureTimes().remove(position);
+
+        if(schedule.getEntryTimes().size() == 0){
+            disposable.add(scheduleService.delete(schedule)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe((status, throwable) -> {
+                        scheduleResource.setValue(Resource.success(null));
+                        statusInsert.setValue(Long.parseLong(status.toString()));
+                    }));
+        }else{
+            disposable.add(scheduleService.save(schedule)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe((status, throwable) -> {
+                        scheduleResource.setValue(Resource.success(null));
+                        statusInsert.setValue(status);
+                    }));
+        }
     }
 
     public LiveData<Resource<Schedule>> getScheduleResource(){
