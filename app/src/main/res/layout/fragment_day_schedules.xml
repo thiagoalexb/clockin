@@ -134,6 +134,20 @@
         </LinearLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/remove_floating_action_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="10dp"
+            android:backgroundTint="@color/colorDefault"
+            app:fabSize="mini"
+            app:layout_constraintBottom_toTopOf="@+id/entry_floating_action_button"
+            app:layout_constraintEnd_toEndOf="@+id/actions_floating_action_button"
+            app:layout_constraintStart_toStartOf="@+id/actions_floating_action_button"
+            app:srcCompat="@drawable/ic_delete"
+            app:tint="@android:color/white" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/entry_floating_action_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -175,6 +189,17 @@
             app:layout_constraintVertical_bias="0.96"
             app:srcCompat="@drawable/ic_add"
             app:tint="@android:color/white" />
+
+        <TextView
+            android:id="@+id/remove_floating_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/half_margin"
+            android:text="@string/remove_schedule"
+            android:textColor="@color/colorDefault"
+            app:layout_constraintBottom_toBottomOf="@+id/remove_floating_action_button"
+            app:layout_constraintEnd_toStartOf="@+id/remove_floating_action_button"
+            app:layout_constraintTop_toTopOf="@+id/remove_floating_action_button" />
 
         <TextView
             android:id="@+id/entry_floating_text_view"

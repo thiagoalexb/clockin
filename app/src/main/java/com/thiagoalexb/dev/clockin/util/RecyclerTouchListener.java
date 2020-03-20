@@ -647,7 +647,7 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener, 
                             closeVisibleBG(new OnSwipeListener() {
                                 @Override
                                 public void onSwipeOptionsClosed() {
-                                    mBgClickListener.onSwipeOptionClicked(optionID, downPosition);
+                                    mBgClickListener.onSwipeOptionClicked(optionID, downPosition, rView.getId());
                                 }
 
                                 @Override
@@ -777,7 +777,7 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener, 
     }
 
     public interface OnSwipeOptionsClickListener {
-        void onSwipeOptionClicked(int viewID, int position);
+        void onSwipeOptionClicked(int viewID, int position, int parent);
     }
 
     public interface RecyclerTouchListenerHelper {

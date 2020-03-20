@@ -43,7 +43,11 @@
     <string name="departures">Saídas</string>
     <string name="no_entries_results">Nenhuma entrada encontrada</string>
     <string name="no_departures_results">Nenhuma saída encontrada</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="content_description_splash">Imagem de fundo da splash screen</string>
+    <string name="remove_schedule">Excluir</string>
+    <string name="remove_schedule_ask">Tem certeza que deseja excluir?</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="one_entry_more_mandatory">É obrigatório ter pelo uma entrada para cada saída</string>
+    <string name="one_departure_more_mandatory">É obrigatório ter pelo uma saída para cada entrada</string>
 </resources>

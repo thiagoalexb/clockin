@@ -6,15 +6,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thiagoalexb.dev.clockin.R;
@@ -26,9 +24,9 @@ import com.thiagoalexb.dev.clockin.ui.animation.ViewAnimation;
 import com.thiagoalexb.dev.clockin.ui.schedule.ScheduleAdapter;
 import com.thiagoalexb.dev.clockin.util.RecyclerTouchListener;
 
-import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -88,14 +86,11 @@ public class DaySchedulesFragment extends BaseFragment {
             dayEntryScheduleAdapter.setArguments(entries, TypeSchedule.ENTRY);
             dayDepartureScheduleAdapter.setArguments(departures, TypeSchedule.DEPARTURE);
 
-            if(entries != null && entries.size() > 0)
-                fragmentDaySchedulesBinding.noEntriesResultsTextView.setVisibility(View.GONE);
-            else
-                fragmentDaySchedulesBinding.noEntriesResultsTextView.setVisibility(View.VISIBLE);
-            if(departures != null && departures.size() > 0)
-                fragmentDaySchedulesBinding.noDeparturesResultsTextView.setVisibility(View.GONE);
-            else
-                fragmentDaySchedulesBinding.noDeparturesResultsTextView.setVisibility(View.VISIBLE);
+            boolean hasEntries = entries != null && entries.size() > 0;
+            fragmentDaySchedulesBinding.noEntriesResultsTextView.setVisibility(hasEntries ? View.GONE : View.VISIBLE);
+
+            boolean hasDepartures = departures != null && departures.size() > 0;
+            fragmentDaySchedulesBinding.noDeparturesResultsTextView.setVisibility(hasDepartures ? View.GONE : View.VISIBLE);
         });
 
         daySchedulesViewModel.getStatusInsert().removeObservers(getViewLifecycleOwner());
@@ -141,10 +136,21 @@ public class DaySchedulesFragment extends BaseFragment {
                 })
                 .setSwipeOptionViews(R.id.edit_image_view, R.id.delete_image_view)
                 .setTypeSchedule(typeSchedule)
-                .setSwipeable(R.id.container_schedule, R.id.container_actions, (viewID, position) -> {
+                .setSwipeable(R.id.container_schedule, R.id.container_actions, (viewID, position, parentId) -> {
                     switch (viewID) {
                         case R.id.delete_image_view:
-                            daySchedulesViewModel.deleteSchedule(position, touchListener.getTypeSchedule());
+                            if(parentId == fragmentDaySchedulesBinding.entriesRecyclerView.getId()){
+                                if(daySchedulesViewModel.getCanAddEntry().getValue())
+                                    createDialogNeedHaveEntry();
+                                else
+                                    daySchedulesViewModel.deleteSchedule(position, touchListener.getTypeSchedule());
+                            }
+                            else{
+                                if(daySchedulesViewModel.getCanAddDeparture().getValue())
+                                    createDialogNeedHaveDeparture();
+                                else
+                                    daySchedulesViewModel.deleteSchedule(position, touchListener.getTypeSchedule());
+                            }
                             break;
                         case R.id.edit_image_view:
                             setTimePickerDialog(getView(), touchListener.getTypeSchedule(), position);
@@ -159,19 +165,31 @@ public class DaySchedulesFragment extends BaseFragment {
     private void setFabButtons() {
         ViewAnimation.init(fragmentDaySchedulesBinding.entryFloatingActionButton, fragmentDaySchedulesBinding.entryFloatingTextView);
         ViewAnimation.init(fragmentDaySchedulesBinding.departureFloatingActionButton, fragmentDaySchedulesBinding.departureFloatingTextView);
+        ViewAnimation.init(fragmentDaySchedulesBinding.removeFloatingActionButton, fragmentDaySchedulesBinding.removeFloatingTextView);
 
         fragmentDaySchedulesBinding.actionsFloatingActionButton.setOnClickListener(view -> {
             setAnimationActionsFabButton();
         });
 
+        fragmentDaySchedulesBinding.removeFloatingActionButton.setOnClickListener(view -> {
+            setAnimationActionsFabButton();
+            createDialogRemoveSchedule();
+        });
+
         fragmentDaySchedulesBinding.entryFloatingActionButton.setOnClickListener(view -> {
             setAnimationActionsFabButton();
-            setTimePickerDialog(view, TypeSchedule.ENTRY, null);
+            if(daySchedulesViewModel.getCanAddEntry().getValue())
+                setTimePickerDialog(view, TypeSchedule.ENTRY, null);
+            else
+                createDialogNeedHaveDeparture();
         });
 
         fragmentDaySchedulesBinding.departureFloatingActionButton.setOnClickListener(view -> {
             setAnimationActionsFabButton();
-            setTimePickerDialog(view, TypeSchedule.DEPARTURE, null);
+            if(daySchedulesViewModel.getCanAddDeparture().getValue())
+                setTimePickerDialog(view, TypeSchedule.DEPARTURE, null);
+            else
+                createDialogNeedHaveEntry();
         });
     }
 
@@ -196,9 +214,55 @@ public class DaySchedulesFragment extends BaseFragment {
         if (isRotate) {
             ViewAnimation.showIn(fragmentDaySchedulesBinding.entryFloatingActionButton, fragmentDaySchedulesBinding.entryFloatingTextView);
             ViewAnimation.showIn(fragmentDaySchedulesBinding.departureFloatingActionButton, fragmentDaySchedulesBinding.departureFloatingTextView);
+            ViewAnimation.showIn(fragmentDaySchedulesBinding.removeFloatingActionButton, fragmentDaySchedulesBinding.removeFloatingTextView);
         } else {
             ViewAnimation.showOut(fragmentDaySchedulesBinding.entryFloatingActionButton, fragmentDaySchedulesBinding.entryFloatingTextView);
             ViewAnimation.showOut(fragmentDaySchedulesBinding.departureFloatingActionButton, fragmentDaySchedulesBinding.departureFloatingTextView);
+            ViewAnimation.showOut(fragmentDaySchedulesBinding.removeFloatingActionButton, fragmentDaySchedulesBinding.removeFloatingTextView);
         }
+    }
+
+    private void createDialogRemoveSchedule(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
+
+        builder.setTitle(R.string.remove_schedule);
+        builder.setMessage(R.string.remove_schedule_ask);
+
+        builder.setPositiveButton(R.string.yes, (dialog, id) -> {
+            daySchedulesViewModel.deleteSchedule(daySchedulesViewModel.getSchedule().getValue());
+        });
+
+        builder.setNegativeButton(R.string.no, (dialog, id) -> {
+
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void createDialogNeedHaveEntry(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
+
+        builder.setTitle(R.string.departure);
+        builder.setMessage(R.string.one_entry_more_mandatory);
+
+        builder.setPositiveButton(R.string.OK, (dialog, id) -> {
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void createDialogNeedHaveDeparture(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
+
+        builder.setTitle(R.string.entry);
+        builder.setMessage(R.string.one_departure_more_mandatory);
+
+        builder.setPositiveButton(R.string.OK, (dialog, id) -> {
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

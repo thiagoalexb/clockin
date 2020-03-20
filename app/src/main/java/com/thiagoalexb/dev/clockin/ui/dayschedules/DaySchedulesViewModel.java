@@ -10,7 +10,6 @@ import com.thiagoalexb.dev.clockin.service.ScheduleService;
 import com.thiagoalexb.dev.clockin.util.Resource;
 
 
-import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +27,8 @@ public class DaySchedulesViewModel extends ViewModel {
     private final MutableLiveData<Schedule> schedule;
     private final MutableLiveData<Long> statusInsert;
     private final ScheduleService scheduleService;
+    private final MutableLiveData<Boolean> canAddEntry;
+    private final MutableLiveData<Boolean> canAddDeparture;
 
 
     @Inject
@@ -38,6 +39,8 @@ public class DaySchedulesViewModel extends ViewModel {
         this.schedule = new MutableLiveData<>();
         this.statusInsert = new MutableLiveData<>();
         this.scheduleService = scheduleService;
+        this.canAddEntry = new MutableLiveData<>(false);
+        this.canAddDeparture = new MutableLiveData<>(false);
     }
 
     @Override
@@ -64,6 +67,9 @@ public class DaySchedulesViewModel extends ViewModel {
                     scheduleDb.setDepartureTimes(sortSchedules(scheduleDb.getDepartureTimes()));
 
                     schedule.setValue(scheduleDb);
+
+                    canAddEntry.setValue(hasDeparture());
+                    canAddDeparture.setValue(hasEntry());
                 }));
     }
 
@@ -96,6 +102,7 @@ public class DaySchedulesViewModel extends ViewModel {
     }
 
     public void insertEntry(LocalDateTime entryTime){
+
         Schedule schedule = this.schedule.getValue();
         schedule.getEntryTimes().add(entryTime.toString());
 
@@ -108,6 +115,7 @@ public class DaySchedulesViewModel extends ViewModel {
     }
 
     public void insertDeparture(LocalDateTime departureTime){
+
         Schedule schedule = this.schedule.getValue();
         ArrayList<String> departures = schedule.getDepartureTimes();
 
@@ -131,10 +139,14 @@ public class DaySchedulesViewModel extends ViewModel {
 
         Schedule schedule = this.schedule.getValue();
 
-        if(typeSchedule == TypeSchedule.ENTRY)
-            schedule.getEntryTimes().remove(position);
-        else
-            schedule.getDepartureTimes().remove(position);
+        if(schedule == null) return;
+
+        if(typeSchedule == TypeSchedule.ENTRY && schedule.getEntryTimes() != null)
+                schedule.getEntryTimes().remove(position);
+        else if (schedule.getDepartureTimes() != null)
+                schedule.getDepartureTimes().remove(position);
+
+
 
         if(schedule.getEntryTimes().size() == 0){
             disposable.add(scheduleService.delete(schedule)
@@ -153,6 +165,42 @@ public class DaySchedulesViewModel extends ViewModel {
         }
     }
 
+    public void deleteSchedule(Schedule schedule) {
+
+        disposable.add(scheduleService.delete(schedule)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((status, throwable1) -> {
+                    scheduleResource.setValue(Resource.success(null));
+                    statusInsert.setValue(Long.parseLong(status.toString()));
+                }));
+    }
+
+    private boolean hasEntry(){
+        Schedule schedule = getSchedule().getValue();
+        if(schedule == null) return false;
+
+        ArrayList<String> entries = schedule.getEntryTimes();
+        if(entries == null || entries.size() == 0) return false;
+
+        ArrayList<String> departures = schedule.getDepartureTimes();
+        if(departures == null) return false;
+
+        return entries.size() - departures.size() == 1;
+    }
+
+    private boolean hasDeparture(){
+        Schedule schedule = getSchedule().getValue();
+        if(schedule == null) return false;
+
+        ArrayList<String> entries = schedule.getEntryTimes();
+        if(entries == null || entries.size() == 0) return false;
+
+        ArrayList<String> departures = schedule.getDepartureTimes();
+        if(departures == null) return false;
+
+        return entries.size() - departures.size() == 0;
+    }
+
     public LiveData<Resource<Schedule>> getScheduleResource(){
         return scheduleResource;
     }
@@ -163,5 +211,13 @@ public class DaySchedulesViewModel extends ViewModel {
 
     public LiveData<Long> getStatusInsert(){
         return statusInsert;
+    }
+
+    public LiveData<Boolean> getCanAddEntry(){
+        return canAddEntry;
+    }
+
+    public LiveData<Boolean> getCanAddDeparture(){
+        return canAddDeparture;
     }
 }
