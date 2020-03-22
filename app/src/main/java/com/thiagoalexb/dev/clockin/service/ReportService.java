@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -36,7 +37,22 @@ public class ReportService {
             CSVWriter writer = new CSVWriter(new FileWriter(csv));
 
             List<String[]> data = new ArrayList<>();
-            data.add(new String[]{"Data", "Dia", "Hora Entrada", "Hora Saida"});
+
+            Comparator<Schedule> comparator = Comparator.comparing( Schedule::getSizeEntry );
+
+            Optional<Schedule> scheduleMaxEntries = schedules.stream().max(comparator);
+
+            int sizeHeaders = (scheduleMaxEntries.get().getSizeEntry() * 2) + 2;
+
+            String[] headers = new String[sizeHeaders];
+            headers[0] = "Data";
+            headers[1] = "Dia";
+
+            data.add(headers);
+
+            for (int j = 2; j < sizeHeaders; j++){
+                headers[j] = j % 2 == 0 ? "Entrada" : "Saída";
+            }
 
             Integer days = schedules.get(0).getDate().toLocalDate().lengthOfMonth();
             Locale locale = DateHelper.getLocale();
@@ -50,17 +66,38 @@ public class ReportService {
 
                 int count = i;
 
-                int yearrr = schedules.get(0).getDate().getYear();
-                int monthhh = schedules.get(0).getDate().getMonthValue();
-                int dayyy = schedules.get(0).getDate().getDayOfMonth();
-
                 Optional<Schedule> schedule = schedules.stream().filter(s ->  s.getDate().getYear() == year && s.getDate().getMonthValue() == month && s.getDate().getDayOfMonth() == count)
                                                         .findFirst();
 
                 if(!schedule.isPresent())
-                    data.add(new String[]{ date, dayOfWeekFormatted, "", "", "" });
-//                else
-//                    data.add(new String[]{ date, dayOfWeekFormatted, DateHelper.getHourMinute(schedule.get().getEntryTime()), DateHelper.getHourMinute(schedule.get().getDepartureTime()) });
+                    data.add(new String[]{ date, dayOfWeekFormatted });
+                else{
+                    int sizeColumns = (schedule.get().getSizeEntry() * 2) + 2;
+                    String[] rows = new String[sizeColumns];
+                    rows[0] = date;
+                    rows[1] = dayOfWeekFormatted;
+
+                    int firstRow = 2;
+
+                    for (int n = 0; n < schedule.get().getEntryTimes().size(); n++){
+                        String entry = schedule.get().getEntryTimes().get(n);
+                        rows[firstRow] = DateHelper.getHourMinute(entry);
+                        firstRow  = firstRow + 2;
+                    }
+
+                    firstRow = 3;
+                    for (int n = 0; n < schedule.get().getDepartureTimes().size(); n++){
+                        String departure = schedule.get().getDepartureTimes().get(n);
+
+                        if(!TextHelper.isNullOrEmpty(departure)){
+                             rows[firstRow] = DateHelper.getHourMinute(departure);
+                            firstRow  = firstRow + 2;
+                        }
+                    }
+
+                    data.add(rows);
+                }
+
             }
 
             writer.writeAll(data);

@@ -102,4 +102,8 @@ public class Schedule {
         }
         return formattedList;
     }
+
+    public int getSizeEntry(){
+        return entryTimes == null ? 0 : entryTimes.size();
+    }
 }
