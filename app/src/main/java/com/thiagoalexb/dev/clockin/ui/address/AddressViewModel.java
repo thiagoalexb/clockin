@@ -22,6 +22,7 @@ public class AddressViewModel extends ViewModel {
     private final CompositeDisposable disposable;
     private final AddressService addressService;
     private final MutableLiveData<Long> statusInsert;
+    private final MutableLiveData<Long> statusSearch;
     private final MutableLiveData<Address> address;
     private final MutableLiveData<Resource<Address>> addressResource;
     private final MutableLiveData<Boolean> isValid;
@@ -32,6 +33,7 @@ public class AddressViewModel extends ViewModel {
         this.disposable = new CompositeDisposable();
         this.addressService = addressService;
         this.statusInsert = new MutableLiveData<>();
+        this.statusSearch = new MutableLiveData<>();
         this.address = new MutableLiveData<>(new Address());
         this.addressResource = new MutableLiveData<>();
         this.isValid = new MutableLiveData<>(false);
@@ -65,12 +67,14 @@ public class AddressViewModel extends ViewModel {
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe((addressApiResponses, throwable) -> {
                     if(throwable != null) {
-                        statusInsert.setValue(null);
+                        addressResource.postValue(Resource.success(null));
+                        statusSearch.postValue(null);
                         return;
                     }
 
                     if(addressApiResponses.size() == 0) {
-                        statusInsert.setValue(null);
+                        addressResource.postValue(Resource.success(null));
+                        statusSearch.postValue(null);
                         return;
                     }
 
@@ -98,6 +102,10 @@ public class AddressViewModel extends ViewModel {
 
     public LiveData<Long> getStatusInsert() {
         return statusInsert;
+    }
+
+    public LiveData<Long> getStatusSearch() {
+        return statusSearch;
     }
 
     public LiveData<Boolean> getIsValid(){

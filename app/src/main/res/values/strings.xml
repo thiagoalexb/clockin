@@ -17,7 +17,7 @@
     <string name="location_permission_mandatory">Para o app funcionar é necessário permissão de localização.</string>
     <string name="OK">OK</string>
     <string name="day">Dia</string>
-    <string name="address_not_found">Endereço não encontrado</string>
+    <string name="address_not_found">Endereço não encontrado. \n Tente escrever nomes completos. \n Ex: Paraná, Curitiba, Avenida Visconde de Guarapuava</string>
     <string name="error_address_not_save">Erro ao cadastrar endereço, tente novamente</string>
     <string name="reports">Relatórios</string>
     <string name="edit_schedule">Editar Horário</string>
@@ -50,4 +50,5 @@
     <string name="no">Não</string>
     <string name="one_entry_more_mandatory">É obrigatório ter pelo uma entrada para cada saída</string>
     <string name="one_departure_more_mandatory">É obrigatório ter pelo uma saída para cada entrada</string>
+    <string name="internet">Internet</string>
 </resources>

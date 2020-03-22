@@ -86,12 +86,15 @@ public class ReportService {
                     }
 
                     firstRow = 3;
-                    for (int n = 0; n < schedule.get().getDepartureTimes().size(); n++){
-                        String departure = schedule.get().getDepartureTimes().get(n);
+                    ArrayList<String> departures = schedule.get().getDepartureTimes();
+                    if (departures != null) {
+                        for (int n = 0; n < schedule.get().getDepartureTimes().size(); n++){
+                            String departure = schedule.get().getDepartureTimes().get(n);
 
-                        if(!TextHelper.isNullOrEmpty(departure)){
-                             rows[firstRow] = DateHelper.getHourMinute(departure);
-                            firstRow  = firstRow + 2;
+                            if(!TextHelper.isNullOrEmpty(departure)){
+                                rows[firstRow] = DateHelper.getHourMinute(departure);
+                                firstRow  = firstRow + 2;
+                            }
                         }
                     }
 

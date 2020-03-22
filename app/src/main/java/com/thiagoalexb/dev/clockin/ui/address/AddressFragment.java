@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
@@ -50,6 +51,8 @@ public class AddressFragment extends BaseFragment {
 
         fragmentAddressBinding.setLifecycleOwner(this);
 
+        this.checkInternet();
+
         this.setObservers();
 
         this.setEvents();
@@ -57,6 +60,25 @@ public class AddressFragment extends BaseFragment {
         addressViewModel.checkAddress();
 
         return fragmentAddressBinding.getRoot();
+    }
+
+    private void checkInternet(){
+        if(isNetworkAvailable()) return;
+
+        createDialogNeedInternet();
+    }
+
+    private void createDialogNeedInternet(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
+
+        builder.setTitle(R.string.internet);
+        builder.setMessage(R.string.internet_warning);
+
+        builder.setPositiveButton(R.string.OK, (dialog, id) -> {
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private void setObservers() {
@@ -67,6 +89,11 @@ public class AddressFragment extends BaseFragment {
         addressViewModel.getAddressResource().removeObservers(getViewLifecycleOwner());
         addressViewModel.getAddressResource().observe(getViewLifecycleOwner(), resource -> {
             setLoading(resource.status);
+        });
+
+        addressViewModel.getStatusSearch().removeObservers(getViewLifecycleOwner());
+        addressViewModel.getStatusSearch().observe(getViewLifecycleOwner(), resource -> {
+            Toast.makeText(getContext(), getString(R.string.address_not_found), Toast.LENGTH_LONG).show();
         });
     }
 
