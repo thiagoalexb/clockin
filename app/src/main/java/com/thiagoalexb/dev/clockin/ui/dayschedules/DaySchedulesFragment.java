@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.thiagoalexb.dev.clockin.R;
 import com.thiagoalexb.dev.clockin.data.TypeSchedule;
+import com.thiagoalexb.dev.clockin.data.models.Schedule;
 import com.thiagoalexb.dev.clockin.databinding.FragmentDaySchedulesBinding;
 import com.thiagoalexb.dev.clockin.di.viewmodels.ViewModelProviderFactory;
 import com.thiagoalexb.dev.clockin.ui.BaseFragment;
@@ -43,6 +44,8 @@ public class DaySchedulesFragment extends BaseFragment {
     private DaySchedulesAdapter dayDepartureScheduleAdapter;
     private int scheduleId;
     private Boolean isRotate = false;
+    private int colorDefault;
+    private int colorWhite;
 
     @Nullable
     @Override
@@ -51,6 +54,10 @@ public class DaySchedulesFragment extends BaseFragment {
         daySchedulesViewModel = ViewModelProviders.of(this, modelProviderFactory).get(DaySchedulesViewModel.class);
 
         fragmentDaySchedulesBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_day_schedules, container, false);
+
+        fragmentDaySchedulesBinding.setDaySchedulesViewModel(daySchedulesViewModel);
+
+        fragmentDaySchedulesBinding.setLifecycleOwner(this);
 
         checkBundle();
 
@@ -83,14 +90,7 @@ public class DaySchedulesFragment extends BaseFragment {
             ArrayList<String> entries = schedule.getEntryTimes();
             ArrayList<String> departures = schedule.getDepartureTimes();
 
-            dayEntryScheduleAdapter.setArguments(entries, TypeSchedule.ENTRY);
-            dayDepartureScheduleAdapter.setArguments(departures, TypeSchedule.DEPARTURE);
-
-            boolean hasEntries = entries != null && entries.size() > 0;
-            fragmentDaySchedulesBinding.noEntriesResultsTextView.setVisibility(hasEntries ? View.GONE : View.VISIBLE);
-
-            boolean hasDepartures = departures != null && departures.size() > 0;
-            fragmentDaySchedulesBinding.noDeparturesResultsTextView.setVisibility(hasDepartures ? View.GONE : View.VISIBLE);
+            setScheduleByType();
         });
 
         daySchedulesViewModel.getStatusInsert().removeObservers(getViewLifecycleOwner());
@@ -104,15 +104,43 @@ public class DaySchedulesFragment extends BaseFragment {
         daySchedulesViewModel.getScheduleResource().observe(getViewLifecycleOwner(), resource -> {
             setLoading(resource.status);
         });
+
+        daySchedulesViewModel.getTypeSchedule().removeObservers(getViewLifecycleOwner());
+        daySchedulesViewModel.getTypeSchedule().observe(getViewLifecycleOwner(), typeSchedule -> {
+            setTabSelected(typeSchedule);
+            setScheduleByType();
+        });
+    }
+
+    private void setScheduleByType(){
+        Schedule schedule = daySchedulesViewModel.getSchedule().getValue();
+
+        if(schedule == null) {
+            fragmentDaySchedulesBinding.noScheduleResultsTextView.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        ArrayList<String> entries = schedule.getEntryTimes();
+        ArrayList<String> deepartures = schedule.getDepartureTimes();
+
+        if(daySchedulesViewModel.getTypeSchedule().getValue() == TypeSchedule.ENTRY){
+            fragmentDaySchedulesBinding.noScheduleResultsTextView.setVisibility(entries != null && entries.size() > 0 ? View.GONE : View.VISIBLE);
+            dayEntryScheduleAdapter.setArguments(entries, TypeSchedule.ENTRY);
+        }
+        else{
+            fragmentDaySchedulesBinding.noScheduleResultsTextView.setVisibility(deepartures != null && deepartures.size() > 0 ? View.GONE : View.VISIBLE);
+            dayEntryScheduleAdapter.setArguments(deepartures, TypeSchedule.DEPARTURE);
+        }
+
     }
 
     private void setElements() {
 
-        dayEntryScheduleAdapter = new DaySchedulesAdapter(this);
-        setRecyclerView(fragmentDaySchedulesBinding.entriesRecyclerView, dayEntryScheduleAdapter, TypeSchedule.ENTRY);
+        colorDefault = getContext().getColor(R.color.colorDefault);
+        colorWhite = getContext().getColor(android.R.color.white);
 
-        dayDepartureScheduleAdapter = new DaySchedulesAdapter(this);
-        setRecyclerView(fragmentDaySchedulesBinding.departuresRecyclerView, dayDepartureScheduleAdapter, TypeSchedule.DEPARTURE);
+        dayEntryScheduleAdapter = new DaySchedulesAdapter(this);
+        setRecyclerView(fragmentDaySchedulesBinding.schedulesRecyclerView, dayEntryScheduleAdapter, TypeSchedule.ENTRY);
 
         setFabButtons();
 
@@ -139,7 +167,7 @@ public class DaySchedulesFragment extends BaseFragment {
                 .setSwipeable(R.id.container_schedule, R.id.container_actions, (viewID, position, parentId) -> {
                     switch (viewID) {
                         case R.id.delete_image_view:
-                            if(parentId == fragmentDaySchedulesBinding.entriesRecyclerView.getId()){
+                            if(daySchedulesViewModel.getTypeSchedule().getValue() == TypeSchedule.ENTRY){
                                 if(daySchedulesViewModel.getCanAddEntry().getValue())
                                     createDialogNeedHaveEntry();
                                 else
@@ -153,7 +181,7 @@ public class DaySchedulesFragment extends BaseFragment {
                             }
                             break;
                         case R.id.edit_image_view:
-                            setTimePickerDialog(getView(), touchListener.getTypeSchedule(), position);
+                            setTimePickerDialog(getView(), daySchedulesViewModel.getTypeSchedule().getValue(), position);
                             break;
 
                     }
@@ -264,5 +292,27 @@ public class DaySchedulesFragment extends BaseFragment {
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void setTabSelected(TypeSchedule typeSchedule){
+        resetTab();
+        if(typeSchedule == TypeSchedule.ENTRY){
+            fragmentDaySchedulesBinding.containerEntryConstraint.setBackgroundColor(colorDefault);
+            fragmentDaySchedulesBinding.entriesImageView.setColorFilter(colorWhite);
+            fragmentDaySchedulesBinding.entriesTextView.setTextColor(colorWhite);
+        }else {
+            fragmentDaySchedulesBinding.containerDepartureConstraint.setBackgroundColor(colorDefault);
+            fragmentDaySchedulesBinding.departuresImageView.setColorFilter(colorWhite);
+            fragmentDaySchedulesBinding.departuresTextView.setTextColor(colorWhite);
+        }
+    }
+
+    private void resetTab(){
+        fragmentDaySchedulesBinding.containerEntryConstraint.setBackgroundColor(colorWhite);
+        fragmentDaySchedulesBinding.containerDepartureConstraint.setBackgroundColor(colorWhite);
+        fragmentDaySchedulesBinding.entriesImageView.setColorFilter(colorDefault);
+        fragmentDaySchedulesBinding.departuresImageView.setColorFilter(colorDefault);
+        fragmentDaySchedulesBinding.entriesTextView.setTextColor(colorDefault);
+        fragmentDaySchedulesBinding.departuresTextView.setTextColor(colorDefault);
     }
 }

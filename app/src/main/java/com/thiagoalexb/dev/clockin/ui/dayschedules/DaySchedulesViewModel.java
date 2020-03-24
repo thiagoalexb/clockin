@@ -29,6 +29,7 @@ public class DaySchedulesViewModel extends ViewModel {
     private final ScheduleService scheduleService;
     private final MutableLiveData<Boolean> canAddEntry;
     private final MutableLiveData<Boolean> canAddDeparture;
+    private final MutableLiveData<TypeSchedule> typeSchedule;
 
 
     @Inject
@@ -41,6 +42,7 @@ public class DaySchedulesViewModel extends ViewModel {
         this.scheduleService = scheduleService;
         this.canAddEntry = new MutableLiveData<>(false);
         this.canAddDeparture = new MutableLiveData<>(false);
+        this.typeSchedule = new MutableLiveData<>(TypeSchedule.ENTRY);
     }
 
     @Override
@@ -175,6 +177,10 @@ public class DaySchedulesViewModel extends ViewModel {
                 }));
     }
 
+    public void setTypeSchedule(TypeSchedule typeSchedule){
+        this.typeSchedule.setValue(typeSchedule);
+    }
+
     private boolean hasEntry(){
         Schedule schedule = getSchedule().getValue();
         if(schedule == null) return false;
@@ -219,5 +225,9 @@ public class DaySchedulesViewModel extends ViewModel {
 
     public LiveData<Boolean> getCanAddDeparture(){
         return canAddDeparture;
+    }
+
+    public LiveData<TypeSchedule> getTypeSchedule(){
+        return typeSchedule;
     }
 }
