@@ -71,15 +71,5 @@ public class DaySchedulesAdapter extends RecyclerView.Adapter<DaySchedulesAdapte
 
             itemEditSheduleBinding.scheduleValueTextView.setText(DateHelper.getHourMinute(localDateTime));
         }
-
-        private void setTimePickerDialog(View view, final int position){
-            LocalDateTime now = LocalDateTime.now();
-            TimePickerDialog timePickerDialog = new TimePickerDialog(view.getContext(), (timePicker, hourOfDay, minute) -> {
-                LocalDateTime newTime = LocalDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), hourOfDay, minute);
-                daySchedulesFragment.daySchedulesViewModel.updateTime(position, typeSchedule, newTime);
-            }, now.getHour(), now.getMinute(), true);
-
-            timePickerDialog.show();
-        }
     }
 }

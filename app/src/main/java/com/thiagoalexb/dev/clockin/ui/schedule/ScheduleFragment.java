@@ -174,11 +174,7 @@ public class ScheduleFragment extends BaseFragment {
         builder.setTitle(R.string.location);
         builder.setMessage(R.string.location_permission_mandatory);
 
-        builder.setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                getLocationPermission();
-            }
-        });
+        builder.setPositiveButton(R.string.OK, (dialog, id) -> getLocationPermission());
 
         AlertDialog dialog = builder.create();
         dialog.show();

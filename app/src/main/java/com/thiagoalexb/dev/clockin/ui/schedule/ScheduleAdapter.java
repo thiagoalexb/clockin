@@ -77,7 +77,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
                 itemScheduleBinding.departureValueTextView.setText(DateHelper.getHourMinute(departureTimes.get(departureTimes.size() - 1)));
 
             if(showEdit)
-                itemScheduleBinding.editScheduleImageView.setOnClickListener(v -> {
+                itemScheduleBinding.containerSchedules.setOnClickListener(v -> {
                     Bundle bundle = new Bundle();
                     bundle.putInt(ID_KEY, schedule.getId());
                     Navigation.findNavController(v).navigate(R.id.action_mainFragment_to_daySchedulesFragment, bundle);

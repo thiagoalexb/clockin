@@ -2,9 +2,9 @@
 
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:statusBarColor">#040e1b</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/colorDefault</item>
+        <item name="colorPrimaryDark">@color/colorDefault</item>
+        <item name="colorAccent">@color/colorDefault</item>
     </style>
 
     <style name="AppTheme.SplashScreen" parent="Theme.MaterialComponents.Light.NoActionBar">
@@ -24,5 +24,4 @@
     <style name="MaterialButtonStyle" parent="Widget.MaterialComponents.Button">
         <item name="backgroundTint">@color/color_states_material_button</item>
     </style>
-
 </resources>
