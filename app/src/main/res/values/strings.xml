@@ -41,8 +41,7 @@
     <string name="schedule">Horário</string>
     <string name="entries">Entradas</string>
     <string name="departures">Saídas</string>
-    <string name="no_entries_results">Nenhuma entrada encontrada</string>
-    <string name="no_departures_results">Nenhuma saída encontrada</string>
+    <string name="no_results_found">Nenhum registro encontrado</string>
     <string name="content_description_splash">Imagem de fundo da splash screen</string>
     <string name="remove_schedule">Excluir</string>
     <string name="remove_schedule_ask">Tem certeza que deseja excluir?</string>

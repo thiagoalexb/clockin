@@ -131,12 +131,12 @@
                             android:layout_width="20dp"
                             android:layout_height="wrap_content"
                             android:tint="@color/colorDefault"
-                            app:srcCompat="@drawable/ic_arrow_right"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="1.0"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"/>
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/ic_more_horiz" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
