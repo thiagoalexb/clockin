@@ -81,6 +81,8 @@ public class ScheduleService {
 
                     departureTimes.add(now.toString());
 
+                    schedule.setDepartureTimes(departureTimes);
+
                     disposable.add(scheduleRepository.update(schedule)
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe((aInt, throwableUpdate) -> {
