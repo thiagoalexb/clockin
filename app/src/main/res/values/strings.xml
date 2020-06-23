@@ -50,4 +50,6 @@
     <string name="one_entry_more_mandatory">É obrigatório ter pelo uma entrada para cada saída</string>
     <string name="one_departure_more_mandatory">É obrigatório ter pelo uma saída para cada entrada</string>
     <string name="internet">Internet</string>
+    <string name="orientation_edit_remove_schedule">Para acessar as opções, basta arrastar a linha para o lado esquerdo! :)</string>
+    <string name="tutorial_key">TUTORIAL_KEY</string>
 </resources>

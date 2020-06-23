@@ -11,277 +11,329 @@
         <import type="com.thiagoalexb.dev.clockin.data.TypeSchedule" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/top_background_image_view"
-            android:layout_width="0dp"
-            android:layout_height="150dp"
-            android:contentDescription="@string/content_description_background"
-            android:scaleType="centerCrop"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/background"
-            tools:srcCompat="@drawable/background" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/tutorial_constraint"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/default_padding">
 
-        <TextView
-            android:id="@+id/title_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto"
-            android:text="@string/schedules"
-            android:textColor="@color/titleColorDefault"
-            android:textSize="@dimen/title"
-            app:layout_constraintBottom_toBottomOf="@+id/top_background_image_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5" />
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/tabs_card_view"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/default_margin"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/title_text_view"
-            app:layout_constraintVertical_bias="0.0">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/container_tabs_constraint"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/container_entry_constraint"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:clickable="true"
-                    android:onClick="@{() -> daySchedulesViewModel.setTypeSchedule(TypeSchedule.ENTRY)}"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/divider_view"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <ImageView
-                        android:id="@+id/entries_image_view"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:tint="@color/colorDefault"
-                        app:layout_constraintBottom_toTopOf="@+id/entries_text_view"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_entry" />
-
-                    <TextView
-                        android:id="@+id/entries_text_view"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/entries"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/entries_image_view" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <View
-                    android:id="@+id/divider_view"
-                    android:layout_width="1dp"
-                    android:layout_height="75dp"
-                    android:background="@color/colorDefault"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/container_departure_constraint"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/container_entry_constraint"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/container_departure_constraint"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:clickable="true"
-                    android:onClick="@{() -> daySchedulesViewModel.setTypeSchedule(TypeSchedule.DEPARTURE)}"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/divider_view"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <ImageView
-                        android:id="@+id/departures_image_view"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:tint="@color/colorDefault"
-                        app:layout_constraintBottom_toTopOf="@+id/departures_text_view"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_departure" />
-
-                    <TextView
-                        android:id="@+id/departures_text_view"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/departures"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/departures_image_view" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
-
-        <ScrollView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:fillViewport="true"
-            android:paddingBottom="@dimen/default_padding"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tabs_card_view"
-            app:layout_constraintVertical_bias="0">
-
-            <LinearLayout
-                android:id="@+id/container_schedules"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/half_margin"
-                android:layout_marginTop="@dimen/default_margin"
-                android:layout_marginEnd="@dimen/half_margin"
-                android:orientation="vertical"
+            <ImageView
+                android:id="@+id/explanation_gif_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="300dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tabs_card_view">
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.3"
+                app:srcCompat="@drawable/clockin_image" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/schedules_recycler_view"
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto"
+                android:gravity="center"
+                android:text="@string/orientation_edit_remove_schedule"
+                android:textColor="@color/colorDefault"
+                android:textSize="@dimen/sub_title"
+                app:layout_constraintBottom_toTopOf="@+id/save_tutorial_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/explanation_gif_image_view" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/save_tutorial_button"
+                style="@style/MaterialButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/OK"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="17sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/day_schedules_constraint"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/top_background_image_view"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:contentDescription="@string/content_description_background"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/background"
+                tools:srcCompat="@drawable/background" />
+
+            <TextView
+                android:id="@+id/title_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto"
+                android:text="@string/schedules"
+                android:textColor="@color/titleColorDefault"
+                android:textSize="@dimen/title"
+                app:layout_constraintBottom_toBottomOf="@+id/top_background_image_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/tabs_card_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_text_view"
+                app:layout_constraintVertical_bias="0.0">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/container_tabs_constraint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/container_entry_constraint"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:clickable="true"
+                        android:onClick="@{() -> daySchedulesViewModel.setTypeSchedule(TypeSchedule.ENTRY)}"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/divider_view"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                            android:id="@+id/entries_image_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:tint="@color/colorDefault"
+                            app:layout_constraintBottom_toTopOf="@+id/entries_text_view"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/ic_entry" />
+
+                        <TextView
+                            android:id="@+id/entries_text_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/entries"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/entries_image_view" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <View
+                        android:id="@+id/divider_view"
+                        android:layout_width="1dp"
+                        android:layout_height="75dp"
+                        android:background="@color/colorDefault"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/container_departure_constraint"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/container_entry_constraint"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/container_departure_constraint"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:clickable="true"
+                        android:onClick="@{() -> daySchedulesViewModel.setTypeSchedule(TypeSchedule.DEPARTURE)}"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/divider_view"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                            android:id="@+id/departures_image_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:tint="@color/colorDefault"
+                            app:layout_constraintBottom_toTopOf="@+id/departures_text_view"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/ic_departure" />
+
+                        <TextView
+                            android:id="@+id/departures_text_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/departures"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/departures_image_view" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <ScrollView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:fillViewport="true"
+                android:paddingBottom="@dimen/default_padding"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tabs_card_view"
+                app:layout_constraintVertical_bias="0">
+
+                <LinearLayout
+                    android:id="@+id/container_schedules"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/half_margin"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_edit_shedule" />
+                    android:layout_marginStart="@dimen/half_margin"
+                    android:layout_marginTop="@dimen/default_margin"
+                    android:layout_marginEnd="@dimen/half_margin"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tabs_card_view">
 
-                <TextView
-                    android:id="@+id/no_schedule_results_text_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="@string/no_results_found" />
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/schedules_recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/half_margin"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/item_edit_shedule" />
 
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/no_schedule_results_text_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="@string/no_results_found" />
 
-        </ScrollView>
+                </LinearLayout>
 
+            </ScrollView>
 
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/remove_floating_action_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_margin="10dp"
+                android:backgroundTint="@color/colorDefault"
+                app:fabSize="mini"
+                app:layout_constraintBottom_toTopOf="@+id/entry_floating_action_button"
+                app:layout_constraintEnd_toEndOf="@+id/actions_floating_action_button"
+                app:layout_constraintStart_toStartOf="@+id/actions_floating_action_button"
+                app:srcCompat="@drawable/ic_delete"
+                app:tint="@android:color/white" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/remove_floating_action_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_margin="10dp"
-            android:backgroundTint="@color/colorDefault"
-            app:fabSize="mini"
-            app:layout_constraintBottom_toTopOf="@+id/entry_floating_action_button"
-            app:layout_constraintEnd_toEndOf="@+id/actions_floating_action_button"
-            app:layout_constraintStart_toStartOf="@+id/actions_floating_action_button"
-            app:srcCompat="@drawable/ic_delete"
-            app:tint="@android:color/white" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/entry_floating_action_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_margin="10dp"
+                android:backgroundTint="@color/colorDefault"
+                app:fabSize="mini"
+                app:layout_constraintBottom_toTopOf="@+id/departure_floating_action_button"
+                app:layout_constraintEnd_toEndOf="@+id/actions_floating_action_button"
+                app:layout_constraintStart_toStartOf="@+id/actions_floating_action_button"
+                app:srcCompat="@drawable/ic_entry"
+                app:tint="@android:color/white" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/entry_floating_action_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_margin="10dp"
-            android:backgroundTint="@color/colorDefault"
-            app:fabSize="mini"
-            app:layout_constraintBottom_toTopOf="@+id/departure_floating_action_button"
-            app:layout_constraintEnd_toEndOf="@+id/actions_floating_action_button"
-            app:layout_constraintStart_toStartOf="@+id/actions_floating_action_button"
-            app:srcCompat="@drawable/ic_entry"
-            app:tint="@android:color/white" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/departure_floating_action_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_marginBottom="4dp"
+                android:backgroundTint="@color/colorDefault"
+                app:fabSize="mini"
+                app:layout_constraintBottom_toTopOf="@+id/actions_floating_action_button"
+                app:layout_constraintEnd_toEndOf="@+id/actions_floating_action_button"
+                app:layout_constraintStart_toStartOf="@+id/actions_floating_action_button"
+                app:srcCompat="@drawable/ic_departure"
+                app:tint="@android:color/white" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/departure_floating_action_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_marginBottom="4dp"
-            android:backgroundTint="@color/colorDefault"
-            app:fabSize="mini"
-            app:layout_constraintBottom_toTopOf="@+id/actions_floating_action_button"
-            app:layout_constraintEnd_toEndOf="@+id/actions_floating_action_button"
-            app:layout_constraintStart_toStartOf="@+id/actions_floating_action_button"
-            app:srcCompat="@drawable/ic_departure"
-            app:tint="@android:color/white" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/actions_floating_action_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorDefault"
+                android:clickable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.91"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.96"
+                app:srcCompat="@drawable/ic_add"
+                app:tint="@android:color/white" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/actions_floating_action_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorDefault"
-            android:clickable="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.91"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.96"
-            app:srcCompat="@drawable/ic_add"
-            app:tint="@android:color/white" />
+            <TextView
+                android:id="@+id/remove_floating_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/half_margin"
+                android:text="@string/remove_schedule"
+                android:textColor="@color/colorDefault"
+                app:layout_constraintBottom_toBottomOf="@+id/remove_floating_action_button"
+                app:layout_constraintEnd_toStartOf="@+id/remove_floating_action_button"
+                app:layout_constraintTop_toTopOf="@+id/remove_floating_action_button" />
 
-        <TextView
-            android:id="@+id/remove_floating_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/half_margin"
-            android:text="@string/remove_schedule"
-            android:textColor="@color/colorDefault"
-            app:layout_constraintBottom_toBottomOf="@+id/remove_floating_action_button"
-            app:layout_constraintEnd_toStartOf="@+id/remove_floating_action_button"
-            app:layout_constraintTop_toTopOf="@+id/remove_floating_action_button" />
+            <TextView
+                android:id="@+id/entry_floating_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/half_margin"
+                android:text="@string/entry"
+                android:textColor="@color/colorDefault"
+                app:layout_constraintBottom_toBottomOf="@+id/entry_floating_action_button"
+                app:layout_constraintEnd_toStartOf="@+id/entry_floating_action_button"
+                app:layout_constraintTop_toTopOf="@+id/entry_floating_action_button" />
 
-        <TextView
-            android:id="@+id/entry_floating_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/half_margin"
-            android:text="@string/entry"
-            android:textColor="@color/colorDefault"
-            app:layout_constraintBottom_toBottomOf="@+id/entry_floating_action_button"
-            app:layout_constraintEnd_toStartOf="@+id/entry_floating_action_button"
-            app:layout_constraintTop_toTopOf="@+id/entry_floating_action_button" />
+            <TextView
+                android:id="@+id/departure_floating_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/half_margin"
+                android:text="@string/departure"
+                android:textColor="@color/colorDefault"
+                app:layout_constraintBottom_toBottomOf="@+id/departure_floating_action_button"
+                app:layout_constraintEnd_toStartOf="@+id/departure_floating_action_button"
+                app:layout_constraintTop_toTopOf="@+id/departure_floating_action_button" />
 
-        <TextView
-            android:id="@+id/departure_floating_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/half_margin"
-            android:text="@string/departure"
-            android:textColor="@color/colorDefault"
-            app:layout_constraintBottom_toBottomOf="@+id/departure_floating_action_button"
-            app:layout_constraintEnd_toStartOf="@+id/departure_floating_action_button"
-            app:layout_constraintTop_toTopOf="@+id/departure_floating_action_button" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 
 </layout>
